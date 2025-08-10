@@ -1,0 +1,47 @@
+.categories-bar-container {
+  background-color: white;
+  border-top: 1px solid #e5e7eb;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.5rem 1rem;
+  overflow-x: auto;
+}
+
+.categories-scroll {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  white-space: nowrap;
+}
+
+.category-button {
+  padding: 0.25rem 1rem;
+  background-color: #f3f4f6;
+  border: none;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: background-color 0.2s;
+  cursor: pointer;
+}
+
+.category-button:hover {
+  background-color: #e5e7eb;
+}
+
+.category-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.category-bar button {
+  padding: 8px 16px;
+  background: #eee;
+  border: none;
+  cursor: pointer;
+  border-radius: 6px;
+}
+
+.category-bar button:hover {
+  background: #ddd;
+}

@@ -1,0 +1,94 @@
+.login-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 40px 100px;
+  max-width: 100vw;
+  margin: 0;
+  gap: 20px;
+}
+.form-wrapper form input,
+.form-wrapper form button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.logo-wrapper {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.logo {
+  height: auto;
+  width: 50rem;
+  max-width: 100%;
+  display: block;
+}
+
+.form-wrapper {
+  flex: 1;
+  text-align: left;
+  max-width: 400px;
+  margin-right: 100px;
+}
+
+.form-wrapper h2 {
+  font-size: 28px;
+  margin-bottom: 8px;
+}
+
+.form-wrapper p {
+  font-size: 16px;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+form input,
+form button {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+form input {
+  padding: 10px;
+  margin-bottom: 15px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.login-btn {
+  background-color: #a40000;
+  color: white;
+  padding: 12px;
+  border: none;
+  font-size: 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-bottom: 15px;
+}
+
+.google-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  background: white;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 4px;
+}
+
+.google-btn img {
+  width: 20px;
+  margin-right: 8px;
+}
+
+.signup-link {
+  margin-top: 20px;
+  font-size: 14px;
+}

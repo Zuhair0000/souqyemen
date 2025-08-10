@@ -1,0 +1,131 @@
+.pending-sellers-page {
+  max-width: 768px;
+  margin: 40px auto;
+  padding: 1.5rem;
+  background-color: #fdfdfd;
+  border-radius: 10px;
+  border: 1px solid #e2e0db;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.pending-sellers-page h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: #333;
+}
+
+.seller-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.seller-card {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+.seller-card h3 {
+  font-size: 1.2rem;
+  color: #333;
+  margin-bottom: 0.3rem;
+}
+
+.seller-card p {
+  margin: 0.25rem 0;
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.images {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.images img {
+  max-width: 140px;
+  max-height: 140px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  object-fit: cover;
+  background-color: #f6f6f6;
+}
+
+.buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 1rem;
+}
+
+.approve-btn,
+.reject-btn {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  transition: background-color 0.3s ease;
+}
+
+.approve-btn {
+  background-color: #4caf50;
+  color: white;
+}
+
+.approve-btn:hover {
+  background-color: #3c9a42;
+}
+
+.reject-btn {
+  background-color: #f44336;
+  color: white;
+}
+
+.reject-btn:hover {
+  background-color: #d7392f;
+}
+
+.image-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  cursor: zoom-out;
+}
+
+.image-modal-content img {
+  max-width: 90vw;
+  max-height: 90vh;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 600px) {
+  .images {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .images img {
+    max-width: 100%;
+  }
+
+  .buttons {
+    flex-direction: column;
+  }
+}

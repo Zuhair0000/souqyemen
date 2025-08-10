@@ -1,0 +1,20 @@
+.user-dropdown-container {
+  position: relative;
+  display: inline-block;
+}
+
+.user-icon-button {
+  color: #333;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.user-icon-button:hover {
+  color: #a22f29;
+}
+
+.logout-item {
+  color: #dc2626;
+}

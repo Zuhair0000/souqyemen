@@ -1,0 +1,20 @@
+.navbar__search {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 30rem;
+}
+
+.navbar__input {
+  width: 30rem;
+  padding: 8px 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  outline: none;
+}
+
+.navbar__input:focus {
+  border-color: #a22f29;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}

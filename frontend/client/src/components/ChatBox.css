@@ -1,0 +1,78 @@
+.chatbox-container {
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fdfdfd;
+  border: 1px solid #e2e0db;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  font-family: "Segoe UI", sans-serif;
+}
+
+.chatbox-title {
+  font-size: 1.5rem;
+  margin-bottom: 20px;
+  color: #333;
+  text-align: center;
+}
+
+.chatbox-messages {
+  max-height: 350px;
+  overflow-y: auto;
+  background-color: #f9f7f3;
+  padding: 15px;
+  border: 1px solid #e0ded7;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.chatbox-message {
+  margin-bottom: 12px;
+  padding: 10px 14px;
+  background-color: #fff;
+  border: 1px solid #e8e6e1;
+  border-radius: 8px;
+  color: #333;
+}
+
+.chatbox-message strong {
+  display: inline-block;
+  margin-bottom: 6px;
+  color: #555;
+  font-size: 0.95rem;
+}
+
+.chatbox-input {
+  display: flex;
+  gap: 10px;
+}
+
+.chatbox-input input {
+  flex: 1;
+  padding: 10px 14px;
+  font-size: 1rem;
+  border: 1px solid #d6d3ce;
+  border-radius: 8px;
+  background-color: #fffefc;
+  transition: border 0.2s;
+}
+
+.chatbox-input input:focus {
+  outline: none;
+  border-color: #b5b1aa;
+}
+
+.chatbox-input button {
+  background-color: #8a775f; /* Matches warm tone from Figma-like palettes */
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.chatbox-input button:hover {
+  background-color: #6e5f4c;
+}
