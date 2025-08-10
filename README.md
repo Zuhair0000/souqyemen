@@ -57,4 +57,6 @@ For Admins
 <img width="1665" height="399" alt="Screenshot 2025-08-10 at 5 09 58 PM" src="https://github.com/user-attachments/assets/78d116a4-f9cb-4bda-b9c4-006c742b94d1" />
 
 
-## 
+## 6️⃣ Promotions Page
+<img width="1516" height="673" alt="Screenshot 2025-08-10 at 5 13 52 PM" src="https://github.com/user-attachments/assets/108cc606-74b4-49ea-940f-d583eca2d834" />
+
