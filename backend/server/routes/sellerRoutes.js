@@ -30,7 +30,7 @@ router.get("/public/:id", getPublicSellerProfile);
 router.use(authenticate, authorizeRoles("seller"));
 
 // Dashboard & Products
-router.get("/dashboard", getSellerAnalytics);
+router.get("/dashboard", authenticate, getSellerAnalytics);
 router.post("/products", upload.single("image"), addProduct);
 router.get("/my-products", getMyProducts);
 router.post("/posts", upload.single("image"), createPost);

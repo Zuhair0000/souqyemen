@@ -36,12 +36,10 @@ exports.login = async (req, res) => {
   const { emailOrPhone, password } = req.body;
 
   try {
-    const [rows] = await db
-      .promise()
-      .query("SELECT * FROM users WHERE email = ? OR phone = ?", [
-        emailOrPhone,
-        emailOrPhone,
-      ]);
+    const [rows] = await db.query(
+      "SELECT * FROM users WHERE email = ? OR phone = ?",
+      [emailOrPhone, emailOrPhone]
+    );
 
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });

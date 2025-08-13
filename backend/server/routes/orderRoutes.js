@@ -3,6 +3,9 @@ const express = require("express");
 const router = express.Router();
 const db = require("../config/db");
 const { authenticate } = require("../middleware/authMiddleware"); // assuming you have JWT middleware
+const {
+  createPaymentIntent,
+} = require("../controller/customer/orderController");
 
 // Checkout route
 router.post("/checkout", authenticate, async (req, res) => {

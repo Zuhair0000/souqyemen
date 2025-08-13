@@ -90,66 +90,111 @@ exports.getPublicSellerProfile = async (req, res) => {
 
 // GET /api/seller/analytics
 exports.getSellerAnalytics = async (req, res) => {
-  console.log("Seller Analytics called");
-  console.log("User from token:", req.user);
-
   const sellerId = req.user.id;
 
   try {
-    // ✅ Total Sales
-    const [[{ totalSales }]] = await db.query(
-      `
-      SELECT SUM(oi.price * oi.quantity) AS totalSales
-      FROM order_items oi
-      JOIN products p ON oi.product_id = p.id
-      WHERE p.seller_id = ?
-      `,
+    // Total sales
+    const [totalSalesResult] = await db.query(
+      `SELECT IFNULL(SUM(o.total), 0) AS totalSales
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       WHERE p.seller_id = ? AND o.status = 'completed'`,
       [sellerId]
     );
 
-    // ✅ Best-Selling Products (by quantity sold)
+    // Total orders (count distinct orders for this seller)
+    const [totalOrdersResult] = await db.query(
+      `SELECT COUNT(DISTINCT o.id) AS totalOrders
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       WHERE p.seller_id = ?`,
+      [sellerId]
+    );
+
+    // Average order value
+    const avgOrderValue =
+      totalOrdersResult[0].totalOrders > 0
+        ? totalSalesResult[0].totalSales / totalOrdersResult[0].totalOrders
+        : 0;
+
+    // Best-selling products
     const [bestSelling] = await db.query(
-      `
-      SELECT p.name, SUM(oi.quantity) AS sold
-      FROM order_items oi
-      JOIN products p ON oi.product_id = p.id
-      WHERE p.seller_id = ?
-      GROUP BY p.id
-      ORDER BY sold DESC
-      LIMIT 5
-      `,
+      `SELECT p.name, SUM(oi.quantity) AS sold
+       FROM order_items oi
+       JOIN products p ON oi.product_id = p.id
+       JOIN orders o ON oi.order_id = o.id
+       WHERE p.seller_id = ? AND o.status = 'completed'
+       GROUP BY p.id, p.name
+       ORDER BY sold DESC
+       LIMIT 5`,
       [sellerId]
     );
 
-    // ❌ Most Viewed: Skipped because `views` column does not exist.
-    const mostViewed = []; // or omit from response
-
-    // ✅ Daily Sales (based on order.created_at)
+    // Daily sales (last 7 days)
     const [dailySales] = await db.query(
-      `
-      SELECT DATE(o.created_at) AS date, SUM(oi.price * oi.quantity) AS total
-      FROM orders o
-      JOIN order_items oi ON oi.order_id = o.id
-      JOIN products p ON oi.product_id = p.id
-      WHERE p.seller_id = ?
-      GROUP BY DATE(o.created_at)
-      ORDER BY DATE(o.created_at) DESC
-      LIMIT 7
-      `,
+      `SELECT DATE(o.created_at) AS date, SUM(o.total) AS total
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       WHERE p.seller_id = ? AND o.status = 'completed'
+       GROUP BY DATE(o.created_at)
+       ORDER BY date DESC
+       LIMIT 7`,
+      [sellerId]
+    );
+
+    // Revenue last 30 days
+    const [revenueLast30] = await db.query(
+      `SELECT DATE(o.created_at) AS date, SUM(o.total) AS revenue
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       WHERE p.seller_id = ? AND o.status = 'completed'
+       GROUP BY DATE(o.created_at)
+       ORDER BY date ASC
+       LIMIT 30`,
+      [sellerId]
+    );
+
+    // Recent orders (latest 5 for this seller)
+    const [recentOrders] = await db.query(
+      `SELECT o.id, o.customer_id, o.total, o.status, o.created_at AS date
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       WHERE p.seller_id = ?
+       GROUP BY o.id
+       ORDER BY o.created_at DESC
+       LIMIT 5`,
+      [sellerId]
+    );
+
+    // Low stock products
+    // Low stock products
+    const [lowStock] = await db.query(
+      `SELECT id, name, stock
+   FROM products
+   WHERE seller_id = ? AND stock < 5
+   ORDER BY stock ASC`,
       [sellerId]
     );
 
     res.json({
-      totalSales: totalSales || 0,
+      totalSales: totalSalesResult[0].totalSales,
+      totalOrders: totalOrdersResult[0].totalOrders,
+      avgOrderValue,
+      salesDelta: 0, // placeholder for percentage change logic
+      ordersDelta: 0, // placeholder for percentage change logic
+      revenueLast30,
+      dailySales: dailySales.reverse(), // oldest first
       bestSelling,
-      mostViewed, // returns empty array
-      dailySales,
+      recentOrders,
+      lowStock,
     });
   } catch (err) {
-    console.error("Analytics Error:", err);
-    res.status(500).json({
-      message: "Failed to load analytics",
-      error: err.message,
-    });
+    console.error("Dashboard error:", err);
+    res.status(500).json({ error: "Failed to fetch dashboard data" });
   }
 };

@@ -17,7 +17,10 @@ const orderRoutes = require("./routes/orderRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const adminRoutes = require("./routes/admin");
 const { Socket } = require("dgram");
-const { getAllPosts } = require("./controller/seller/postController");
+const {
+  getAllPosts,
+  getPostById,
+} = require("./controller/seller/postController");
 
 dotenv.config();
 
@@ -40,6 +43,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
 app.get("/api/posts", getAllPosts);
+app.get("/api/posts/:id", getPostById);
 
 // Product and Category Routes
 app.get("/api/products", async (req, res) => {

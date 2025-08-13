@@ -55,6 +55,31 @@ ORDER BY posts.created_at DESC;`
   }
 };
 
+exports.getPostById = async (req, res) => {
+  const postId = req.params.id;
+  try {
+    const [post] = await db.query(
+      `
+      SELECT 
+  posts.*, 
+  users.business_name, 
+  users.profile_photo, 
+  users.id AS seller_id
+
+FROM posts
+JOIN users ON posts.seller_id = users.id
+ORDER BY posts.created_at DESC;`,
+      [postId]
+    );
+    if (!post.length) {
+      return res.status(404).json({ message: "Post not found" });
+    }
+    res.json(post[0]);
+  } catch (err) {
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 exports.updatePost = async (req, res) => {
   const sellerId = req.user.id;
   const postId = req.params.id;
