@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import NavBar from "../components/NavBar";
 import logo from "../assets/Logo.jpeg";
-import "./SignUp.css";
 import { Link } from "react-router-dom";
 
 export default function SignUpSeller() {
@@ -26,7 +25,6 @@ export default function SignUpSeller() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const data = new FormData();
     data.append("businessName", formData.businessName);
     data.append("fullName", formData.fullName);
@@ -35,6 +33,7 @@ export default function SignUpSeller() {
     data.append("phoneNumber", formData.phoneNumber);
     data.append("idPhoto", formData.idPhoto);
     data.append("selfieWithId", formData.selfieWithId);
+
     try {
       const res = await fetch(
         "http://localhost:3001/api/auth/register/seller",
@@ -43,9 +42,7 @@ export default function SignUpSeller() {
           body: data,
         }
       );
-
       const result = await res.json();
-      console.log(result);
       if (res.ok) {
         alert("Submitted for review!");
       } else {
@@ -69,13 +66,19 @@ export default function SignUpSeller() {
   return (
     <>
       <NavBar />
-      <div className="signup-container">
-        <div className="logo-wrapper">
-          <img src={logo} alt="SouqYemen" className="logo" />
+      <div className="flex justify-between items-center px-[100px] py-10 gap-5 w-full">
+        <div className="flex-1 flex items-center text-center">
+          <img
+            src={logo}
+            alt="SouqYemen"
+            className="w-[50rem] max-w-full h-auto block"
+          />
         </div>
-        <div className="form-wrapper">
-          <h2>Seller Registration</h2>
-          <p>Enter your business details</p>
+        <div className="flex-1 text-left max-w-[400px] mr-[100px]">
+          <h2 className="text-[28px] mb-2">Seller Registration</h2>
+          <p className="text-[16px] text-[#444] mb-5">
+            Enter your business details
+          </p>
 
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <input
@@ -85,14 +88,16 @@ export default function SignUpSeller() {
               value={formData.businessName}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="text"
               name="fullName"
               placeholder="Owner Full Name"
-              value={formData.ownerFullName}
+              value={formData.fullName}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="email"
@@ -101,6 +106,7 @@ export default function SignUpSeller() {
               value={formData.email}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="tel"
@@ -109,6 +115,7 @@ export default function SignUpSeller() {
               value={formData.phoneNumber}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="password"
@@ -117,30 +124,41 @@ export default function SignUpSeller() {
               value={formData.password}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
-            <label>Upload Business ID or Owner ID:</label>
+            <label className="block mt-2">
+              Upload Business ID or Owner ID:
+            </label>
             <input
               type="file"
               name="idPhoto"
               accept="image/*"
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
-            <label>Upload Selfie with ID:</label>
+            <label className="block mt-2">Upload Selfie with ID:</label>
             <input
               type="file"
               name="selfieWithId"
               accept="image/*"
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
-            <button type="submit" className="create-btn">
+            <button
+              type="submit"
+              className="w-full bg-[#a40000] text-white py-3 text-[16px] rounded cursor-pointer"
+            >
               Submit for Review
             </button>
           </form>
 
-          <p className="login-link">
-            Already registered? <Link to="/login">Log in</Link>
+          <p className="mt-5 text-[14px]">
+            Already registered?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Log in
+            </Link>
           </p>
         </div>
       </div>

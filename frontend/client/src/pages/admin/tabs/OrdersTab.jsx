@@ -27,25 +27,30 @@ export default function OrdersTab() {
   );
 
   return (
-    <div className="orders-tab-container">
-      <h3>All Orders</h3>
+    <div className="max-w-3xl mx-auto my-10 p-6 bg-white rounded-lg border border-gray-200 shadow-sm font-sans">
+      <h3 className="text-xl text-center text-gray-800 mb-6">All Orders</h3>
 
       <input
         type="text"
         placeholder="Search by order number..."
-        className="order-search-input"
+        className="w-full max-w-xs mb-4 px-4 py-2 border border-gray-300 rounded-md text-base"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
       />
 
       {filteredOrders.length === 0 ? (
-        <p>No matching orders.</p>
+        <p className="text-center text-gray-600">No matching orders.</p>
       ) : (
         filteredOrders.map((order) => (
-          <div key={order.id} className="admin-order-card">
-            <p>Order #{order.id}</p>
-            <p>Customer ID: {order.customer_id}</p>
-            <p>Status: {order.status}</p>
+          <div
+            key={order.id}
+            className="bg-white border border-gray-300 rounded-md p-4 shadow-sm mb-4"
+          >
+            <p className="text-gray-700 text-sm my-1">Order #{order.id}</p>
+            <p className="text-gray-700 text-sm my-1">
+              Customer ID: {order.customer_id}
+            </p>
+            <p className="text-gray-700 text-sm my-1">Status: {order.status}</p>
           </div>
         ))
       )}

@@ -1,4 +1,17 @@
+@import "tailwindcss";
+
 #fly-img {
   transition: all 0.7s ease-in-out;
   border-radius: 6px;
+}
+
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

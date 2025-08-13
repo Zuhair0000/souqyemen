@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "./UserIconDropdown.css";
+import { FaUserCircle } from "react-icons/fa";
 
 export default function UserIconDropdown({ user: propUser }) {
   const [user, setUser] = useState(null);
@@ -16,10 +16,10 @@ export default function UserIconDropdown({ user: propUser }) {
   };
 
   useEffect(() => {
-    setUser(propUser); // keep in sync with props
+    setUser(propUser);
   }, [propUser]);
 
-  // Close dropdown on outside click
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -31,43 +31,67 @@ export default function UserIconDropdown({ user: propUser }) {
   }, []);
 
   return (
-    <div className="user-dropdown-container" ref={dropdownRef}>
+    <div className="relative inline-block" ref={dropdownRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="user-icon-button"
+        className="text-gray-800 text-2xl bg-transparent border-none cursor-pointer hover:text-red-700"
         aria-label="User menu"
       >
-        <i className="fas fa-user-circle"></i>
+        <FaUserCircle />
       </button>
 
       {open && (
-        <div className="dropdown-menu">
+        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md z-50">
           {user ? (
-            <ul>
+            <ul className="flex flex-col">
               <li>
-                <Link to="/profile" className="dashboard-card">
+                <Link
+                  to="/profile"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
                   Profile
                 </Link>
               </li>
               <li>
-                <Link to="/orders">My Orders</Link>
+                <Link
+                  to="/orders"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
+                  My Orders
+                </Link>
               </li>
               <li>
-                <Link to="/settings" className="dashboard-card">
+                <Link
+                  to="/settings"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
                   Settings
                 </Link>
               </li>
-              <li className="logout-item" onClick={handleLogout}>
+              <li
+                onClick={handleLogout}
+                className="block px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
+              >
                 Logout
               </li>
             </ul>
           ) : (
-            <ul>
+            <ul className="flex flex-col">
               <li>
-                <Link to="/login">Login</Link>
+                <Link
+                  to="/login"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
+                  Login
+                </Link>
               </li>
               <li>
-                <Link to="/signup">Sign Up</Link>
+                <Link
+                  to="/signup"
+                  className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                >
+                  Sign Up
+                </Link>
               </li>
             </ul>
           )}

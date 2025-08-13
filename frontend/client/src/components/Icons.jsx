@@ -1,16 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
-import { Heart, ShoppingCart, User } from "lucide-react";
-import "./Icons.css";
-import { useCart } from "../context/cartContext"; // ✅ correct import
-import { Megaphone } from "lucide-react";
+import { Heart, ShoppingCart, User, Megaphone } from "lucide-react";
+import { useCart } from "../context/cartContext";
 
 export default function Icons() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { cartCount } = useCart(); // get cart from context
+  const { cartCount } = useCart();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -24,7 +22,6 @@ export default function Icons() {
     }
   }, []);
 
-  // Close on outside click
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -43,50 +40,78 @@ export default function Icons() {
   };
 
   return (
-    <div className="navbar__icons" ref={dropdownRef}>
-      <button className="icon-button">
+    <div className="flex items-center gap-4" ref={dropdownRef}>
+      {/* Wishlist Icon */}
+      <button className="bg-transparent border-none cursor-pointer text-gray-600 text-xl flex items-center transition-colors duration-200 hover:text-[#a22f29]">
         <Heart />
       </button>
-      <NavLink to="/cart" className="icon-button cart-icon">
+
+      {/* Cart Icon */}
+      <NavLink
+        to="/cart"
+        className="relative bg-transparent border-none cursor-pointer text-gray-600 text-xl flex items-center transition-colors duration-200 hover:text-[#a22f29]"
+      >
         <ShoppingCart />
-        {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
+        {cartCount > 0 && (
+          <span className="absolute -top-1.5 -right-1.5 bg-[#a22f29] text-white text-xs font-bold px-1.5 py-0.5 rounded-full">
+            {cartCount}
+          </span>
+        )}
       </NavLink>
 
-      <NavLink to="/promotions" className="navbar__link" title="Promotions">
+      {/* Promotions */}
+      <NavLink
+        to="/promotions"
+        title="Promotions"
+        className="text-gray-600 hover:text-[#a22f29] transition-colors duration-200"
+      >
         <Megaphone size={25} />
       </NavLink>
 
+      {/* User Menu */}
       {user ? (
-        <div className="user-dropdown-wrapper">
+        <div className="relative">
           <button
             onClick={() => setShowDropdown(!showDropdown)}
-            className="icon-button"
+            className="bg-transparent border-none cursor-pointer text-gray-600 text-xl flex items-center transition-colors duration-200 hover:text-[#a22f29]"
           >
             <User />
           </button>
 
           {showDropdown && (
-            <div className="dropdown-menu">
-              <ul>
-                <li>
-                  <NavLink to="/profile" onClick={() => setShowDropdown(false)}>
+            <div className="absolute top-[60px] right-0 w-64 bg-white border border-gray-300 shadow-lg p-3 rounded-lg z-50 animate-[dropdownFadeSlide_0.3s_ease_forwards]">
+              <ul className="list-none m-0 p-0">
+                <li className="my-2">
+                  <NavLink
+                    to="/profile"
+                    onClick={() => setShowDropdown(false)}
+                    className="text-gray-800 hover:text-[#a22f29] transition-colors"
+                  >
                     Profile
                   </NavLink>
                 </li>
-                <li>
-                  <NavLink to="/orders" onClick={() => setShowDropdown(false)}>
+                <li className="my-2">
+                  <NavLink
+                    to="/orders"
+                    onClick={() => setShowDropdown(false)}
+                    className="text-gray-800 hover:text-[#a22f29] transition-colors"
+                  >
                     My Orders
                   </NavLink>
                 </li>
-                <li>
+                <li className="my-2">
                   <NavLink
                     to="/settings"
                     onClick={() => setShowDropdown(false)}
+                    className="text-gray-800 hover:text-[#a22f29] transition-colors"
                   >
                     Settings
                   </NavLink>
                 </li>
-                <li className="logout-item" onClick={handleLogout}>
+                <li
+                  className="my-2 text-gray-800 cursor-pointer hover:text-[#a22f29] transition-colors"
+                  onClick={handleLogout}
+                >
                   Logout
                 </li>
               </ul>
@@ -94,7 +119,10 @@ export default function Icons() {
           )}
         </div>
       ) : (
-        <NavLink to="/signup" className="icon-button">
+        <NavLink
+          to="/signup"
+          className="bg-transparent border-none cursor-pointer text-gray-600 text-xl flex items-center transition-colors duration-200 hover:text-[#a22f29]"
+        >
           <User />
         </NavLink>
       )}

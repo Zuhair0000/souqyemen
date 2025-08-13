@@ -3,7 +3,6 @@ import PendingSellers from "./tabs/PendingSellers";
 import UsersTab from "./tabs/UsersTab";
 import ProductsTab from "./tabs/ProductsTab";
 import OrdersTab from "./tabs/OrdersTab";
-import "./AdminDashboard.css";
 import NavBar from "../../components/NavBar";
 
 export default function AdminDashboard() {
@@ -32,40 +31,34 @@ export default function AdminDashboard() {
             localStorage.removeItem("token");
             window.location.href = "/login";
           }}
-          className="logout-btn"
+          className="ml-auto bg-[#a22f29] text-white px-4 py-2 rounded-lg font-bold cursor-pointer transition-colors duration-300 hover:bg-[#76201b]"
         >
           Logout
         </button>
       </NavBar>
-      <div className="admin-dashboard">
-        <h2 className="admin-title">Admin Dashboard</h2>
-        <div className="admin-tabs">
-          <button
-            onClick={() => setActiveTab("pending")}
-            className={activeTab === "pending" ? "active" : ""}
-          >
-            Pending Sellers
-          </button>
-          <button
-            onClick={() => setActiveTab("users")}
-            className={activeTab === "users" ? "active" : ""}
-          >
-            Users
-          </button>
-          <button
-            onClick={() => setActiveTab("products")}
-            className={activeTab === "products" ? "active" : ""}
-          >
-            Products
-          </button>
-          <button
-            onClick={() => setActiveTab("orders")}
-            className={activeTab === "orders" ? "active" : ""}
-          >
-            Orders
-          </button>
+      <div className="max-w-3xl mx-auto my-10 p-6 bg-[#f4f1eb] rounded-lg border border-gray-300 shadow-md font-sans">
+        <h2 className="text-xl mb-6 text-center text-gray-800 font-semibold">
+          Admin Dashboard
+        </h2>
+        <div className="flex flex-wrap justify-center gap-2 mb-6">
+          {[
+            { key: "pending", label: "Pending Sellers" },
+            { key: "users", label: "Users" },
+            { key: "products", label: "Products" },
+            { key: "orders", label: "Orders" },
+          ].map(({ key, label }) => (
+            <button
+              key={key}
+              onClick={() => setActiveTab(key)}
+              className={`bg-[#a22f29] text-white px-5 py-2 rounded-lg font-bold cursor-pointer transition-colors duration-300 hover:bg-[#76201b] ${
+                activeTab === key ? "bg-[#76201b]" : ""
+              }`}
+            >
+              {label}
+            </button>
+          ))}
         </div>
-        <div className="admin-content">{renderTab()}</div>
+        <div className="py-4">{renderTab()}</div>
       </div>
     </>
   );

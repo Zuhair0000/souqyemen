@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import NavBar from "../components/NavBar";
 import logo from "../assets/Logo.jpeg";
-import "./SignUp.css";
 import { Link } from "react-router-dom";
 
 export default function SignUpCustomer() {
@@ -20,22 +19,16 @@ export default function SignUpCustomer() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       const res = await fetch(
         "http://localhost:3001/api/auth/register/customer",
         {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify(formData),
         }
       );
-
       const result = await res.json();
-      console.log(result);
-
       if (res.ok) {
         alert("Account created successfully");
       } else {
@@ -45,22 +38,23 @@ export default function SignUpCustomer() {
       console.error("Error:", error);
     }
 
-    setFormData({
-      name: "",
-      emailOrPhone: "",
-      password: "",
-    });
+    setFormData({ name: "", emailOrPhone: "", password: "" });
   };
+
   return (
     <>
-      <NavBar>Need help?</NavBar>
-      <div className="signup-container">
-        <div className="logo-wrapper">
-          <img src={logo} alt="SouqYemen" className="logo" />
+      <NavBar />
+      <div className="flex justify-between items-center px-[100px] py-10 gap-5 w-full">
+        <div className="flex-1 flex items-center text-center">
+          <img
+            src={logo}
+            alt="SouqYemen"
+            className="w-[50rem] max-w-full h-auto block"
+          />
         </div>
-        <div className="form-wrapper">
-          <h2>Create an account</h2>
-          <p>Enter your details</p>
+        <div className="flex-1 text-left max-w-[400px] mr-[100px]">
+          <h2 className="text-[28px] mb-2">Create an account</h2>
+          <p className="text-[16px] text-[#444] mb-5">Enter your details</p>
 
           <form onSubmit={handleSubmit}>
             <input
@@ -70,6 +64,7 @@ export default function SignUpCustomer() {
               value={formData.name}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="text"
@@ -78,6 +73,7 @@ export default function SignUpCustomer() {
               value={formData.emailOrPhone}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
             <input
               type="password"
@@ -86,25 +82,36 @@ export default function SignUpCustomer() {
               value={formData.password}
               onChange={handleChange}
               required
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
-            <button type="submit" className="create-btn">
+            <button
+              type="submit"
+              className="w-full bg-[#a40000] text-white py-3 text-[16px] rounded cursor-pointer"
+            >
               Create Account
             </button>
           </form>
-          <button className="google-btn">
+
+          <button className="w-full flex items-center justify-center mt-4 p-2 bg-white border border-gray-300 text-[14px] rounded cursor-pointer">
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
               alt="Google"
-              style={{ width: "20px", marginRight: "8px" }}
+              className="w-5 mr-2"
             />
             Sign up with Google
           </button>
+
           <Link to="/signup-seller">
-            <button className="google-btn">Become a Seller</button>
+            <button className="w-full flex items-center justify-center mt-4 p-2 bg-white border border-gray-300 text-[14px] rounded cursor-pointer">
+              Become a Seller
+            </button>
           </Link>
 
-          <p className="login-link">
-            Already have account? <Link to="/login">Log in</Link>
+          <p className="mt-5 text-[14px]">
+            Already have account?{" "}
+            <Link to="/login" className="text-blue-600 hover:underline">
+              Log in
+            </Link>
           </p>
         </div>
       </div>

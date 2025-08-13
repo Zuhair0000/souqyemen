@@ -1,21 +1,20 @@
 import React from "react";
-import "./NavBar.css";
 import logo from "../assets/Logo.jpeg";
 import { NavLink } from "react-router-dom";
 
 export default function NavBar({ setSelectedCategory, children }) {
-  const hanleLogoClick = () => {
+  const handleLogoClick = () => {
     if (setSelectedCategory) {
       setSelectedCategory(null);
     }
   };
-  return (
-    <nav className="navbar">
-      <div className="navbar__container">
-        <NavLink to="/" className="navbar__logo" onClick={hanleLogoClick}>
-          <img src={logo} alt="logo" className="navbar__logo-img" />
-        </NavLink>
 
+  return (
+    <nav className="w-full py-2.5 bg-[#f4f1eb]">
+      <div className="max-w-[1200px] mx-auto flex items-center justify-between relative">
+        <NavLink to="/" className="flex items-center" onClick={handleLogoClick}>
+          <img src={logo} alt="logo" className="h-[50px] w-auto" />
+        </NavLink>
         {children}
       </div>
     </nav>

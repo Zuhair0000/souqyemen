@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import NavBar from "../components/NavBar";
 import logo from "../assets/Logo.jpeg";
-import "./Login.css";
 import { Link, useNavigate } from "react-router-dom";
 
 export default function Login() {
@@ -69,14 +68,20 @@ export default function Login() {
   return (
     <>
       <NavBar>Need help?</NavBar>
-      <div className="login-container">
-        <div className="logo-wrapper">
-          <img src={logo} alt="SouqYemen" className="logo" />
+      <div className="flex justify-between items-center px-24 py-10 max-w-full gap-5">
+        {/* Logo Section */}
+        <div className="flex-1 flex items-center justify-center text-center">
+          <img
+            src={logo}
+            alt="SouqYemen"
+            className="w-full max-w-[50rem] h-auto block"
+          />
         </div>
 
-        <div className="form-wrapper">
-          <h2>Welcome back</h2>
-          <p>Log in to your account</p>
+        {/* Form Section */}
+        <div className="flex-1 max-w-md text-left mr-24">
+          <h2 className="text-[28px] mb-2">Welcome back</h2>
+          <p className="text-base text-gray-700 mb-5">Log in to your account</p>
 
           <form onSubmit={handleSubmit}>
             <input
@@ -86,6 +91,7 @@ export default function Login() {
               value={formData.emailOrPhone}
               onChange={handleChange}
               required
+              className="w-full box-border p-2.5 mb-4 text-sm border border-gray-300 rounded"
             />
             <input
               type="password"
@@ -94,26 +100,45 @@ export default function Login() {
               value={formData.password}
               onChange={handleChange}
               required
+              className="w-full box-border p-2.5 mb-4 text-sm border border-gray-300 rounded"
             />
-            <button type="submit" className="login-btn">
+            <button
+              type="submit"
+              className="w-full bg-red-900 text-white py-3 text-base rounded cursor-pointer mb-4 border-none"
+            >
               Log In
             </button>
           </form>
 
-          <button className="google-btn">
+          <button
+            className="w-full flex items-center justify-center p-2.5 bg-white border border-gray-300 rounded cursor-pointer text-sm mb-4"
+            type="button"
+          >
             <img
               src="https://upload.wikimedia.org/wikipedia/commons/4/4a/Logo_2013_Google.png"
               alt="Google"
+              className="w-5 mr-2"
             />
             Log in with Google
           </button>
 
           <Link to="/signup-seller">
-            <button className="google-btn">Become a Seller</button>
+            <button
+              className="w-full flex items-center justify-center p-2.5 bg-white border border-gray-300 rounded cursor-pointer text-sm"
+              type="button"
+            >
+              Become a Seller
+            </button>
           </Link>
 
-          <p className="signup-link">
-            Don't have an account? <Link to="/signup">Create one</Link>
+          <p className="mt-5 text-sm">
+            Don't have an account?{" "}
+            <Link
+              to="/signup"
+              className="text-red-900 underline hover:text-red-700"
+            >
+              Create one
+            </Link>
           </p>
         </div>
       </div>

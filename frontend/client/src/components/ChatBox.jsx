@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client";
-import "./ChatBox.css";
 import SellerNavBar from "./SellerNavBar";
 import NavBar from "./NavBar";
 
@@ -61,13 +60,18 @@ export default function ChatBox() {
     <>
       {user?.role === "seller" ? <SellerNavBar /> : <NavBar />}
 
-      <div className="chatbox-container">
-        <h2>Chat with {user.role === "customer" ? "Seller" : "Customer"}</h2>
+      <div className="max-w-[800px] mx-auto my-10 p-5 bg-[#fdfdfd] border border-[#e2e0db] rounded-lg shadow-md font-[Segoe_UI]">
+        <h2 className="text-2xl mb-5 text-[#333] text-center">
+          Chat with {user.role === "customer" ? "Seller" : "Customer"}
+        </h2>
 
-        <div className="chatbox-messages">
+        <div className="max-h-[350px] overflow-y-auto bg-[#f9f7f3] p-4 border border-[#e0ded7] rounded-lg mb-5">
           {chat.map((msg, i) => (
-            <p className="chatbox-message" key={i}>
-              <strong>
+            <p
+              className="mb-3 p-3.5 bg-white border border-[#e8e6e1] rounded-lg text-[#333]"
+              key={i}
+            >
+              <strong className="block mb-1.5 text-[#555] text-[0.95rem]">
                 {msg.sender_id === user.id
                   ? "You"
                   : user.role === "customer"
@@ -80,14 +84,20 @@ export default function ChatBox() {
           ))}
         </div>
 
-        <div className="chatbox-input">
+        <div className="flex gap-2.5">
           <input
             type="text"
             value={message}
             placeholder="Type a message"
             onChange={(e) => setMessage(e.target.value)}
+            className="flex-1 p-3.5 text-base border border-[#d6d3ce] rounded-lg bg-[#fffefc] focus:outline-none focus:border-[#b5b1aa] transition"
           />
-          <button onClick={sendMessage}>Send</button>
+          <button
+            onClick={sendMessage}
+            className="bg-[#8a775f] text-white px-4 py-2.5 rounded-lg font-bold cursor-pointer transition hover:bg-[#6e5f4c]"
+          >
+            Send
+          </button>
         </div>
       </div>
     </>
