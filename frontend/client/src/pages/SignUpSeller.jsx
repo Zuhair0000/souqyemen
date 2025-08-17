@@ -66,17 +66,20 @@ export default function SignUpSeller() {
   return (
     <>
       <NavBar />
-      <div className="flex justify-between items-center px-[100px] py-10 gap-5 w-full">
-        <div className="flex-1 flex items-center text-center">
+      <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-[100px] py-10 gap-5 w-full">
+        {/* Logo */}
+        <div className="flex-1 flex items-center justify-center text-center mb-6 md:mb-0">
           <img
             src={logo}
             alt="SouqYemen"
-            className="w-[50rem] max-w-full h-auto block"
+            className="w-40 md:w-[30rem] lg:w-[50rem] h-auto block"
           />
         </div>
-        <div className="flex-1 text-left max-w-[400px] mr-[100px]">
-          <h2 className="text-[28px] mb-2">Seller Registration</h2>
-          <p className="text-[16px] text-[#444] mb-5">
+
+        {/* Form */}
+        <div className="flex-1 w-full max-w-sm md:max-w-[400px] text-left md:mr-[100px]">
+          <h2 className="text-2xl md:text-[28px] mb-2">Seller Registration</h2>
+          <p className="text-sm md:text-[16px] text-[#444] mb-5">
             Enter your business details
           </p>
 

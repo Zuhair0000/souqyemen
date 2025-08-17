@@ -68,19 +68,19 @@ export default function Login() {
   return (
     <>
       <NavBar>Need help?</NavBar>
-      <div className="flex justify-between items-center px-24 py-10 max-w-full gap-5">
+      <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-24 py-10 gap-5 w-full">
         {/* Logo Section */}
-        <div className="flex-1 flex items-center justify-center text-center">
+        <div className="flex-1 flex items-center justify-center text-center mb-6 md:mb-0">
           <img
             src={logo}
             alt="SouqYemen"
-            className="w-full max-w-[50rem] h-auto block"
+            className="w-40 md:w-[30rem] lg:w-[50rem] h-auto block"
           />
         </div>
 
         {/* Form Section */}
-        <div className="flex-1 max-w-md text-left mr-24">
-          <h2 className="text-[28px] mb-2">Welcome back</h2>
+        <div className="flex-1 w-full max-w-md text-left md:mr-24">
+          <h2 className="text-2xl md:text-[28px] mb-2">Welcome back</h2>
           <p className="text-base text-gray-700 mb-5">Log in to your account</p>
 
           <form onSubmit={handleSubmit}>

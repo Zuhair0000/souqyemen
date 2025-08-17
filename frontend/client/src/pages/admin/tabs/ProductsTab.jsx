@@ -38,7 +38,7 @@ export default function ProductsTab() {
   );
 
   return (
-    <div className="max-w-xl mx-auto my-10 p-6 bg-white rounded-lg border border-gray-300 shadow-sm font-sans">
+    <div className="max-w-3xl mx-auto my-10 p-6 bg-white rounded-lg border border-gray-300 shadow-sm font-sans">
       <h3 className="text-2xl text-center text-gray-800 mb-6">All Products</h3>
 
       <input

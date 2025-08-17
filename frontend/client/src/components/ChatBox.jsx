@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 import SellerNavBar from "./SellerNavBar";
 import NavBar from "./NavBar";
+import Icons from "./Icons";
 
 const socket = io("http://localhost:3001");
 
@@ -58,7 +59,13 @@ export default function ChatBox() {
 
   return (
     <>
-      {user?.role === "seller" ? <SellerNavBar /> : <NavBar />}
+      {user?.role === "seller" ? (
+        <SellerNavBar />
+      ) : (
+        <NavBar>
+          <Icons />
+        </NavBar>
+      )}
 
       <div className="max-w-[800px] mx-auto my-10 p-5 bg-[#fdfdfd] border border-[#e2e0db] rounded-lg shadow-md font-[Segoe_UI]">
         <h2 className="text-2xl mb-5 text-[#333] text-center">
