@@ -27,7 +27,6 @@ export default function SellerOrders() {
 
   return (
     <>
-      <SellerNavBar />
       <div className="p-6 bg-[#f4f1eb] max-w-[1200px] mx-auto mt-8 rounded-xl shadow">
         <BackButton />
         <h2 className="text-2xl font-bold mb-6 text-gray-800">📦 My Orders</h2>

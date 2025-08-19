@@ -5,9 +5,11 @@ import Products from "../../components/Products";
 import Search from "../../components/Search";
 import Icons from "../../components/Icons";
 import Hero from "../../components/Hero";
+import { useOutletContext } from "react-router-dom";
 
-export default function HomePage({ selectedCategory, setSelectedCategory }) {
-  const [searchQuery, setSearchQuery] = useState("");
+export default function HomePage() {
+  const { selectedCategory, setSelectedCategory, searchQuery } =
+    useOutletContext();
   const [products, setProducts] = useState([]);
   const [promotions, setPromotions] = useState([]); // <-- new state
 
@@ -43,10 +45,6 @@ export default function HomePage({ selectedCategory, setSelectedCategory }) {
 
   return (
     <div>
-      <NavBar setSelectedCategory={setSelectedCategory}>
-        <Search setSearchQuery={setSearchQuery} />
-        <Icons />
-      </NavBar>
       <CategoriesBar onCategorySelect={setSelectedCategory} />
       <Hero promotions={promotions} />
       <Products products={filterProducts} />

@@ -1,7 +1,6 @@
 import React from "react";
 import { useCart } from "../../context/cartContext";
-import NavBar from "../../components/NavBar";
-import Icons from "../../components/Icons";
+
 import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
 
@@ -27,9 +26,6 @@ export default function Cart() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
       <div className="flex justify-center items-start mt-8 px-24 py-10 gap-10 mx-auto max-w-[1000px] box-border  bg-[#f4f1eb]">
         <div className="flex-1 max-w-[700px]">
           <BackButton />

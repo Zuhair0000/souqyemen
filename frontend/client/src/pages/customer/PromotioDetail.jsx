@@ -26,10 +26,6 @@ export default function PromotionDetails() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
-
       <div className="max-w-[900px] mx-auto mt-8 px-7 border-2 py-8">
         {/* Seller Info */}
         <BackButton />

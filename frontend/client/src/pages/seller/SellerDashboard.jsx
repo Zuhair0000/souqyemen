@@ -181,7 +181,6 @@ export default function SellerDashboard() {
   if (loading) {
     return (
       <>
-        <SellerNavBar />
         <div className="p-8 max-w-[1200px] mx-auto mt-8 ">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <SkeletonCard />
@@ -197,7 +196,6 @@ export default function SellerDashboard() {
   if (error) {
     return (
       <>
-        <SellerNavBar />
         <div className="p-8 max-w-[1200px] mx-auto mt-8 text-center text-red-600">
           {error}
         </div>
@@ -207,7 +205,6 @@ export default function SellerDashboard() {
 
   return (
     <>
-      <SellerNavBar />
       <div className="p-8 bg-[#f4f1eb] rounded-2xl max-w-[1200px] mx-auto mt-8">
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl mb-6 text-gray-800 font-bold">

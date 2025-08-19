@@ -82,9 +82,6 @@ export default function Checkout() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
       <div className="p-4 max-w-[1000px] mt-8 mx-auto bg-[#f4f1eb] rounded-lg shadow">
         <BackButton />
         <h2 className="text-xl font-semibold mb-4">Select Payment Method</h2>

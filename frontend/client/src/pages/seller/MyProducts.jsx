@@ -66,7 +66,6 @@ const MyProducts = () => {
 
   return (
     <>
-      <SellerNavBar />
       <div className="max-w-[1200px] mx-auto px-8 py-8 bg-[#f4f1eb] mt-8">
         <BackButton />
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">

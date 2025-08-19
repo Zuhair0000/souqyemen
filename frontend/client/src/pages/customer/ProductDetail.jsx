@@ -43,9 +43,6 @@ export default function ProductDetail() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
       <div className="max-w-[1200px] mx-auto px-8 py-8">
         <BackButton />
         <div className="flex flex-wrap gap-8 mb-12 items-start">

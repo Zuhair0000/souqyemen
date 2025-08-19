@@ -22,10 +22,6 @@ export default function MyOrders() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
-
       <div className="p-4 max-w-[1000px] mx-auto font-sans px-10 bg-[#f4f1eb] mt-8">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
           My Orders

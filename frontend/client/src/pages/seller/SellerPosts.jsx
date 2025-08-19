@@ -72,7 +72,6 @@ export default function SellerPosts() {
 
   return (
     <>
-      <SellerNavBar />
       <div className="font-sans bg-[#f4f1eb] max-w-[1000px] mx-auto py-5 mt-8">
         <BackButton />
         <h2 className="text-center my-8 text-2xl text-[#2c3e50]">

@@ -53,12 +53,10 @@ export default function SignUpCustomer() {
             className="w-40 md:w-[30rem] lg:w-[50rem] h-auto block"
           />
         </div>
-
-        {/* Form */}
         <div className="flex-1 w-full max-w-sm md:max-w-[400px] text-left md:mr-[100px]">
-          <h2 className="text-2xl md:text-[28px] mb-2">Seller Registration</h2>
+          <h2 className="text-2xl md:text-[28px] mb-2">Create an account</h2>
           <p className="text-sm md:text-[16px] text-[#444] mb-5">
-            Enter your business details
+            Enter your details
           </p>
 
           <form onSubmit={handleSubmit}>

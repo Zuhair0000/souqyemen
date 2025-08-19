@@ -47,9 +47,6 @@ export default function Profile() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
       <div className="flex justify-center items-center px-[100px] py-10 max-w-[1000px] mx-auto mt-8 bg-[#f4f1eb]">
         <div className="flex justify-between items-start gap-10 w-full flex-wrap lg:flex-nowrap">
           {/* Info Section */}

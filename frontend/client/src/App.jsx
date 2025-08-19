@@ -2,7 +2,6 @@ import HomePage from "./pages/customer/HomePage";
 import "./index.css";
 import { Route, Routes } from "react-router-dom";
 import ProductDetail from "./pages/customer/ProductDetail";
-import { useState } from "react";
 import ScrollToTop from "./components/ScrollToTop";
 import SignUpCustomer from "./pages/SignUpCustomer";
 import Login from "./pages/Login";
@@ -25,107 +24,111 @@ import PromotionDetails from "./pages/customer/PromotioDetail";
 import SettingsPage from "./pages/Settings";
 import Checkout from "./pages/customer/Checkout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CustomerLayout from "./pages/customer/CustomerLayout";
+import SellerLayout from "./pages/seller/SellerLayout";
 
 function App() {
-  const [selectedCategory, setSelectedCategory] = useState(null);
-
   return (
     <>
       <ScrollToTop />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <HomePage
-                selectedCategory={selectedCategory}
-                setSelectedCategory={setSelectedCategory}
-              />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/product/:id"
-          element={<ProductDetail setSelectedCategory={setSelectedCategory} />}
-        />
+        {/* Customer Routes */}
+        <Route element={<CustomerLayout />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/product/:id" element={<ProductDetail />} />
 
-        <Route path="/signup" element={<SignUpCustomer />} />
-        <Route path="/signup-seller" element={<SignUpSeller />} />
-        <Route path="/login" element={<Login />} />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <Profile />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/orders"
-          element={
-            <ProtectedRoute>
-              <MyOrders />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <SettingsPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route
-          path="/seller/dashboard"
-          element={
-            <ProtectedRoute>
-              <SellerDashboard />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/seller/add-product"
-          element={
-            <ProtectedRoute>
-              <AddProduct />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/seller/my-products"
-          element={
-            <ProtectedRoute>
-              <MyProducts />
-            </ProtectedRoute>
-          }
-        />
-        {/* <Route path="/seller/orders" element={<Orders />} /> */}
-        <Route
-          path="/seller/edit-product/:id"
-          element={
-            <ProtectedRoute>
-              <EditProduct />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/seller/orders/:id/status"
-          element={
-            <ProtectedRoute>
-              <SellerOrders />
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/checkout" element={<Checkout />} />
+
+          <Route path="/promotions" element={<PromotionsFeed />} />
+          <Route path="/promotions/:id" element={<PromotionDetails />} />
+        </Route>
+
+        {/* Seller Routes */}
+
+        <Route element={<SellerLayout />}>
+          <Route
+            path="/seller/dashboard"
+            element={
+              <ProtectedRoute>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/add-product"
+            element={
+              <ProtectedRoute>
+                <AddProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/my-products"
+            element={
+              <ProtectedRoute>
+                <MyProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/edit-product/:id"
+            element={
+              <ProtectedRoute>
+                <EditProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/orders/:id/status"
+            element={
+              <ProtectedRoute>
+                <SellerOrders />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/seller/posts" element={<SellerPosts />} />
+        </Route>
+
         <Route
           path="/seller/public/:id"
           element={
@@ -134,6 +137,11 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/signup" element={<SignUpCustomer />} />
+        <Route path="/signup-seller" element={<SignUpSeller />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* other routes */}
         <Route
           path="/chat/:id"
           element={
@@ -152,9 +160,6 @@ function App() {
         />
         <Route path="/seller/chat/:id" element={<ChatBox />} />
         <Route path="/admin/pending-sellers" element={<AdminDashboard />} />
-        <Route path="/seller/posts" element={<SellerPosts />} />
-        <Route path="/promotions" element={<PromotionsFeed />} />
-        <Route path="/promotions/:id" element={<PromotionDetails />} />
       </Routes>
     </>
   );

@@ -64,7 +64,6 @@ export default function AddProduct() {
 
   return (
     <>
-      <SellerNavBar />
       <div className="max-w-[1000px] mx-auto my-8 pr-5 py-5 bg-[#f4f1eb] rounded-xl">
         <BackButton />
         <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>

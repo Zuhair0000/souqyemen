@@ -17,9 +17,6 @@ export default function PromotionsFeed() {
 
   return (
     <>
-      <NavBar>
-        <Icons />
-      </NavBar>
       <div className="max-w-[1000px] mx-auto mt-8 px-7 bg-[#f4f1eb] py-8">
         <BackButton />
         <h2 className="text-center mb-6 text-[1.8rem] text-[#1c1e21] font-semibold">

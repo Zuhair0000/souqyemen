@@ -76,7 +76,6 @@ export default function EditProduct() {
 
   return (
     <>
-      <SellerNavBar />
       <div className="max-w-2xl mx-auto p-8">
         <h2 className="text-2xl font-semibold mb-6">Edit Product</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
