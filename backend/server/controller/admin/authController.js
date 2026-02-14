@@ -94,3 +94,69 @@ exports.getAllOrders = async (req, res) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+exports.generateReport = async (req, res) => {
+  try {
+    // 1️⃣ Basic counts
+    const [[users]] = await db.query(
+      "SELECT COUNT(*) as totalUsers FROM users"
+    );
+
+    const [[sellers]] = await db.query(
+      "SELECT COUNT(*) as totalSellers FROM users WHERE role='seller'"
+    );
+
+    const [[products]] = await db.query(
+      "SELECT COUNT(*) as totalProducts FROM products"
+    );
+
+    const [[orders]] = await db.query(
+      "SELECT COUNT(*) as totalOrders FROM orders"
+    );
+
+    const [[revenue]] = await db.query(
+      "SELECT IFNULL(SUM(total),0) as totalRevenue FROM orders WHERE status='completed'"
+    );
+
+    // 2️⃣ Top 5 sellers by revenue
+    // const [topSellers] = await db.query(`
+    //   SELECT u.id, u.name,
+    //          IFNULL(SUM(o.total),0) as revenue
+    //   FROM users u
+    //   LEFT JOIN orders o
+    //     ON u.id = o.seller_id
+    //     AND o.status='completed'
+    //   WHERE u.role='seller'
+    //   GROUP BY u.id
+    //   ORDER BY revenue DESC
+    //   LIMIT 5
+    // `);
+
+    // 3️⃣ Top 5 products (ONLY if order_items exists)
+    const [topProducts] = await db.query(`
+      SELECT p.name,
+             IFNULL(SUM(oi.quantity),0) as totalSold
+      FROM products p
+      LEFT JOIN order_items oi ON p.id = oi.product_id
+      LEFT JOIN orders o 
+        ON oi.order_id = o.id 
+        AND o.status='completed'
+      GROUP BY p.id
+      ORDER BY totalSold DESC
+      LIMIT 5
+    `);
+
+    res.json({
+      totalUsers: users.totalUsers,
+      totalSellers: sellers.totalSellers,
+      totalProducts: products.totalProducts,
+      totalOrders: orders.totalOrders,
+      totalRevenue: revenue.totalRevenue,
+      // topSellers,
+      topProducts,
+    });
+  } catch (error) {
+    console.error("Admin Report Error:", error);
+    res.status(500).json({ message: error.message });
+  }
+};

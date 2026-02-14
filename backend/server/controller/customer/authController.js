@@ -7,27 +7,34 @@ const JWT_SECRET =
   "8cbf7645a1e3b8723e1d5f934b8d7e614e6d77c8b798e3b257456bcd312f74c1";
 
 exports.registerCustomer = async (req, res) => {
-  const { name, emailOrPhone, password } = req.body;
+  const { name, email, password } = req.body;
 
-  if (!name || !emailOrPhone || !password) {
+  if (!name || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const query = `INSERT INTO users (name, email, password, role, status)
-               VALUES (?, ?, ?, 'customer', 'approved')`;
+    const query = `
+      INSERT INTO users (name, email, password, role, status)
+      VALUES (?, ?, ?, 'customer', 'approved')
+    `;
 
-    db.query(query, [name, emailOrPhone, hashedPassword], (err, result) => {
-      if (err) {
-        console.error("DB Error:", err);
-        return res.status(500).json({ message: "Database error" });
-      }
-      res.status(201).json({ message: "Customer registered successfully" });
+    await db.query(query, [name, email, hashedPassword]); // ✅ no .promise()
+
+    return res.status(201).json({
+      success: true,
+      message: "Customer registered successfully",
     });
-  } catch (err) {
-    res.status(500).json({ message: "Error while registering customer" });
+  } catch (error) {
+    console.error("Register Error:", error);
+
+    if (error.code === "ER_DUP_ENTRY") {
+      return res.status(409).json({ message: "Email already exists" });
+    }
+
+    return res.status(500).json({ message: "Server error" });
   }
 };
 

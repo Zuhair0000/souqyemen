@@ -54,9 +54,9 @@ export default function Icons() {
       </NavLink>
 
       {/* Wishlist */}
-      <NavLink to="/wishlist" className={baseIcon}>
+      {/* <NavLink to="/wishlist" className={baseIcon}>
         <Heart size={20} /> <span className="md:hidden">Wishlist</span>
-      </NavLink>
+      </NavLink> */}
 
       {/* Cart */}
       <NavLink to="/cart" className={`${baseIcon} relative`}>

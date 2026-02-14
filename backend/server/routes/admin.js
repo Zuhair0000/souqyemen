@@ -9,6 +9,7 @@ const {
   getAllProducts,
   deleteProduct,
   getAllOrders,
+  generateReport,
 } = require("../controller/admin/authController");
 
 const {
@@ -45,5 +46,7 @@ router.delete(
 
 // Orders
 router.get("/orders", authenticate, authorizeRoles("admin"), getAllOrders);
+
+router.get("/report", authenticate, authorizeRoles("admin"), generateReport);
 
 module.exports = router;

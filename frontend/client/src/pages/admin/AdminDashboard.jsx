@@ -4,6 +4,7 @@ import UsersTab from "./tabs/UsersTab";
 import ProductsTab from "./tabs/ProductsTab";
 import OrdersTab from "./tabs/OrdersTab";
 import NavBar from "../../components/NavBar";
+import AdminReportsTab from "./tabs/AdminReportsTab";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("pending");
@@ -18,6 +19,8 @@ export default function AdminDashboard() {
         return <ProductsTab />;
       case "orders":
         return <OrdersTab />;
+      case "reports":
+        return <AdminReportsTab />;
       default:
         return <PendingSellers />;
     }
@@ -46,6 +49,7 @@ export default function AdminDashboard() {
             { key: "users", label: "Users" },
             { key: "products", label: "Products" },
             { key: "orders", label: "Orders" },
+            { key: "reports", label: "Reports" },
           ].map(({ key, label }) => (
             <button
               key={key}

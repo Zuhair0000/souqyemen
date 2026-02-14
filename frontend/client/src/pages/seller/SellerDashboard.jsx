@@ -22,6 +22,8 @@ import {
   FiAlertTriangle,
 } from "react-icons/fi";
 import SellerNavBar from "../../components/SellerNavBar"; // adjust path if needed
+import jsPDF from "jspdf";
+import { useRef } from "react";
 
 // ---------- Helper mini components ----------
 function KPI({ title, value, delta, icon: Icon, bg = "bg-white" }) {
@@ -140,6 +142,66 @@ export default function SellerDashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const reportRef = useRef();
+
+  const handleDownloadPDF = () => {
+    const pdf = new jsPDF();
+
+    const pageWidth = pdf.internal.pageSize.getWidth();
+
+    let y = 20;
+
+    pdf.setFontSize(18);
+    pdf.text("Seller Performance Report", pageWidth / 2, y, {
+      align: "center",
+    });
+
+    y += 10;
+
+    pdf.setFontSize(10);
+    pdf.text(
+      `Generated on: ${new Date().toLocaleDateString()}`,
+      pageWidth / 2,
+      y,
+      { align: "center" }
+    );
+
+    y += 20;
+
+    pdf.setFontSize(14);
+    pdf.text("Summary", 14, y);
+
+    y += 10;
+
+    pdf.setFontSize(12);
+    pdf.text(`Total Sales: $${Number(data.totalSales || 0).toFixed(2)}`, 14, y);
+    y += 8;
+    pdf.text(`Total Orders: ${data.totalOrders || 0}`, 14, y);
+    y += 8;
+    pdf.text(
+      `Average Order Value: $${Number(data.avgOrderValue || 0).toFixed(2)}`,
+      14,
+      y
+    );
+    y += 8;
+    pdf.text(`Low Stock Items: ${(data.lowStock || []).length}`, 14, y);
+
+    y += 15;
+
+    pdf.setFontSize(14);
+    pdf.text("Best Selling Products", 14, y);
+
+    y += 10;
+
+    pdf.setFontSize(11);
+
+    (data.bestSelling || []).forEach((item, index) => {
+      pdf.text(`${index + 1}. ${item.name} - Sold: ${item.sold}`, 14, y);
+      y += 8;
+    });
+
+    pdf.save("Seller_Report.pdf");
+  };
 
   useEffect(() => {
     const fetchAnalytics = async () => {
@@ -205,11 +267,21 @@ export default function SellerDashboard() {
 
   return (
     <>
-      <div className="p-8 bg-[#f4f1eb] rounded-2xl max-w-[1200px] mx-auto mt-8">
+      <div
+        ref={reportRef}
+        className="p-8 bg-[#f4f1eb] rounded-2xl max-w-[1200px] mx-auto mt-8"
+      >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl mb-6 text-gray-800 font-bold">
             Seller Dashboard
           </h2>
+
+          <button
+            onClick={handleDownloadPDF}
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+          >
+            Download PDF Report
+          </button>
 
           {/* KPI Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">

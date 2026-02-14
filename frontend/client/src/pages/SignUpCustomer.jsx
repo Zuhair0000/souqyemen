@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import NavBar from "../components/NavBar";
 import logo from "../assets/Logo.jpeg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function SignUpCustomer() {
   const [formData, setFormData] = useState({
     name: "",
-    emailOrPhone: "",
+    email: "",
     password: "",
   });
-
+  const navigate = useNavigate();
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -31,6 +31,8 @@ export default function SignUpCustomer() {
       const result = await res.json();
       if (res.ok) {
         alert("Account created successfully");
+        setFormData({ name: "", email: "", password: "" });
+        navigate("/login");
       } else {
         alert(result.message || "Failed to create account");
       }
@@ -38,7 +40,7 @@ export default function SignUpCustomer() {
       console.error("Error:", error);
     }
 
-    setFormData({ name: "", emailOrPhone: "", password: "" });
+    setFormData({ name: "", email: "", password: "" });
   };
 
   return (
@@ -71,9 +73,9 @@ export default function SignUpCustomer() {
             />
             <input
               type="text"
-              name="emailOrPhone"
-              placeholder="Email or Phone Number"
-              value={formData.emailOrPhone}
+              name="email"
+              placeholder="Email"
+              value={formData.email}
               onChange={handleChange}
               required
               className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
@@ -104,11 +106,11 @@ export default function SignUpCustomer() {
             Sign up with Google
           </button>
 
-          <Link to="/signup-seller">
-            <button className="w-full flex items-center justify-center mt-4 p-2 bg-white border border-gray-300 text-[14px] rounded cursor-pointer">
-              Become a Seller
-            </button>
-          </Link>
+          {/* <Link to="/signup-seller"> */}
+          <button className="w-full flex items-center justify-center mt-4 p-2 bg-white border border-gray-300 text-[14px] rounded cursor-pointer">
+            Become a Seller
+          </button>
+          {/* </Link> */}
 
           <p className="mt-5 text-[14px]">
             Already have account?{" "}

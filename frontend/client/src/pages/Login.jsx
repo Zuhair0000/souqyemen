@@ -122,14 +122,14 @@ export default function Login() {
             Log in with Google
           </button>
 
-          <Link to="/signup-seller">
-            <button
-              className="w-full flex items-center justify-center p-2.5 bg-white border border-gray-300 rounded cursor-pointer text-sm"
-              type="button"
-            >
-              Become a Seller
-            </button>
-          </Link>
+          {/* <Link to="/signup-seller"> */}
+          <button
+            className="w-full flex items-center justify-center p-2.5 bg-white border border-gray-300 rounded cursor-pointer text-sm"
+            type="button"
+          >
+            Become a Seller
+          </button>
+          {/* </Link> */}
 
           <p className="mt-5 text-sm">
             Don't have an account?{" "}
