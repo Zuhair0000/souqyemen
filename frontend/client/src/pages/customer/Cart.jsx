@@ -3,10 +3,12 @@ import { useCart } from "../../context/cartContext";
 
 import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next";
 
 export default function Cart() {
   const { cartItems, updateQuantity, removeFromCart } = useCart();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   const handleQuantityChange = (e, id) => {
     const quantity = parseInt(e.target.value);
@@ -17,7 +19,7 @@ export default function Cart() {
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   const handleCheckout = async () => {
@@ -29,29 +31,29 @@ export default function Cart() {
       <div className="flex justify-center items-start mt-8 px-24 py-10 gap-10 mx-auto max-w-[1000px] box-border  bg-[#f4f1eb]">
         <div className="flex-1 max-w-[700px]">
           <BackButton />
-          <h2 className="text-2xl mb-5 text-gray-800">Your Cart</h2>
+          <h2 className="text-2xl mb-5 text-gray-800">{t("Your Cart")}</h2>
 
           {cartItems.length === 0 ? (
-            <p>Your cart is empty</p>
+            <p>{t("Your cart is empty")}</p>
           ) : (
             <>
               <table className="w-full border border-gray-300 rounded-lg border-collapse mb-5 bg-white overflow-hidden">
                 <thead>
                   <tr>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-100 font-semibold text-sm text-center text-gray-800">
-                      Product
+                      {t("Product")}
                     </th>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-100 font-semibold text-sm text-center text-gray-800">
-                      Qty
+                      {t("Qty")}
                     </th>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-100 font-semibold text-sm text-center text-gray-800">
-                      Price
+                      {t("Price")}
                     </th>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-100 font-semibold text-sm text-center text-gray-800">
-                      Subtotal
+                      {t("Subtotal")}
                     </th>
                     <th className="px-4 py-3 border-b border-gray-200 bg-gray-100 font-semibold text-sm text-center text-gray-800">
-                      Action
+                      {t("Action")}
                     </th>
                   </tr>
                 </thead>
@@ -80,7 +82,7 @@ export default function Cart() {
                           onClick={() => removeFromCart(item.id)}
                           className="mt-6 px-6 py-3 bg-red-800 text-white rounded-md text-base cursor-pointer transition-colors hover:bg-red-900"
                         >
-                          Remove
+                          {t("Remove")}
                         </button>
                       </td>
                     </tr>
@@ -89,14 +91,14 @@ export default function Cart() {
               </table>
 
               <h3 className="text-right text-lg mb-5">
-                Total: ${total.toFixed(2)}
+                {t("Total")}: ${total.toFixed(2)}
               </h3>
 
               <button
                 onClick={handleCheckout}
                 className="w-full max-w-xs bg-red-900 text-white py-3 px-6 rounded-md text-lg cursor-pointer hover:bg-red-800 transition"
               >
-                Proceed to Checkout
+                {t("Proceed to Checkout")}
               </button>
             </>
           )}

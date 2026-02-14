@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
+import { useTranslation } from "react-i18next";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -12,6 +13,7 @@ export default function Profile() {
     address: "",
   });
   const token = localStorage.getItem("token");
+  const { t } = useTranslation();
 
   useEffect(() => {
     axios
@@ -43,7 +45,7 @@ export default function Profile() {
       .catch((err) => console.error(err));
   };
 
-  if (!user) return <p>Loading...</p>;
+  if (!user) return <p>{t("Loading")}...</p>;
 
   return (
     <>
@@ -53,24 +55,24 @@ export default function Profile() {
           <div className="flex-1 bg-[#f9f9f9] p-8 rounded-lg shadow-sm">
             <h2 className="text-2xl mb-4">My Profile</h2>
             <p className="text-base text-gray-800 mb-3">
-              <strong>Name:</strong> {user.name}
+              <strong>{t("Name")}:</strong> {user.name}
             </p>
             <p className="text-base text-gray-800 mb-3">
-              <strong>Email:</strong> {user.email}
+              <strong>{t("Email")}:</strong> {user.email}
             </p>
             <p className="text-base text-gray-800 mb-3">
-              <strong>Phone Number:</strong> {user.phone}
+              <strong>{t("Phone Number")}:</strong> {user.phone}
             </p>
             <p className="text-base text-gray-800 mb-3">
-              <strong>Address:</strong> {user.address || "Not provided"}
+              <strong>{t("Address")}:</strong> {user.address || "Not provided"}
             </p>
           </div>
 
           {/* Form Section */}
           <div className="flex-1 max-w-[400px] text-left">
-            <h2 className="text-2xl mb-2">Update Information</h2>
+            <h2 className="text-2xl mb-2">{t("Update Information")}</h2>
             <p className="text-base text-gray-700 mb-5">
-              Make changes to your profile below:
+              {t("Make changes to your profile below:")}
             </p>
             <form
               onSubmit={(e) => e.preventDefault()}
@@ -111,7 +113,7 @@ export default function Profile() {
                 onClick={handleUpdate}
                 className="bg-[#a40000] hover:bg-[#870000] text-white p-3 text-base rounded cursor-pointer w-full"
               >
-                Save Changes
+                {t("Save Changes")}
               </button>
             </form>
           </div>

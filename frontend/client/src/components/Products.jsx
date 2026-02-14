@@ -2,9 +2,11 @@ import React from "react";
 import logo from "../assets/Logo.jpeg";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/cartContext";
+import { useTranslation } from "react-i18next";
 
 export default function Products({ products }) {
   const { addToCart } = useCart();
+  const { t } = useTranslation();
 
   const handleAdd = (e, product) => {
     e.preventDefault();
@@ -13,10 +15,10 @@ export default function Products({ products }) {
 
   return (
     <div className="p-5 max-w-[1500px] mx-auto my-8 bg-[#f4f1eb]">
-      <h2 className="mb-8 text-2xl font-bold">Products</h2>
+      <h2 className="mb-8 text-2xl font-bold">{t("Products")}</h2>
       <div className="grid gap-6 grid-cols-[repeat(auto-fit,minmax(200px,1fr))]">
         {products.length === 0 ? (
-          <p>No products found</p>
+          <p>{t("No products found")}</p>
         ) : (
           products.map((product, index) => (
             <Link
@@ -50,7 +52,7 @@ export default function Products({ products }) {
                   onClick={(e) => handleAdd(e, product)}
                   className="bg-[#a22f29] text-white px-4 py-2 rounded-md mt-auto transition duration-300 hover:bg-[#76201b] active:scale-95"
                 >
-                  Add to cart
+                  {t("Add to cart")}
                 </button>
               </div>
             </Link>

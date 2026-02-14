@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 
 export default function Hero({ promotions }) {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const { t } = useTranslation();
 
   const prevSlide = () => {
     setCurrentIndex((prev) => (prev === 0 ? promotions.length - 1 : prev - 1));
@@ -25,7 +27,7 @@ export default function Hero({ promotions }) {
 
   return (
     <div className="max-w-[1500px] mx-auto my-6 px-4 py-5 relative bg-[#f4f1eb]">
-      <h2 className="mb-8 text-2xl font-bold">Current Promotions</h2>
+      <h2 className="mb-8 text-2xl font-bold">{t("Current Promotions")}</h2>
 
       <div className="relative">
         <Link
@@ -36,14 +38,14 @@ export default function Hero({ promotions }) {
             <img
               src={`http://localhost:3001/${post.image.replace(
                 /^\/?uploads/,
-                "uploads"
+                "uploads",
               )}`}
               alt={post.title}
               className="h-120 w-full max-w-[1000px] object-cover rounded-lg shadow-md mx-auto"
             />
           ) : (
             <div className="h-56 w-full max-w-[800px] bg-gray-300 flex items-center justify-center rounded-lg mx-auto">
-              No Image
+              {t("No Image")}
             </div>
           )}
           <h3 className="text-center mt-2 font-semibold">{post.title}</h3>

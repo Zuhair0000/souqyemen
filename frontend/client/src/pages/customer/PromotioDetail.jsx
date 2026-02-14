@@ -4,10 +4,12 @@ import logo from "../../assets/Logo.jpeg"; // fallback logo image
 import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next";
 
 export default function PromotionDetails() {
   const { id } = useParams();
   const [post, setPost] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetch(`http://localhost:3001/api/posts/${id}`)
@@ -40,17 +42,17 @@ export default function PromotionDetails() {
                   ? `http://localhost:3001${post.profile_photo}`
                   : logo
               }
-              alt={post.business_name || "Business"}
+              alt={post.business_name || t("Business")}
               className="w-12 h-12 rounded-full object-cover border-2 border-[#a22f29]"
             />
             <span className="text-base font-semibold text-[#1c1e21]">
-              {post.business_name || "Unknown Business"}
+              {post.business_name || t("Unknown Business")}
             </span>
           </Link>
           <span className="text-sm text-[#65676b]">
             {isValidDate
               ? new Date(post.created_at).toLocaleDateString()
-              : "Unknown date"}
+              : t("Unknown date")}
           </span>
         </div>
 
@@ -61,7 +63,7 @@ export default function PromotionDetails() {
           <img
             src={`http://localhost:3001/${post.image.replace(
               /^\/?uploads/,
-              "uploads"
+              "uploads",
             )}`}
             alt={post.title}
             className="w-full max-h-[400px] object-cover rounded-md mb-4"
@@ -69,7 +71,7 @@ export default function PromotionDetails() {
         )}
         <Link to={`/chat/${post.seller_id}`}>
           <button className="mt-4 ml-4 px-6 py-3 bg-red-700 text-white rounded-md text-lg hover:bg-red-900 transition">
-            Chat with Seller
+            {t("Chat with Seller")}
           </button>
         </Link>
       </div>

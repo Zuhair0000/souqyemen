@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next";
 
 export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("");
@@ -11,13 +12,14 @@ export default function Checkout() {
   const [expiryDate, setExpiryDate] = useState("");
   const [cvv, setCvv] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const { cartItems, clearCart } = useCart();
   const navigate = useNavigate();
 
   const total = cartItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
-    0
+    0,
   );
 
   // Format card number: XXXX XXXX XXXX XXXX
@@ -84,7 +86,9 @@ export default function Checkout() {
     <>
       <div className="p-4 max-w-[1000px] mt-8 mx-auto bg-[#f4f1eb] rounded-lg shadow">
         <BackButton />
-        <h2 className="text-xl font-semibold mb-4">Select Payment Method</h2>
+        <h2 className="text-xl font-semibold mb-4">
+          {t("Select Payment Method")}
+        </h2>
 
         {/* Payment method */}
         <label className="block mb-4">
@@ -129,7 +133,7 @@ export default function Checkout() {
           className="bg-red-900 text-white px-4 py-2 rounded"
           disabled={loading}
         >
-          {loading ? "Processing..." : "Pay Now"}
+          {loading ? t("Processing...") : t("Pay Now")}
         </button>
 
         <h3 className="text-right text-lg mt-4">Total: ${total.toFixed(2)}</h3>

@@ -3,10 +3,12 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
+import { useTranslation } from "react-i18next";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
   const token = localStorage.getItem("token");
+  const { t } = useTranslation();
 
   useEffect(() => {
     axios
@@ -24,12 +26,12 @@ export default function MyOrders() {
     <>
       <div className="p-4 max-w-[1000px] mx-auto font-sans px-10 bg-[#f4f1eb] mt-8">
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-800">
-          My Orders
+          {t("My Orders")}
         </h1>
 
         {orders.length === 0 ? (
           <p className="text-center text-gray-500 text-base mt-8">
-            You haven't placed any orders yet.
+            {t("You haven't placed any orders yet.")}
           </p>
         ) : (
           orders.map((order) => (
@@ -44,10 +46,10 @@ export default function MyOrders() {
                     order.status === "pending"
                       ? "bg-yellow-100 text-yellow-800"
                       : order.status === "completed"
-                      ? "bg-green-100 text-green-800"
-                      : order.status === "cancelled"
-                      ? "bg-red-100 text-red-800"
-                      : "bg-gray-100 text-gray-700"
+                        ? "bg-green-100 text-green-800"
+                        : order.status === "cancelled"
+                          ? "bg-red-100 text-red-800"
+                          : "bg-gray-100 text-gray-700"
                   }`}
                 >
                   {order.status}
@@ -56,7 +58,7 @@ export default function MyOrders() {
 
               <div>
                 <p className="font-semibold text-gray-900 mb-2">
-                  Total: ${Number(order.total).toFixed(2)}
+                  {t("Total")}: ${Number(order.total).toFixed(2)}
                 </p>
                 <ul className="list-none p-0">
                   {order.items.map((item, i) => (

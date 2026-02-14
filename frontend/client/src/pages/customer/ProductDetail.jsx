@@ -5,6 +5,7 @@ import NavBar from "../../components/NavBar";
 import { useCart } from "../../context/cartContext";
 import Icons from "../../components/Icons";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -12,12 +13,13 @@ export default function ProductDetail() {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
   const { addToCart } = useCart();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/products/${id}`
+          `http://localhost:3001/api/products/${id}`,
         );
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -39,7 +41,8 @@ export default function ProductDetail() {
     }
   };
 
-  if (!product) return <p className="text-center mt-8">Loading product...</p>;
+  if (!product)
+    return <p className="text-center mt-8">{t("Loading product...")}</p>;
 
   return (
     <>
@@ -61,15 +64,15 @@ export default function ProductDetail() {
           <div className="flex-1">
             <h2 className="text-3xl mb-2 font-semibold">{product.name}</h2>
             <p className="text-xl text-red-700 mb-4">
-              <strong>Price:</strong> ${product.price}
+              <strong>{t("Price")}:</strong> ${product.price}
             </p>
             <p className="text-gray-700 mb-2">{product.description}</p>
             <p className="text-gray-700 mb-4">
-              <strong>Category:</strong> {product.category}
+              <strong>{t("Category")}:</strong> {product.category}
             </p>
 
             <div className="mb-4 flex items-center gap-2">
-              <label htmlFor="quantity">Quantity:</label>
+              <label htmlFor="quantity">{t("Quantity")}:</label>
               <input
                 type="number"
                 id="quantity"
@@ -84,18 +87,18 @@ export default function ProductDetail() {
               className="mt-6 px-6 py-3 bg-red-700 text-white rounded-md text-lg hover:bg-red-900 transition"
               onClick={handleAdd}
             >
-              Add to cart
+              {t("Add to cart")}
             </button>
 
             <Link to={`/seller/public/${product.seller_id}`}>
               <button className="mt-4 ml-4 px-6 py-3 border border-red-700 text-red-700 rounded-md hover:bg-red-100 transition">
-                Visit Seller
+                {t("Visit Seller")}
               </button>
             </Link>
 
             <Link to={`/chat/${product.seller_id}`}>
               <button className="mt-4 ml-4 px-6 py-3 bg-red-700 text-white rounded-md text-lg hover:bg-red-900 transition">
-                Chat with Seller
+                {t("Chat with Seller")}
               </button>
             </Link>
           </div>
@@ -104,11 +107,11 @@ export default function ProductDetail() {
 
       <div className="bg-gray-50 border-t border-gray-200 py-8 px-8">
         <h3 className="text-2xl mb-6 font-semibold text-gray-900">
-          Related products
+          {t("Related products")}
         </h3>
         <div className="flex flex-wrap gap-6">
           {relatedProducts.length === 0 ? (
-            <p>No related products found</p>
+            <p>{t("No related products found")}</p>
           ) : (
             relatedProducts.map((item) => (
               <div

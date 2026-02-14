@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 
 export default function CategoriesBar({ onCategorySelect }) {
   const [categories, setCategories] = useState([]);
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     fetch("http://localhost:3001/api/categories")
@@ -9,6 +11,8 @@ export default function CategoriesBar({ onCategorySelect }) {
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));
   }, []);
+
+  const isArabic = i18n.language === "ar";
 
   return (
     <div className="bg-white border-t border-b border-gray-200 px-2 py-2">
@@ -26,7 +30,7 @@ export default function CategoriesBar({ onCategorySelect }) {
           className="px-3 md:px-4 py-1 bg-gray-100 rounded-full text-xs md:text-sm font-medium transition-colors duration-200 hover:bg-gray-200"
           onClick={() => onCategorySelect(null)}
         >
-          All
+          {t("All")}
         </button>
         {categories.map((cat) => (
           <button
@@ -34,7 +38,7 @@ export default function CategoriesBar({ onCategorySelect }) {
             className="px-3 md:px-4 py-1 bg-gray-100 rounded-full text-xs md:text-sm font-medium transition-colors duration-200 hover:bg-gray-200"
             onClick={() => onCategorySelect(cat.id)}
           >
-            {cat.name}
+            {isArabic ? cat.name_ar || cat.name : cat.name}
           </button>
         ))}
       </div>

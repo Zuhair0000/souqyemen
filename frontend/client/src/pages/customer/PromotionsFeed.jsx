@@ -5,9 +5,11 @@ import Icons from "../../components/Icons";
 import { Link } from "react-router-dom";
 import logo from "../../assets/Logo.jpeg";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next";
 
 export default function PromotionsFeed() {
   const [posts, setPosts] = useState([]);
+  const { t } = useTranslation();
 
   useEffect(() => {
     axios.get("http://localhost:3001/api/posts").then((res) => {
@@ -20,7 +22,7 @@ export default function PromotionsFeed() {
       <div className="max-w-[1000px] mx-auto mt-8 px-7 bg-[#f4f1eb] py-8">
         <BackButton />
         <h2 className="text-center mb-6 text-[1.8rem] text-[#1c1e21] font-semibold">
-          Promotional Posts
+          {t("Promotional Posts")}
         </h2>
         <div className="flex flex-col gap-6">
           {posts.map((post) => (
@@ -54,7 +56,7 @@ export default function PromotionsFeed() {
                 <img
                   src={`http://localhost:3001/${post.image.replace(
                     /^\/?uploads/,
-                    "uploads"
+                    "uploads",
                   )}`}
                   alt="Post"
                   className="w-full max-h-[300px] object-cover rounded-md mt-2"
