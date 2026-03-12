@@ -5,9 +5,11 @@ import ProductsTab from "./tabs/ProductsTab";
 import OrdersTab from "./tabs/OrdersTab";
 import NavBar from "../../components/NavBar";
 import AdminReportsTab from "./tabs/AdminReportsTab";
+import { useTranslation } from "react-i18next";
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("pending");
+  const { t } = useTranslation();
 
   const renderTab = () => {
     switch (activeTab) {
@@ -34,14 +36,15 @@ export default function AdminDashboard() {
             localStorage.removeItem("token");
             window.location.href = "/login";
           }}
-          className="ml-auto bg-[#a22f29] text-white px-4 py-2 rounded-lg font-bold cursor-pointer transition-colors duration-300 hover:bg-[#76201b]"
+          // Changed ml-auto to ms-auto for RTL
+          className="ms-auto bg-[#a22f29] text-white px-4 py-2 rounded-lg font-bold cursor-pointer transition-colors duration-300 hover:bg-[#76201b]"
         >
-          Logout
+          {t("Logout")}
         </button>
       </NavBar>
       <div className="max-w-3xl mx-auto my-10 p-6 bg-[#f4f1eb] rounded-lg border border-gray-300 shadow-md font-sans">
         <h2 className="text-xl mb-6 text-center text-gray-800 font-semibold">
-          Admin Dashboard
+          {t("Admin Dashboard")}
         </h2>
         <div className="flex flex-wrap justify-center gap-2 mb-6">
           {[
@@ -58,7 +61,7 @@ export default function AdminDashboard() {
                 activeTab === key ? "bg-[#76201b]" : ""
               }`}
             >
-              {label}
+              {t(label)}
             </button>
           ))}
         </div>

@@ -5,11 +5,13 @@ import logo from "../../assets/Logo.jpeg";
 import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function SellerProfile() {
   const { id } = useParams();
   const [seller, setSeller] = useState(null);
   const [products, setProducts] = useState([]);
+  const { t } = useTranslation(); // Initialize translation hook
 
   const user = JSON.parse(localStorage.getItem("user"));
   const role = localStorage.getItem("role");
@@ -56,7 +58,7 @@ export default function SellerProfile() {
             {role === "customer" && (
               <Link to={`/chat/${seller.id}`}>
                 <button className="bg-[#a22f29] text-white px-6 py-2 rounded-full cursor-pointer text-[16px] font-medium transition-colors duration-300 mt-3 hover:bg-[#831e1a]">
-                  Contact seller
+                  {t("Contact seller")}
                 </button>
               </Link>
             )}
@@ -64,7 +66,7 @@ export default function SellerProfile() {
         )}
 
         <h3 className="text-[26px] font-semibold mb-7 text-[#333] text-center">
-          Products
+          {t("Products")}
         </h3>
 
         <div className="grid grid-cols-[repeat(auto-fit,minmax(220px,1fr))] gap-7">

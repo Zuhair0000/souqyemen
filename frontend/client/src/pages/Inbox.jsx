@@ -4,10 +4,12 @@ import SellerNavBar from "../components/SellerNavBar";
 import BackButton from "../components/BackButton";
 import NavBar from "../components/NavBar";
 import Icons from "../components/Icons";
+import { useTranslation } from "react-i18next";
 
 export default function SellerInbox() {
   const [inbox, setInbox] = useState([]);
   const user = JSON.parse(localStorage.getItem("user"));
+  const { t } = useTranslation();
 
   useEffect(() => {
     const fetchInbox = async () => {
@@ -18,7 +20,7 @@ export default function SellerInbox() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
       setInbox(Array.isArray(data) ? data : []);
@@ -38,9 +40,11 @@ export default function SellerInbox() {
 
       <div className="max-w-2xl mx-auto my-8 p-5 bg-[#f4f1eb] rounded-lg">
         <BackButton />
-        <h2 className="text-2xl font-bold mb-5 text-center">Messages</h2>
+        <h2 className="text-2xl font-bold mb-5 text-center">{t("Messages")}</h2>
         {inbox.length === 0 ? (
-          <p className="text-center text-gray-500 italic">No messages yet</p>
+          <p className="text-center text-gray-500 italic">
+            {t("No messages yet")}
+          </p>
         ) : (
           inbox.map((user) => (
             <Link

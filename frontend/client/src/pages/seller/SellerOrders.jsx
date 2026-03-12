@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import SellerNavBar from "../../components/SellerNavBar";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function SellerOrders() {
   const [orders, setOrders] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
+  const { t } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     fetch("http://localhost:3001/api/seller/orders", {
@@ -29,26 +31,30 @@ export default function SellerOrders() {
     <>
       <div className="p-6 bg-[#f4f1eb] max-w-[1200px] mx-auto mt-8 rounded-xl shadow">
         <BackButton />
-        <h2 className="text-2xl font-bold mb-6 text-gray-800">📦 My Orders</h2>
+        <h2 className="text-2xl font-bold mb-6 text-gray-800">
+          📦 {t("My Orders")}
+        </h2>
 
         {orders.length === 0 ? (
-          <p className="text-gray-600">No orders found.</p>
+          <p className="text-gray-600">{t("No orders found.")}</p>
         ) : (
           <>
             {/* Filter */}
             <div className="mb-5 flex items-center gap-3">
-              <label className="font-medium text-gray-700">Filter:</label>
+              <label className="font-medium text-gray-700">
+                {t("Filter:")}
+              </label>
               <select
                 className="border rounded-lg px-3 py-2 bg-white shadow-sm focus:ring-2 focus:ring-red-400"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="processing">Processing</option>
-                <option value="shipped">Shipped</option>
-                <option value="completed">Completed</option>
-                <option value="cancelled">Cancelled</option>
+                <option value="all">{t("All")}</option>
+                <option value="pending">{t("Pending")}</option>
+                <option value="processing">{t("Processing")}</option>
+                <option value="shipped">{t("Shipped")}</option>
+                <option value="completed">{t("Completed")}</option>
+                <option value="cancelled">{t("Cancelled")}</option>
               </select>
             </div>
 
@@ -56,12 +62,13 @@ export default function SellerOrders() {
             <div className="overflow-x-auto">
               <table className="w-full bg-white border border-gray-200 rounded-xl shadow-sm">
                 <thead>
-                  <tr className="bg-gray-100 text-gray-700 text-left">
-                    <th className="p-3">Order ID</th>
-                    <th className="p-3">Total</th>
-                    <th className="p-3">Status</th>
-                    <th className="p-3">Created At</th>
-                    <th className="p-3">Update Status</th>
+                  {/* Changed text-left to text-start for RTL support */}
+                  <tr className="bg-gray-100 text-gray-700 text-start">
+                    <th className="p-3">{t("Order ID")}</th>
+                    <th className="p-3">{t("Total")}</th>
+                    <th className="p-3">{t("Status")}</th>
+                    <th className="p-3">{t("Created At")}</th>
+                    <th className="p-3">{t("Update Status")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -69,7 +76,7 @@ export default function SellerOrders() {
                     .filter((order) =>
                       statusFilter === "all"
                         ? true
-                        : order.status === statusFilter
+                        : order.status === statusFilter,
                     )
                     .map((order, i) => (
                       <tr
@@ -88,7 +95,8 @@ export default function SellerOrders() {
                               statusColors[order.status]
                             }`}
                           >
-                            {order.status}
+                            {/* Translates the DB status string */}
+                            {t(order.status)}
                           </span>
                         </td>
                         <td className="p-3 text-gray-600">
@@ -108,11 +116,11 @@ export default function SellerOrders() {
                                     headers: {
                                       "Content-Type": "application/json",
                                       Authorization: `Bearer ${localStorage.getItem(
-                                        "token"
+                                        "token",
                                       )}`,
                                     },
                                     body: JSON.stringify({ status: newStatus }),
-                                  }
+                                  },
                                 );
 
                                 if (res.ok) {
@@ -121,10 +129,10 @@ export default function SellerOrders() {
                                     {
                                       headers: {
                                         Authorization: `Bearer ${localStorage.getItem(
-                                          "token"
+                                          "token",
                                         )}`,
                                       },
-                                    }
+                                    },
                                   );
                                   const data = await updated.json();
                                   setOrders(data.orders);
@@ -136,11 +144,13 @@ export default function SellerOrders() {
                               }
                             }}
                           >
-                            <option value="pending">Pending</option>
-                            <option value="processing">Processing</option>
-                            <option value="shipped">Shipped</option>
-                            <option value="completed">Completed</option>
-                            <option value="cancelled">Cancelled</option>
+                            <option value="pending">{t("Pending")}</option>
+                            <option value="processing">
+                              {t("Processing")}
+                            </option>
+                            <option value="shipped">{t("Shipped")}</option>
+                            <option value="completed">{t("Completed")}</option>
+                            <option value="cancelled">{t("Cancelled")}</option>
                           </select>
                         </td>
                       </tr>

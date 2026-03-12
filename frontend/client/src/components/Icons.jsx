@@ -3,6 +3,7 @@ import { useNavigate, NavLink } from "react-router-dom";
 import { Heart, ShoppingCart, User, Megaphone, House } from "lucide-react";
 import { useCart } from "../context/cartContext";
 import { FiMessageSquare } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export default function Icons() {
   const [user, setUser] = useState(null);
@@ -10,6 +11,7 @@ export default function Icons() {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cartCount } = useCart();
+  const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -50,20 +52,16 @@ export default function Icons() {
     >
       {/* Home */}
       <NavLink to="/" className={baseIcon}>
-        <House size={20} /> <span className="md:hidden">Home</span>
+        <House size={20} /> <span className="md:hidden">{t("Home")}</span>
       </NavLink>
-
-      {/* Wishlist */}
-      {/* <NavLink to="/wishlist" className={baseIcon}>
-        <Heart size={20} /> <span className="md:hidden">Wishlist</span>
-      </NavLink> */}
 
       {/* Cart */}
       <NavLink to="/cart" className={`${baseIcon} relative`}>
         <ShoppingCart size={20} />
-        <span className="md:hidden">Cart</span>
+        <span className="md:hidden">{t("Cart")}</span>
         {cartCount > 0 && (
-          <span className="absolute -top-1 -right-2 bg-[#a22f29] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+          // Changed -right-2 to -end-2 for RTL logic
+          <span className="absolute -top-1 -end-2 bg-[#a22f29] text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
             {cartCount}
           </span>
         )}
@@ -72,12 +70,13 @@ export default function Icons() {
       {/* Messages */}
       <NavLink to="/seller/inbox" className={baseIcon}>
         <FiMessageSquare size={20} />{" "}
-        <span className="md:hidden">Messages</span>
+        <span className="md:hidden">{t("Messages")}</span>
       </NavLink>
 
       {/* Promotions */}
       <NavLink to="/promotions" className={baseIcon}>
-        <Megaphone size={20} /> <span className="md:hidden">Promotions</span>
+        <Megaphone size={20} />{" "}
+        <span className="md:hidden">{t("Promotions")}</span>
       </NavLink>
 
       {/* User */}
@@ -87,11 +86,12 @@ export default function Icons() {
             onClick={() => setShowDropdown((v) => !v)}
             className={baseIcon}
           >
-            <User size={20} /> <span className="md:hidden">Account</span>
+            <User size={20} /> <span className="md:hidden">{t("Account")}</span>
           </button>
 
           {showDropdown && (
-            <div className="absolute md:top-[52px] md:right-0 top-10 right-1 w-64 bg-white border border-gray-300 shadow-lg p-3 rounded-lg z-50">
+            // Changed right-0 / right-1 to end-0 / end-1 for RTL alignment
+            <div className="absolute md:top-[52px] md:end-0 top-10 end-1 w-64 bg-white border border-gray-300 shadow-lg p-3 rounded-lg z-50 text-start">
               <ul className="list-none m-0 p-0">
                 <li className="my-2">
                   <NavLink
@@ -99,7 +99,7 @@ export default function Icons() {
                     onClick={() => setShowDropdown(false)}
                     className="block text-gray-800 hover:text-[#a22f29]"
                   >
-                    Profile
+                    {t("Profile")}
                   </NavLink>
                 </li>
                 <li className="my-2">
@@ -108,7 +108,7 @@ export default function Icons() {
                     onClick={() => setShowDropdown(false)}
                     className="block text-gray-800 hover:text-[#a22f29]"
                   >
-                    My Orders
+                    {t("My Orders")}
                   </NavLink>
                 </li>
                 <li className="my-2">
@@ -117,14 +117,14 @@ export default function Icons() {
                     onClick={() => setShowDropdown(false)}
                     className="block text-gray-800 hover:text-[#a22f29]"
                   >
-                    Settings
+                    {t("Settings")}
                   </NavLink>
                 </li>
                 <li
                   onClick={handleLogout}
                   className="my-2 cursor-pointer text-gray-800 hover:text-[#a22f29] transition-colors"
                 >
-                  Logout
+                  {t("Logout")}
                 </li>
               </ul>
             </div>
@@ -132,7 +132,7 @@ export default function Icons() {
         </div>
       ) : (
         <NavLink to="/signup" className={baseIcon}>
-          <User size={20} /> <span className="md:hidden">Sign Up</span>
+          <User size={20} /> <span className="md:hidden">{t("Sign Up")}</span>
         </NavLink>
       )}
     </div>

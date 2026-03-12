@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SellerNavBar from "./SellerNavBar";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function SellerInbox() {
   const [inbox, setInbox] = useState([]);
   const seller = JSON.parse(localStorage.getItem("user"));
+  const { t } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     const fetchInbox = async () => {
@@ -15,7 +17,7 @@ export default function SellerInbox() {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       const data = await res.json();
       setInbox(Array.isArray(data) ? data : []);
@@ -27,9 +29,11 @@ export default function SellerInbox() {
     <>
       <SellerNavBar />
       <div className="max-w-2xl mx-auto my-8 p-5 bg-[#f4f1eb] rounded-lg">
-        <h2 className="text-2xl font-bold mb-5 text-center">Messages</h2>
+        <h2 className="text-2xl font-bold mb-5 text-center">{t("Messages")}</h2>
         {inbox.length === 0 ? (
-          <p className="text-center text-gray-500 italic">No messages yet</p>
+          <p className="text-center text-gray-500 italic">
+            {t("No messages yet")}
+          </p>
         ) : (
           inbox.map((user) => (
             <Link

@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { useTranslation } from "react-i18next";
 
 export default function ProductsTab() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState("");
+  const { t } = useTranslation();
 
   const fetchProducts = async () => {
     try {
@@ -34,16 +36,18 @@ export default function ProductsTab() {
   }, []);
 
   const filteredProducts = products.filter((product) =>
-    product.name?.toLowerCase().includes(search.toLowerCase())
+    product.name?.toLowerCase().includes(search.toLowerCase()),
   );
 
   return (
     <div className="max-w-3xl mx-auto my-10 p-6 bg-white rounded-lg border border-gray-300 shadow-sm font-sans">
-      <h3 className="text-2xl text-center text-gray-800 mb-6">All Products</h3>
+      <h3 className="text-2xl text-center text-gray-800 mb-6">
+        {t("All Products")}
+      </h3>
 
       <input
         type="text"
-        placeholder="Search by product name..."
+        placeholder={t("Search by product name...")}
         className="w-full max-w-xs mb-4 px-4 py-2 border border-gray-300 rounded-md text-base focus:outline-none focus:ring-2 focus:ring-red-600"
         value={search}
         onChange={(e) => setSearch(e.target.value)}
@@ -58,13 +62,13 @@ export default function ProductsTab() {
             {product.name}
           </p>
           <p className="text-gray-600 text-sm mb-3">
-            Seller ID: {product.seller_id}
+            {t("Seller ID")}: {product.seller_id}
           </p>
           <button
             onClick={() => deleteProduct(product.id)}
             className="bg-red-600 text-white px-4 py-2 rounded-md font-bold text-sm hover:bg-red-700 transition-colors"
           >
-            Remove
+            {t("Remove")}
           </button>
         </div>
       ))}

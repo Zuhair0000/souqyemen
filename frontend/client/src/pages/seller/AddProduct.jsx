@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import SellerNavBar from "../../components/SellerNavBar";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function AddProduct() {
   const [form, setForm] = useState({
@@ -13,6 +14,7 @@ export default function AddProduct() {
   });
 
   const [categories, setCategories] = useState([]);
+  const { t } = useTranslation(); // Initialize translation hook
 
   useEffect(() => {
     fetch("http://localhost:3001/api/categories")
@@ -45,7 +47,7 @@ export default function AddProduct() {
 
       const data = await res.json();
       if (res.ok) {
-        alert("Product added successfully");
+        alert(t("Product added successfully")); // Translated alert
         setForm({
           name: "",
           description: "",
@@ -55,7 +57,7 @@ export default function AddProduct() {
           category: "",
         });
       } else {
-        alert(data.error || "Failed to add product");
+        alert(data.error || t("Failed to add product")); // Translated alert
       }
     } catch (err) {
       console.error("Error adding product:", err);
@@ -64,17 +66,21 @@ export default function AddProduct() {
 
   return (
     <>
-      <div className="max-w-[1000px] mx-auto my-8 pr-5 py-5 bg-[#f4f1eb] rounded-xl">
+      {/* Changed pr-5 to pe-5 for RTL support */}
+      <div className="max-w-[1000px] mx-auto my-8 pe-5 py-5 bg-[#f4f1eb] rounded-xl">
         <BackButton />
-        <h1 className="text-3xl font-bold mb-6 text-center">Add New Product</h1>
+        <h1 className="text-3xl font-bold mb-6 text-center">
+          {t("Add New Product")}
+        </h1>
         <form
           onSubmit={handleSubmit}
           encType="multipart/form-data"
-          className="flex flex-col gap-4 bg-white p-6 ml-5 rounded-lg border border-gray-300"
+          // Changed ml-5 to ms-5 for RTL support
+          className="flex flex-col gap-4 bg-white p-6 ms-5 rounded-lg border border-gray-300"
         >
           <input
             name="name"
-            placeholder="Product Name"
+            placeholder={t("Product Name")}
             value={form.name}
             onChange={handleChange}
             required
@@ -82,7 +88,7 @@ export default function AddProduct() {
           />
           <input
             name="stock"
-            placeholder="Quantity"
+            placeholder={t("Quantity")}
             type="number"
             value={form.stock}
             onChange={handleChange}
@@ -99,7 +105,7 @@ export default function AddProduct() {
           />
           <textarea
             name="description"
-            placeholder="Description"
+            placeholder={t("Description")}
             value={form.description}
             onChange={handleChange}
             required
@@ -108,7 +114,7 @@ export default function AddProduct() {
           />
           <input
             name="price"
-            placeholder="Price"
+            placeholder={t("Price")}
             type="number"
             value={form.price}
             onChange={handleChange}
@@ -122,10 +128,10 @@ export default function AddProduct() {
             required
             className="p-3 border border-gray-300 rounded-md text-lg"
           >
-            <option value="">-- Select Category --</option>
+            <option value="">{t("-- Select Category --")}</option>
             {categories.map((cat) => (
               <option key={cat.id} value={cat.id}>
-                {cat.name}
+                {t(cat.name)} {/* Translates category name dynamically */}
               </option>
             ))}
           </select>
@@ -134,7 +140,7 @@ export default function AddProduct() {
             type="submit"
             className="bg-[#a22f29] text-white py-2 px-4 rounded-md text-lg cursor-pointer transition-colors duration-200 hover:bg-[#76201b]"
           >
-            Add Product
+            {t("Add Product")}
           </button>
         </form>
       </div>

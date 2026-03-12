@@ -1,12 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaUserCircle } from "react-icons/fa";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function UserIconDropdown({ user: propUser }) {
   const [user, setUser] = useState(null);
   const [open, setOpen] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Initialize translation hook
 
   const handleLogout = () => {
     localStorage.removeItem("user");
@@ -41,7 +43,8 @@ export default function UserIconDropdown({ user: propUser }) {
       </button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md z-50">
+        // Changed right-0 to end-0 for RTL dropdown positioning
+        <div className="absolute end-0 mt-2 w-40 bg-white border border-gray-200 rounded-md shadow-md z-50 text-start">
           {user ? (
             <ul className="flex flex-col">
               <li>
@@ -49,7 +52,7 @@ export default function UserIconDropdown({ user: propUser }) {
                   to="/profile"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
-                  Profile
+                  {t("Profile")}
                 </Link>
               </li>
               <li>
@@ -57,7 +60,7 @@ export default function UserIconDropdown({ user: propUser }) {
                   to="/orders"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
-                  My Orders
+                  {t("My Orders")}
                 </Link>
               </li>
               <li>
@@ -65,14 +68,14 @@ export default function UserIconDropdown({ user: propUser }) {
                   to="/settings"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
-                  Settings
+                  {t("Settings")}
                 </Link>
               </li>
               <li
                 onClick={handleLogout}
                 className="block px-4 py-2 text-red-600 hover:bg-gray-100 cursor-pointer"
               >
-                Logout
+                {t("Logout")}
               </li>
             </ul>
           ) : (
@@ -82,7 +85,7 @@ export default function UserIconDropdown({ user: propUser }) {
                   to="/login"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
-                  Login
+                  {t("Login")}
                 </Link>
               </li>
               <li>
@@ -90,7 +93,7 @@ export default function UserIconDropdown({ user: propUser }) {
                   to="/signup"
                   className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 >
-                  Sign Up
+                  {t("Sign Up")}
                 </Link>
               </li>
             </ul>

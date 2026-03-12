@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import SellerNavBar from "../../components/SellerNavBar";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next"; // Added import
 
 export default function SellerPosts() {
   const [posts, setPosts] = useState([]);
   const [form, setForm] = useState({ title: "", content: "" });
   const [imageFile, setImageFile] = useState(null);
   const [editingId, setEditingId] = useState(null);
+  const { t } = useTranslation(); // Initialize translation hook
 
   const token = localStorage.getItem("token");
 
@@ -34,7 +36,7 @@ export default function SellerPosts() {
             Authorization: `Bearer ${token}`,
             "Content-Type": "multipart/form-data",
           },
-        }
+        },
       );
     } else {
       await axios.post("http://localhost:3001/api/seller/posts", formData, {
@@ -58,7 +60,8 @@ export default function SellerPosts() {
   };
 
   const handleDelete = async (id) => {
-    if (confirm("Are you sure you want to delete this post?")) {
+    // Translated the confirmation message
+    if (window.confirm(t("Are you sure you want to delete this post?"))) {
       await axios.delete(`http://localhost:3001/api/seller/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -75,7 +78,7 @@ export default function SellerPosts() {
       <div className="font-sans bg-[#f4f1eb] max-w-[1000px] mx-auto py-5 mt-8">
         <BackButton />
         <h2 className="text-center my-8 text-2xl text-[#2c3e50]">
-          {editingId ? "Edit Post" : "Create Post"}
+          {editingId ? t("Edit Post") : t("Create Post")}
         </h2>
 
         <form
@@ -84,14 +87,14 @@ export default function SellerPosts() {
         >
           <input
             type="text"
-            placeholder="Title"
+            placeholder={t("Title")}
             value={form.title}
             onChange={(e) => setForm({ ...form, title: e.target.value })}
             required
             className="w-full mb-4 p-3 border border-gray-300 rounded-md text-base"
           />
           <textarea
-            placeholder="Content"
+            placeholder={t("Content")}
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
             required
@@ -107,19 +110,20 @@ export default function SellerPosts() {
             type="submit"
             className="bg-[#1abc9c] text-white px-6 py-3 rounded-md text-base cursor-pointer transition-colors duration-300 hover:bg-[#16a085]"
           >
-            {editingId ? "Update Post" : "Create Post"}
+            {editingId ? t("Update Post") : t("Create Post")}
           </button>
           {editingId && (
             <button
               type="button"
-              className="ml-2 bg-gray-400 text-black px-4 py-3 rounded-md"
+              // Changed ml-2 to ms-2 for RTL support
+              className="ms-2 bg-gray-400 text-black px-4 py-3 rounded-md"
               onClick={() => {
                 setEditingId(null);
                 setForm({ title: "", content: "" });
                 setImageFile(null);
               }}
             >
-              Cancel
+              {t("Cancel")}
             </button>
           )}
         </form>
@@ -136,7 +140,7 @@ export default function SellerPosts() {
                 <img
                   src={`http://localhost:3001/${post.image.replace(
                     /^\/?uploads/,
-                    "uploads"
+                    "uploads",
                   )}`}
                   alt="Post"
                   className="w-full h-[180px] object-cover rounded-md my-3"
@@ -150,13 +154,13 @@ export default function SellerPosts() {
                   onClick={() => handleEdit(post)}
                   className="bg-[#2980b9] text-white px-4 py-2 rounded-md text-sm"
                 >
-                  Edit
+                  {t("Edit")}
                 </button>
                 <button
                   onClick={() => handleDelete(post.id)}
                   className="bg-[#e74c3c] text-white px-4 py-2 rounded-md text-sm hover:bg-[#c0392b]"
                 >
-                  Delete
+                  {t("Delete")}
                 </button>
               </div>
             </div>

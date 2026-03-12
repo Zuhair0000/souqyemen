@@ -1,19 +1,40 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const db = require("../../config/db");
+const nodemailer = require("nodemailer");
+const { OAuth2Client } = require("google-auth-library");
 
+// 1. Setup Google Client
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+// 2. Setup Email Transporter
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
 // ENV secret key or hardcoded for now
 const JWT_SECRET =
   "8cbf7645a1e3b8723e1d5f934b8d7e614e6d77c8b798e3b257456bcd312f74c1";
 
 exports.registerCustomer = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { name, email, password, otp } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 
   try {
+    const [otpRecord] = await db.query(
+      "SELECT * FROM otp_verifications WHERE email = ? AND otp = ?",
+      [email, otp],
+    );
+
+    if (otpRecord.length === 0) {
+      return res.status(400).json({ message: "Invalid or expired OTP" });
+    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = `
@@ -45,7 +66,7 @@ exports.login = async (req, res) => {
   try {
     const [rows] = await db.query(
       "SELECT * FROM users WHERE email = ? OR phone = ?",
-      [emailOrPhone, emailOrPhone]
+      [emailOrPhone, emailOrPhone],
     );
 
     if (rows.length === 0) {

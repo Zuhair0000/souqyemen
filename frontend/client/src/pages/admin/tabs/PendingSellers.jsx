@@ -3,10 +3,12 @@ import "./PendingSellers.css";
 import axios from "axios";
 import SellerNavBar from "../../../components/SellerNavBar";
 import NavBar from "../../../components/NavBar";
+import { useTranslation } from "react-i18next";
 
 export default function PendingSellers() {
   const [sellers, setSellers] = useState([]);
-  const [previewImage, setPreviewImage] = useState(null); // for modal
+  const [previewImage, setPreviewImage] = useState(null);
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchPendingSellers();
@@ -19,7 +21,7 @@ export default function PendingSellers() {
         "http://localhost:3001/api/admin/pending-sellers",
         {
           headers: { Authorization: `Bearer ${token}` },
-        }
+        },
       );
       setSellers(res.data);
     } catch (err) {
@@ -33,7 +35,7 @@ export default function PendingSellers() {
       await axios.put(
         `http://localhost:3001/api/admin/seller/${id}/status`,
         { status },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` } },
       );
       setSellers((prev) => prev.filter((s) => s.id !== id));
     } catch (err) {
@@ -45,11 +47,11 @@ export default function PendingSellers() {
     <>
       <div className="max-w-3xl mx-auto my-10 p-6 bg-white rounded-lg border border-gray-200 shadow-sm font-sans">
         <h2 className="text-xl mb-6 text-center text-gray-800">
-          Pending Seller Approvals
+          {t("Pending Seller Approvals")}
         </h2>
 
         {sellers.length === 0 ? (
-          <p className="text-center text-gray-600">No pending sellers</p>
+          <p className="text-center text-gray-600">{t("No pending sellers")}</p>
         ) : (
           <div className="flex flex-col gap-5">
             {sellers.map((seller) => (
@@ -61,39 +63,41 @@ export default function PendingSellers() {
                   {seller.business_name}
                 </h3>
                 <p className="text-gray-700 text-sm my-1">
-                  Owner: {seller.name}
+                  {t("Owner")}: {seller.name}
                 </p>
                 <p className="text-gray-700 text-sm my-1">
-                  Email: {seller.email}
+                  {t("Email")}: {seller.email}
                 </p>
                 <p className="text-gray-700 text-sm my-1">
-                  Phone: {seller.phone}
+                  {t("Phone")}: {seller.phone}
                 </p>
 
                 <div className="flex flex-wrap gap-4 mt-3">
                   <div>
-                    <strong className="block mb-1">ID Photo:</strong>
+                    <strong className="block mb-1">{t("ID Photo")}:</strong>
                     <img
                       src={`http://localhost:3001/uploads/${seller.id_photo}`}
                       alt="ID"
                       className="max-w-[140px] max-h-[140px] rounded-md border border-gray-300 object-cover bg-gray-100 cursor-pointer"
                       onClick={() =>
                         setPreviewImage(
-                          `http://localhost:3001/uploads/${seller.id_photo}`
+                          `http://localhost:3001/uploads/${seller.id_photo}`,
                         )
                       }
                     />
                   </div>
 
                   <div>
-                    <strong className="block mb-1">Selfie with ID:</strong>
+                    <strong className="block mb-1">
+                      {t("Selfie with ID")}:
+                    </strong>
                     <img
                       src={`http://localhost:3001/uploads/${seller.selfie_with_id}`}
                       alt="Selfie"
                       className="max-w-[140px] max-h-[140px] rounded-md border border-gray-300 object-cover bg-gray-100 cursor-pointer"
                       onClick={() =>
                         setPreviewImage(
-                          `http://localhost:3001/uploads/${seller.selfie_with_id}`
+                          `http://localhost:3001/uploads/${seller.selfie_with_id}`,
                         )
                       }
                     />
@@ -105,13 +109,13 @@ export default function PendingSellers() {
                     onClick={() => updateStatus(seller.id, "approved")}
                     className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-md transition-colors"
                   >
-                    Approve
+                    {t("Approve")}
                   </button>
                   <button
                     onClick={() => updateStatus(seller.id, "rejected")}
                     className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-2 rounded-md transition-colors"
                   >
-                    Reject
+                    {t("Reject")}
                   </button>
                 </div>
               </div>

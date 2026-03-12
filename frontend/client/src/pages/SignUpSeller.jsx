@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import NavBar from "../components/NavBar";
 import logo from "../assets/Logo.jpeg";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function SignUpSeller() {
   const [formData, setFormData] = useState({
@@ -13,6 +14,7 @@ export default function SignUpSeller() {
     idPhoto: null,
     selfieWithId: null,
   });
+  const { t } = useTranslation();
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -40,13 +42,13 @@ export default function SignUpSeller() {
         {
           method: "POST",
           body: data,
-        }
+        },
       );
       const result = await res.json();
       if (res.ok) {
-        alert("Submitted for review!");
+        alert(t("Submitted for review!"));
       } else {
-        alert(result.message || "Failed to register seller");
+        alert(result.message || t("Failed to register seller"));
       }
     } catch (error) {
       console.error("Error:", error);
@@ -76,61 +78,63 @@ export default function SignUpSeller() {
           />
         </div>
 
-        {/* Form */}
-        <div className="flex-1 w-full max-w-sm md:max-w-[400px] text-left md:mr-[100px]">
-          <h2 className="text-2xl md:text-[28px] mb-2">Seller Registration</h2>
+        {/* Form - Changed text-left to text-start and md:mr-[100px] to md:me-[100px] */}
+        <div className="flex-1 w-full max-w-sm md:max-w-[400px] text-start md:me-[100px]">
+          <h2 className="text-2xl md:text-[28px] mb-2">
+            {t("Seller Registration")}
+          </h2>
           <p className="text-sm md:text-[16px] text-[#444] mb-5">
-            Enter your business details
+            {t("Enter your business details")}
           </p>
 
           <form onSubmit={handleSubmit} encType="multipart/form-data">
             <input
               type="text"
               name="businessName"
-              placeholder="Business/Organization Name"
+              placeholder={t("Business/Organization Name")}
               value={formData.businessName}
               onChange={handleChange}
               required
-              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded text-start"
             />
             <input
               type="text"
               name="fullName"
-              placeholder="Owner Full Name"
+              placeholder={t("Owner Full Name")}
               value={formData.fullName}
               onChange={handleChange}
               required
-              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded text-start"
             />
             <input
               type="email"
               name="email"
-              placeholder="Email"
+              placeholder={t("Email")}
               value={formData.email}
               onChange={handleChange}
               required
-              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded text-start"
             />
             <input
               type="tel"
               name="phoneNumber"
-              placeholder="Phone Number"
+              placeholder={t("Phone Number")}
               value={formData.phoneNumber}
               onChange={handleChange}
               required
-              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded text-start"
             />
             <input
               type="password"
               name="password"
-              placeholder="Password"
+              placeholder={t("Password")}
               value={formData.password}
               onChange={handleChange}
               required
-              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
+              className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded text-start"
             />
             <label className="block mt-2">
-              Upload Business ID or Owner ID:
+              {t("Upload Business ID or Owner ID:")}
             </label>
             <input
               type="file"
@@ -140,7 +144,7 @@ export default function SignUpSeller() {
               required
               className="w-full p-2 mt-2 mb-4 text-[14px] border border-gray-300 rounded"
             />
-            <label className="block mt-2">Upload Selfie with ID:</label>
+            <label className="block mt-2">{t("Upload Selfie with ID:")}</label>
             <input
               type="file"
               name="selfieWithId"
@@ -153,14 +157,14 @@ export default function SignUpSeller() {
               type="submit"
               className="w-full bg-[#a40000] text-white py-3 text-[16px] rounded cursor-pointer"
             >
-              Submit for Review
+              {t("Submit for Review")}
             </button>
           </form>
 
           <p className="mt-5 text-[14px]">
-            Already registered?{" "}
+            {t("Already registered?")}{" "}
             <Link to="/login" className="text-blue-600 hover:underline">
-              Log in
+              {t("Log in")}
             </Link>
           </p>
         </div>

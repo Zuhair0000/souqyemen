@@ -2,12 +2,14 @@ import React, { useEffect, useState } from "react";
 import SellerNavBar from "../../components/SellerNavBar";
 import { useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
+import { useTranslation } from "react-i18next"; // Added import
 
 const MyProducts = () => {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { t } = useTranslation(); // Initialize translation hook
 
   const fetchProducts = async () => {
     try {
@@ -37,7 +39,7 @@ const MyProducts = () => {
 
   const handleDelete = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this product?"
+      t("Are you sure you want to delete this product?"),
     );
     if (!confirmDelete) return;
 
@@ -50,18 +52,18 @@ const MyProducts = () => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
-        }
+        },
       );
       if (!res.ok) throw new Error("Failed to delete");
       setProducts((prev) => prev.filter((product) => product.id !== id));
     } catch (err) {
       console.error("Delete error:", err);
-      alert("Failed to delete the product.");
+      alert(t("Failed to delete the product."));
     }
   };
 
   const filteredProducts = products.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
+    product.name.toLowerCase().includes(searchQuery.toLowerCase()),
   );
 
   return (
@@ -69,13 +71,13 @@ const MyProducts = () => {
       <div className="max-w-[1200px] mx-auto px-8 py-8 bg-[#f4f1eb] mt-8">
         <BackButton />
         <h2 className="text-3xl font-bold text-center mb-8 text-gray-800">
-          My Products
+          {t("My Products")}
         </h2>
 
         <div className="flex justify-center mb-8">
           <input
             type="text"
-            placeholder="Search products..."
+            placeholder={t("Search products...")}
             className="w-full max-w-md px-4 py-2 border bg-white border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -83,9 +85,9 @@ const MyProducts = () => {
         </div>
 
         {loading ? (
-          <p className="text-center">Loading...</p>
+          <p className="text-center">{t("Loading")}...</p>
         ) : filteredProducts.length === 0 ? (
-          <p className="text-center text-gray-600">No products found.</p>
+          <p className="text-center text-gray-600">{t("No products found")}</p>
         ) : (
           <ul className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 list-none">
             {filteredProducts.map((product) => (
@@ -101,7 +103,9 @@ const MyProducts = () => {
                 <h3 className="text-xl font-semibold text-gray-900 mb-2">
                   {product.name}
                 </h3>
-                <p className="mb-1">Price: ${product.price}</p>
+                <p className="mb-1">
+                  {t("Price")}: ${product.price}
+                </p>
                 <p className="mb-4 text-gray-700">{product.description}</p>
 
                 <div className="flex gap-3">
@@ -111,13 +115,13 @@ const MyProducts = () => {
                       navigate(`/seller/edit-product/${product.id}`)
                     }
                   >
-                    Edit
+                    {t("Edit")}
                   </button>
                   <button
                     className="flex-1 bg-red-500 text-white py-2 rounded-md text-sm font-medium hover:bg-red-600 transition"
                     onClick={() => handleDelete(product.id)}
                   >
-                    Delete
+                    {t("Delete")}
                   </button>
                 </div>
               </li>

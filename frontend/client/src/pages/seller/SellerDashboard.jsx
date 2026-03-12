@@ -21,9 +21,10 @@ import {
   FiPackage,
   FiAlertTriangle,
 } from "react-icons/fi";
-import SellerNavBar from "../../components/SellerNavBar"; // adjust path if needed
+import SellerNavBar from "../../components/SellerNavBar";
 import jsPDF from "jspdf";
 import { useRef } from "react";
+import { useTranslation } from "react-i18next"; // Added import
 
 // ---------- Helper mini components ----------
 function KPI({ title, value, delta, icon: Icon, bg = "bg-white" }) {
@@ -57,9 +58,10 @@ function SkeletonCard() {
 
 // ---------- Charts ----------
 function SalesLineChart({ data }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-lg p-4 shadow h-96">
-      <h4 className="font-semibold mb-2">Revenue (Last 30 days)</h4>
+      <h4 className="font-semibold mb-2">{t("Revenue (Last 30 days)")}</h4>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -80,9 +82,10 @@ function SalesLineChart({ data }) {
 }
 
 function DailyBarChart({ data }) {
+  const { t } = useTranslation();
   return (
     <div className="bg-white rounded-lg p-4 shadow h-96">
-      <h4 className="font-semibold mb-2">Daily Sales (Last 7 days)</h4>
+      <h4 className="font-semibold mb-2">{t("Daily Sales (Last 7 days)")}</h4>
       <ResponsiveContainer width="100%" height={300}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
@@ -97,9 +100,9 @@ function DailyBarChart({ data }) {
 }
 
 function BestSellingPie({ data }) {
+  const { t } = useTranslation();
   const COLORS = ["#6366f1", "#06b6d4", "#f97316", "#f43f5e", "#34d399"];
 
-  // Ensure numbers
   const numericData = (data || []).map((item) => ({
     ...item,
     sold: Number(item.sold) || 0,
@@ -107,7 +110,7 @@ function BestSellingPie({ data }) {
 
   return (
     <div className="bg-white rounded-lg p-4 shadow h-96">
-      <h4 className="font-semibold mb-2">Best Selling Products</h4>
+      <h4 className="font-semibold mb-2">{t("Best Selling Products")}</h4>
       <ResponsiveContainer width="100%" height={300}>
         <PieChart>
           <Pie
@@ -135,68 +138,68 @@ function BestSellingPie({ data }) {
   );
 }
 
-// ---------- Tables ----------
-
 // ---------- Main Dashboard Page ----------
 export default function SellerDashboard() {
   const [analytics, setAnalytics] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const reportRef = useRef();
+  const { t } = useTranslation(); // Translation hook for main component
 
   const handleDownloadPDF = () => {
     const pdf = new jsPDF();
-
     const pageWidth = pdf.internal.pageSize.getWidth();
-
     let y = 20;
 
     pdf.setFontSize(18);
-    pdf.text("Seller Performance Report", pageWidth / 2, y, {
+    pdf.text(t("Seller Performance Report"), pageWidth / 2, y, {
       align: "center",
     });
 
     y += 10;
-
     pdf.setFontSize(10);
     pdf.text(
-      `Generated on: ${new Date().toLocaleDateString()}`,
+      `${t("Generated on")}: ${new Date().toLocaleDateString()}`,
       pageWidth / 2,
       y,
-      { align: "center" }
+      { align: "center" },
     );
 
     y += 20;
-
     pdf.setFontSize(14);
-    pdf.text("Summary", 14, y);
+    pdf.text(t("Summary"), 14, y);
 
     y += 10;
-
     pdf.setFontSize(12);
-    pdf.text(`Total Sales: $${Number(data.totalSales || 0).toFixed(2)}`, 14, y);
-    y += 8;
-    pdf.text(`Total Orders: ${data.totalOrders || 0}`, 14, y);
-    y += 8;
     pdf.text(
-      `Average Order Value: $${Number(data.avgOrderValue || 0).toFixed(2)}`,
+      `${t("Total Sales")}: $${Number(data.totalSales || 0).toFixed(2)}`,
       14,
-      y
+      y,
     );
     y += 8;
-    pdf.text(`Low Stock Items: ${(data.lowStock || []).length}`, 14, y);
+    pdf.text(`${t("Total Orders")}: ${data.totalOrders || 0}`, 14, y);
+    y += 8;
+    pdf.text(
+      `${t("Avg Order Value")}: $${Number(data.avgOrderValue || 0).toFixed(2)}`,
+      14,
+      y,
+    );
+    y += 8;
+    pdf.text(`${t("Low Stock")}: ${(data.lowStock || []).length}`, 14, y);
 
     y += 15;
-
     pdf.setFontSize(14);
-    pdf.text("Best Selling Products", 14, y);
+    pdf.text(t("Best Selling Products"), 14, y);
 
     y += 10;
-
     pdf.setFontSize(11);
 
     (data.bestSelling || []).forEach((item, index) => {
-      pdf.text(`${index + 1}. ${item.name} - Sold: ${item.sold}`, 14, y);
+      pdf.text(
+        `${index + 1}. ${item.name} - ${t("Sold")}: ${item.sold}`,
+        14,
+        y,
+      );
       y += 8;
     });
 
@@ -211,21 +214,20 @@ export default function SellerDashboard() {
           "http://localhost:3001/api/seller/dashboard",
           {
             headers: { Authorization: `Bearer ${token}` },
-          }
+          },
         );
         setAnalytics(res.data);
       } catch (err) {
         console.error("Analytics Error:", err);
-        setError(err.message || "Failed to load analytics");
+        setError(err.message || t("Failed to load analytics"));
       } finally {
         setLoading(false);
       }
     };
 
     fetchAnalytics();
-  }, []);
+  }, [t]);
 
-  // Example fallback / mock structure if analytics is missing keys
   const mock = {
     totalSales: 0,
     totalOrders: 0,
@@ -242,26 +244,22 @@ export default function SellerDashboard() {
 
   if (loading) {
     return (
-      <>
-        <div className="p-8 max-w-[1200px] mx-auto mt-8 ">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-            <SkeletonCard />
-          </div>
+      <div className="p-8 max-w-[1200px] mx-auto mt-8 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
+          <SkeletonCard />
         </div>
-      </>
+      </div>
     );
   }
 
   if (error) {
     return (
-      <>
-        <div className="p-8 max-w-[1200px] mx-auto mt-8 text-center text-red-600">
-          {error}
-        </div>
-      </>
+      <div className="p-8 max-w-[1200px] mx-auto mt-8 text-center text-red-600">
+        {error}
+      </div>
     );
   }
 
@@ -273,40 +271,40 @@ export default function SellerDashboard() {
       >
         <div className="max-w-[1200px] mx-auto">
           <h2 className="text-3xl mb-6 text-gray-800 font-bold">
-            Seller Dashboard
+            {t("Seller Dashboard")}
           </h2>
 
           <button
             onClick={handleDownloadPDF}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg shadow mb-6"
           >
-            Download PDF Report
+            {t("Download PDF Report")}
           </button>
 
           {/* KPI Row */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
             <KPI
-              title="Total Sales"
+              title={t("Total Sales")}
               value={`$${Number(data.totalSales || 0).toFixed(2)}`}
               delta={data.salesDelta}
               icon={FiShoppingCart}
               bg="bg-white"
             />
             <KPI
-              title="Total Orders"
+              title={t("Total Orders")}
               value={data.totalOrders || 0}
               delta={data.ordersDelta}
               icon={FiBarChart2}
               bg="bg-white"
             />
             <KPI
-              title="Avg Order Value"
+              title={t("Avg Order Value")}
               value={`$${Number(data.avgOrderValue || 0).toFixed(2)}`}
               icon={FiPackage}
               bg="bg-white"
             />
             <KPI
-              title="Low Stock"
+              title={t("Low Stock")}
               value={(data.lowStock || []).length}
               icon={FiAlertTriangle}
               bg="bg-white"
@@ -324,9 +322,3 @@ export default function SellerDashboard() {
     </>
   );
 }
-
-// Notes:
-// - This single-file component contains multiple subcomponents for simplicity. You may split them into separate files.
-// - Install dependencies: `npm install recharts react-icons axios`.
-// - Backend `/api/seller/dashboard` should return a JSON object with keys used above. Example structure is expected in the `mock` constant.
-// - Customize colors/spacing to match your brand.
