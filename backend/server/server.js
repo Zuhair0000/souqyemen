@@ -18,6 +18,7 @@ const userRoutes = require("./routes/userRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 const adminRoutes = require("./routes/admin");
+const shippingCompanyRoutes = require("./routes/shippingCompanyRoutes");
 const { Socket } = require("dgram");
 const {
   getAllPosts,
@@ -47,6 +48,7 @@ app.use("/api/seller", sellerRoutes); // /api/seller/products, etc.
 app.use("/api/orders", orderRoutes);
 app.use("/api/messages", messageRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/delivery", shippingCompanyRoutes);
 app.get("/api/posts", getAllPosts);
 app.get("/api/posts/:id", getPostById);
 

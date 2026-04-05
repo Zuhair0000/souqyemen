@@ -13,7 +13,7 @@ export default function Search({ setSearchQuery }) {
       <input
         type="text"
         placeholder="Search..."
-        className="w-full px-4 py-2 border border-gray-300 rounded-md text-base outline-none 
+        className="w-full px-6 py-2 border border-gray-300 rounded-md text-base outline-none 
                    focus:border-[#a22f29] focus:ring-2 focus:ring-blue-200"
         onChange={(e) => setSearchQuery(e.target.value)}
       />

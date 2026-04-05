@@ -54,7 +54,7 @@ router.put("/edit-product/:id", async (req, res) => {
   try {
     const [result] = await db.query(
       "UPDATE products SET name = ?, description = ?, price = ?, stock = ? WHERE id = ?",
-      [name, description, price, stock, id]
+      [name, description, price, stock, id],
     );
     if (result.affectedRows === 0)
       return res.status(404).json({ message: "Product not found" });
@@ -91,7 +91,7 @@ router.get("/inbox/:sellerId", async (req, res) => {
        FROM messages m
        JOIN users u ON u.id = m.sender_id
        WHERE m.receiver_id = ?`,
-      [sellerId]
+      [sellerId],
     );
 
     res.json(rows);
@@ -111,6 +111,32 @@ router.get("/api/messages/:user1/:user2", async (req, res) => {
     ],
   }).sort({ createdAt: 1 });
   res.json(messages);
+});
+
+router.get("/delivery-companies", authenticate, async (req, res) => {
+  try {
+    // Assuming you are using mysql2 promise pool
+    const [companies] = await db.query("SELECT * FROM delivery_companies");
+    res.json(companies);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error fetching companies" });
+  }
+});
+
+// Get tracking updates for a specific order (For Seller Portal)
+router.get("/orders/:id/tracking", authenticate, async (req, res) => {
+  const orderId = req.params.id;
+  try {
+    const [tracking] = await db.query(
+      "SELECT update_text, created_at FROM tracking_updates WHERE order_id = ? ORDER BY created_at ASC",
+      [orderId],
+    );
+    res.json(tracking);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error fetching tracking updates" });
+  }
 });
 
 module.exports = router;

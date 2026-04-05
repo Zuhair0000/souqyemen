@@ -6,6 +6,8 @@ import ScrollToTop from "./components/ScrollToTop";
 import SignUpCustomer from "./pages/SignUpCustomer";
 import Login from "./pages/Login";
 import SignUpSeller from "./pages/SignUpSeller";
+// --- NEW IMPORT FOR DELIVERY SIGNUP ---
+import SignUpDelivery from "./pages/SignUpDelivery";
 import Profile from "./pages/customer/Profile";
 import MyOrders from "./pages/customer/MyOrders";
 import Cart from "./pages/customer/Cart";
@@ -26,6 +28,10 @@ import Checkout from "./pages/customer/Checkout";
 import ProtectedRoute from "./components/ProtectedRoute";
 import CustomerLayout from "./pages/customer/CustomerLayout";
 import SellerLayout from "./pages/seller/SellerLayout";
+
+// --- NEW IMPORT FOR DELIVERY PORTAL ---
+// Adjust the path based on where you saved DeliveryOrders.jsx
+import DeliveryOrders from "./pages/delivery/DeliveryOrders";
 
 function App() {
   return (
@@ -83,7 +89,6 @@ function App() {
         </Route>
 
         {/* Seller Routes */}
-
         <Route element={<SellerLayout />}>
           <Route
             path="/seller/dashboard"
@@ -137,11 +142,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* Authentication & Public Routes */}
         <Route path="/signup" element={<SignUpCustomer />} />
         <Route path="/signup-seller" element={<SignUpSeller />} />
+
+        {/* NEW ROUTE: Delivery Sign Up */}
+        <Route path="/signup-delivery" element={<SignUpDelivery />} />
+
         <Route path="/login" element={<Login />} />
 
-        {/* other routes */}
+        {/* Other Protected Routes */}
         <Route
           path="/chat/:id"
           element={
@@ -160,6 +171,16 @@ function App() {
         />
         <Route path="/seller/chat/:id" element={<ChatBox />} />
         <Route path="/admin/pending-sellers" element={<AdminDashboard />} />
+
+        {/* NEW ROUTE: Delivery Company Portal */}
+        <Route
+          path="/delivery/orders"
+          element={
+            <ProtectedRoute>
+              <DeliveryOrders />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </>
   );

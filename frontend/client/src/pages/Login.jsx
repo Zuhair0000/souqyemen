@@ -4,15 +4,15 @@ import logo from "../assets/Logo.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
+import { Mail, Lock } from "lucide-react";
 
 export default function Login() {
   const [formData, setFormData] = useState({ emailOrPhone: "", password: "" });
   const navigate = useNavigate();
   const { t } = useTranslation();
 
-  const handleChange = (e) => {
+  const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
 
   const handleSuccessfulLogin = (data) => {
     localStorage.setItem("token", data.token);
@@ -25,6 +25,8 @@ export default function Login() {
 
     if (role === "admin") {
       navigate("/admin/pending-sellers");
+    } else if (role === "delivery") {
+      navigate("/delivery/orders"); // <-- Redirects to Delivery Portal
     } else if (role === "seller") {
       if (status === "approved") {
         navigate("/seller/dashboard");
@@ -45,14 +47,9 @@ export default function Login() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-
-      if (res.ok) {
-        handleSuccessfulLogin(data);
-      } else {
-        alert(data.message || t("Login failed"));
-      }
+      if (res.ok) handleSuccessfulLogin(data);
+      else alert(data.message || t("Login failed"));
     } catch (err) {
-      console.error("Login Error:", err);
       alert(t("Something went wrong"));
     }
   };
@@ -65,64 +62,82 @@ export default function Login() {
         body: JSON.stringify({ token: credentialResponse.credential }),
       });
       const data = await res.json();
-
-      if (res.ok) {
-        handleSuccessfulLogin(data);
-      } else {
-        alert(data.message || t("Login failed"));
-      }
+      if (res.ok) handleSuccessfulLogin(data);
+      else alert(data.message || t("Login failed"));
     } catch (error) {
-      console.error("Google Auth Error:", error);
       alert(t("Something went wrong"));
     }
   };
 
   return (
-    <>
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-orange-50/30 flex flex-col">
       <NavBar>{t("Need help?")}</NavBar>
-      <div className="flex flex-col md:flex-row justify-between items-center px-6 md:px-24 py-10 gap-5 w-full">
-        <div className="flex-1 flex items-center justify-center text-center mb-6 md:mb-0">
+
+      <div className="flex-1 flex flex-col md:flex-row justify-center items-center px-6 md:px-16 lg:px-24 py-10 gap-10">
+        {/* Left Side: Logo */}
+        <div className="hidden md:flex flex-1 items-center justify-center">
           <img
             src={logo}
             alt="SouqYemen"
-            className="w-40 md:w-[30rem] lg:w-[50rem] h-auto block"
+            className="w-[80%] max-w-[500px] h-auto drop-shadow-2xl rounded-[3rem]"
           />
         </div>
 
-        <div className="flex-1 w-full max-w-md text-start md:me-24">
-          <h2 className="text-2xl md:text-[28px] mb-2">{t("Welcome back")}</h2>
-          <p className="text-base text-gray-700 mb-5">
+        {/* Right Side: Glass Form */}
+        <div className="w-full max-w-[450px] bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-2xl border border-white p-8 md:p-10 text-start">
+          <h2 className="text-3xl font-black text-gray-900 tracking-tight mb-2">
+            {t("Welcome back")}
+          </h2>
+          <p className="text-gray-500 font-medium mb-8">
             {t("Log in to your account")}
           </p>
 
-          <form onSubmit={handleSubmit}>
-            <input
-              type="text"
-              name="emailOrPhone"
-              placeholder={t("Email or Phone Number")}
-              value={formData.emailOrPhone}
-              onChange={handleChange}
-              required
-              className="w-full box-border p-2.5 mb-4 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-red-900 outline-none"
-            />
-            <input
-              type="password"
-              name="password"
-              placeholder={t("Password")}
-              value={formData.password}
-              onChange={handleChange}
-              required
-              className="w-full box-border p-2.5 mb-4 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-red-900 outline-none"
-            />
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                <Mail size={18} />
+              </div>
+              <input
+                type="text"
+                name="emailOrPhone"
+                placeholder={t("Email or Phone")}
+                value={formData.emailOrPhone}
+                onChange={handleChange}
+                required
+                className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all"
+              />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
+                <Lock size={18} />
+              </div>
+              <input
+                type="password"
+                name="password"
+                placeholder={t("Password")}
+                value={formData.password}
+                onChange={handleChange}
+                required
+                className="w-full pl-11 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-rose-400 focus:bg-white outline-none transition-all"
+              />
+            </div>
+
             <button
               type="submit"
-              className="w-full bg-red-900 text-white py-3 text-base rounded cursor-pointer mb-4 border-none hover:bg-red-800 transition-colors"
+              className="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all mt-2"
             >
               {t("Log In")}
             </button>
           </form>
 
-          <div className="mb-4 flex justify-center w-full">
+          <div className="my-6 flex items-center before:flex-1 before:border-t before:border-gray-200 after:flex-1 after:border-t after:border-gray-200">
+            <span className="px-3 text-sm text-gray-400 font-medium">
+              {t("OR")}
+            </span>
+          </div>
+
+          <div className="flex justify-center w-full mb-6">
             <GoogleLogin
               onSuccess={handleGoogleSuccess}
               onError={() => alert(t("Google Sign-In Failed"))}
@@ -130,24 +145,34 @@ export default function Login() {
             />
           </div>
 
-          <Link
-            to="/signup-seller"
-            className="block w-full text-center p-2.5 bg-white border border-gray-300 rounded cursor-pointer text-sm hover:bg-gray-50 transition-colors"
-          >
-            {t("Become a Seller")}
-          </Link>
+          <div className="space-y-3 mb-6">
+            <Link
+              to="/signup-seller"
+              className="flex items-center justify-center w-full py-3.5 bg-white border-2 border-gray-100 text-gray-700 font-bold rounded-xl hover:bg-gray-50 hover:border-gray-200 transition-all"
+            >
+              {t("Become a Seller")}
+            </Link>
 
-          <p className="mt-5 text-sm">
+            {/* NEW: Logistics Link */}
+            <Link
+              to="/signup-delivery"
+              className="flex items-center justify-center w-full py-3.5 bg-indigo-50 border-2 border-indigo-100 text-indigo-700 font-bold rounded-xl hover:bg-indigo-100 hover:border-indigo-200 transition-all"
+            >
+              {t("Join as Logistics Partner")}
+            </Link>
+          </div>
+
+          <p className="text-center text-gray-500 font-medium">
             {t("Don't have an account?")}{" "}
             <Link
               to="/signup"
-              className="text-red-900 underline hover:text-red-700"
+              className="text-rose-500 font-bold hover:underline"
             >
               {t("Create one")}
             </Link>
           </p>
         </div>
       </div>
-    </>
+    </div>
   );
 }

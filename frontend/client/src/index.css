@@ -1,5 +1,66 @@
 @import "tailwindcss";
 
+/* 1. Tailwind v4 Custom Theme Configuration */
+@theme {
+  /* Define custom animations */
+  --animate-fade-slide-up: fadeSlideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1)
+    forwards;
+  --animate-slide-down: slideDown 0.3s ease-out forwards;
+  --animate-float: float 4s ease-in-out infinite;
+
+  /* Define the keyframes for those animations */
+  @keyframes fadeSlideUp {
+    0% {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slideDown {
+    0% {
+      opacity: 0;
+      transform: translateY(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes float {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+/* 2. Global Body Styling (Using standard CSS to avoid VS Code @apply warnings) */
+body {
+  background: linear-gradient(to bottom right, #fdfbf7, #fff5f5, #f4f1eb);
+  min-height: 100vh;
+  color: #1f2937; /* Equivalent to text-gray-800 */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* 3. Hide scrollbars for cleaner horizontal scrolling on categories */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* 4. Your existing fly-img rule */
 #fly-img {
   transition: all 0.7s ease-in-out;
   border-radius: 6px;

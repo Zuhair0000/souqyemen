@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import logo from "../../assets/Logo.jpeg"; // fallback logo image
-import NavBar from "../../components/NavBar";
-import Icons from "../../components/Icons";
+import logo from "../../assets/Logo.jpeg";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
+import { MessageCircle, Calendar } from "lucide-react";
 
 export default function PromotionDetails() {
   const { id } = useParams();
@@ -22,59 +21,81 @@ export default function PromotionDetails() {
       .catch((err) => console.error("Error fetching promotion post:", err));
   }, [id]);
 
-  if (!post) return <div>Loading...</div>;
+  if (!post)
+    return (
+      <div className="min-h-screen flex items-center justify-center text-xl text-rose-500 font-bold animate-pulse">
+        {t("Loading...")}
+      </div>
+    );
 
   const isValidDate = post.created_at && !isNaN(new Date(post.created_at));
 
   return (
-    <>
-      <div className="max-w-[900px] mx-auto mt-8 px-7 border-2 py-8">
-        {/* Seller Info */}
+    <div className="min-h-screen bg-[#f4f1eb] py-8 md:py-12">
+      <div className="max-w-[900px] mx-auto px-4 md:px-8">
         <BackButton />
-        <div className="flex justify-between items-center mb-4">
-          <Link
-            to={`/seller/public/${post.seller_id}`}
-            className="flex items-center gap-3 text-inherit no-underline"
-          >
-            <img
-              src={
-                post.profile_photo
-                  ? `http://localhost:3001${post.profile_photo}`
-                  : logo
-              }
-              alt={post.business_name || t("Business")}
-              className="w-12 h-12 rounded-full object-cover border-2 border-[#a22f29]"
-            />
-            <span className="text-base font-semibold text-[#1c1e21]">
-              {post.business_name || t("Unknown Business")}
-            </span>
-          </Link>
-          <span className="text-sm text-[#65676b]">
-            {isValidDate
-              ? new Date(post.created_at).toLocaleDateString()
-              : t("Unknown date")}
-          </span>
-        </div>
 
-        {/* Post Content */}
-        <h2 className="text-2xl font-semibold mb-4">{post.title}</h2>
-        <p className="mb-4">{post.content}</p>
-        {post.image && (
-          <img
-            src={`http://localhost:3001/${post.image.replace(
-              /^\/?uploads/,
-              "uploads",
-            )}`}
-            alt={post.title}
-            className="w-full max-h-[400px] object-cover rounded-md mb-4"
-          />
-        )}
-        <Link to={`/chat/${post.seller_id}`}>
-          <button className="mt-4 ml-4 px-6 py-3 bg-red-700 text-white rounded-md text-lg hover:bg-red-900 transition">
-            {t("Chat with Seller")}
-          </button>
-        </Link>
+        <div className="bg-white rounded-[2rem] shadow-xl border border-gray-100 overflow-hidden mt-6">
+          {/* Post Image Hero (If exists) */}
+          {post.image && (
+            <div className="w-full h-[300px] md:h-[450px] bg-gray-900 relative">
+              <img
+                src={`http://localhost:3001/${post.image.replace(/^\/?uploads/, "uploads")}`}
+                alt={post.title}
+                className="w-full h-full object-cover opacity-90"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
+            </div>
+          )}
+
+          <div className="p-6 md:p-10 text-start">
+            {/* Seller Info Header */}
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8 pb-8 border-b border-gray-100">
+              <Link
+                to={`/seller/public/${post.seller_id}`}
+                className="flex items-center gap-4 group"
+              >
+                <img
+                  src={
+                    post.profile_photo
+                      ? `http://localhost:3001${post.profile_photo}`
+                      : logo
+                  }
+                  alt={post.business_name || t("Business")}
+                  className="w-16 h-16 rounded-full object-cover border-[3px] border-rose-100 shadow-sm group-hover:border-rose-400 transition-colors"
+                />
+                <div>
+                  <span className="block text-xl font-black text-gray-800 group-hover:text-rose-600 transition-colors">
+                    {post.business_name || t("Unknown Business")}
+                  </span>
+                  <span className="flex items-center gap-1.5 text-sm text-gray-500 font-medium mt-1">
+                    <Calendar size={14} />
+                    {isValidDate
+                      ? new Date(post.created_at).toLocaleDateString()
+                      : t("Unknown date")}
+                  </span>
+                </div>
+              </Link>
+
+              {/* Chat Button */}
+              <Link to={`/chat/${post.seller_id}`}>
+                <button className="flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-rose-500 to-orange-500 text-white rounded-xl font-bold hover:shadow-lg hover:-translate-y-1 transition-all active:scale-95 w-full sm:w-auto">
+                  <MessageCircle size={20} />
+                  {t("Chat with Seller")}
+                </button>
+              </Link>
+            </div>
+
+            {/* Post Typography */}
+            <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-6 leading-tight">
+              {post.title}
+            </h1>
+            <div className="prose prose-lg text-gray-700 max-w-none leading-relaxed whitespace-pre-wrap">
+              {post.content}
+            </div>
+          </div>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

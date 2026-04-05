@@ -5,7 +5,7 @@ exports.getProfile = async (req, res) => {
   try {
     const [rows] = await db.query(
       "SELECT id, name, email, phone, address, role, business_name FROM users WHERE id = ?",
-      [req.user.id]
+      [req.user.id],
     );
     if (rows.length === 0)
       return res.status(404).json({ message: "User not found" });
@@ -22,7 +22,7 @@ exports.updateProfile = async (req, res) => {
   try {
     await db.query(
       "UPDATE users SET name = ?, email = ?, phone = ?, address = ? WHERE id = ?",
-      [name, email, phone, address, req.user.id]
+      [name, email, phone, address, req.user.id],
     );
     res.json({ message: "Profile updated" });
   } catch (err) {
@@ -35,19 +35,23 @@ exports.updateProfile = async (req, res) => {
 // GET /api/user/orders
 exports.getMyOrders = async (req, res) => {
   try {
+    // 1. Fetch Orders and Items
     const [rows] = await db.query(
       `SELECT 
           o.id AS order_id, o.status, o.total,
+          dc.name AS delivery_company_name,
           p.name AS product_name, oi.quantity, oi.price
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         LEFT JOIN products p ON oi.product_id = p.id
+        LEFT JOIN delivery_companies dc ON o.delivery_company_id = dc.id
         WHERE o.customer_id = ?
         ORDER BY o.id DESC`,
-      [req.user.id]
+      [req.user.id],
     );
 
     const ordersMap = {};
+    const orderIds = [];
 
     rows.forEach((row) => {
       if (!ordersMap[row.order_id]) {
@@ -55,8 +59,11 @@ exports.getMyOrders = async (req, res) => {
           id: row.order_id,
           status: row.status,
           total: row.total,
+          delivery_company_name: row.delivery_company_name,
           items: [],
+          tracking: [], // <-- Initialize empty tracking array
         };
+        orderIds.push(row.order_id);
       }
 
       if (row.product_name) {
@@ -68,12 +75,34 @@ exports.getMyOrders = async (req, res) => {
       }
     });
 
+    // 2. Fetch the text updates written by the Delivery Company
+    if (orderIds.length > 0) {
+      const [trackingRows] = await db.query(
+        `SELECT order_id, update_text, created_at 
+         FROM tracking_updates 
+         WHERE order_id IN (?) 
+         ORDER BY created_at ASC`,
+        [orderIds],
+      );
+
+      // Attach the updates to the correct order
+      trackingRows.forEach((track) => {
+        if (ordersMap[track.order_id]) {
+          ordersMap[track.order_id].tracking.push({
+            update_text: track.update_text,
+            created_at: track.created_at,
+          });
+        }
+      });
+    }
+
     res.status(200).json(Object.values(ordersMap));
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Failed to load orders" });
   }
 };
+
 // PUT /api/user/settings
 exports.updateSettings = async (req, res) => {
   const { notificationsEnabled } = req.body;
@@ -101,7 +130,7 @@ exports.getProductsByCategory = async (req, res) => {
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        WHERE p.category_id = ?`,
-      [categoryId]
+      [categoryId],
     );
 
     res.json(products);
@@ -119,7 +148,7 @@ exports.getMessages = async (req, res) => {
        WHERE (sender_id = ? AND receiver_id = ?) 
           OR (sender_id = ? AND receiver_id = ?) 
        ORDER BY timestamp`,
-      [user1, user2, user2, user1]
+      [user1, user2, user2, user1],
     );
     res.json(rows);
   } catch (err) {
