@@ -33,22 +33,30 @@ exports.updateProfile = async (req, res) => {
 
 // GET /api/user/orders
 // GET /api/user/orders
+// GET /api/user/orders
 exports.getMyOrders = async (req, res) => {
   try {
-    // 1. Fetch Orders and Items
     const [rows] = await db.query(
       `SELECT 
           o.id AS order_id, o.status, o.total,
           dc.name AS delivery_company_name,
-          p.name AS product_name, oi.quantity, oi.price
+          oi.product_id AS db_product_id,
+          p.name AS product_name, oi.quantity, oi.price,
+          r.rating AS user_rating /* NEW: Get their past rating! */
         FROM orders o
         LEFT JOIN order_items oi ON o.id = oi.order_id
         LEFT JOIN products p ON oi.product_id = p.id
         LEFT JOIN delivery_companies dc ON o.delivery_company_id = dc.id
+        LEFT JOIN reviews r ON r.order_id = o.id AND r.product_id = oi.product_id AND r.user_id = o.customer_id /* NEW: Join the reviews table */
         WHERE o.customer_id = ?
         ORDER BY o.id DESC`,
       [req.user.id],
     );
+
+    // Let's print the very first raw row from the DB to see if product_id exists!
+    if (rows.length > 0) {
+      console.log("RAW DB ROW:", rows[0]);
+    }
 
     const ordersMap = {};
     const orderIds = [];
@@ -61,21 +69,22 @@ exports.getMyOrders = async (req, res) => {
           total: row.total,
           delivery_company_name: row.delivery_company_name,
           items: [],
-          tracking: [], // <-- Initialize empty tracking array
+          tracking: [],
         };
         orderIds.push(row.order_id);
       }
 
       if (row.product_name) {
         ordersMap[row.order_id].items.push({
+          product_id: row.db_product_id,
           name: row.product_name,
           quantity: row.quantity,
           price: row.price,
+          user_rating: row.user_rating /* NEW: Send it to the frontend! */,
         });
       }
     });
 
-    // 2. Fetch the text updates written by the Delivery Company
     if (orderIds.length > 0) {
       const [trackingRows] = await db.query(
         `SELECT order_id, update_text, created_at 
@@ -85,7 +94,6 @@ exports.getMyOrders = async (req, res) => {
         [orderIds],
       );
 
-      // Attach the updates to the correct order
       trackingRows.forEach((track) => {
         if (ordersMap[track.order_id]) {
           ordersMap[track.order_id].tracking.push({
@@ -98,7 +106,7 @@ exports.getMyOrders = async (req, res) => {
 
     res.status(200).json(Object.values(ordersMap));
   } catch (err) {
-    console.error(err);
+    console.error("Error in getMyOrders:", err);
     res.status(500).json({ message: "Failed to load orders" });
   }
 };

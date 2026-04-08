@@ -3,7 +3,7 @@ import logo from "../assets/Logo.jpeg";
 import { Link } from "react-router-dom";
 import { useCart } from "../context/cartContext";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart } from "lucide-react";
+import { ShoppingCart, Star } from "lucide-react";
 
 export default function Products({ products }) {
   const { addToCart } = useCart();
@@ -15,7 +15,7 @@ export default function Products({ products }) {
   };
 
   return (
-    <div className="p-4 max-w-[1300px] mx-auto my-12">
+    <div className="p-4 max-w-[1600px] mx-auto my-12">
       <div className="flex items-center justify-between mb-10">
         <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
           {t("Products")}
@@ -38,7 +38,6 @@ export default function Products({ products }) {
               className="group no-underline outline-none"
             >
               <div className="relative bg-white rounded-[2rem] p-5 flex flex-col h-[420px] border border-gray-100 hover:border-rose-200 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(244,63,94,0.15)]">
-                {/* Image Container */}
                 <div className="w-full h-52 mb-5 overflow-hidden rounded-2xl bg-gradient-to-br from-gray-50 to-gray-100 relative flex items-center justify-center p-2">
                   <img
                     src={
@@ -55,8 +54,20 @@ export default function Products({ products }) {
                   />
                 </div>
 
-                {/* Details */}
                 <div className="flex flex-col flex-grow text-start">
+                  {/* Rating display added here */}
+                  <div className="flex items-center gap-1 mb-1">
+                    <Star
+                      size={14}
+                      className="fill-yellow-400 text-yellow-400"
+                    />
+                    <span className="text-sm font-bold text-gray-600">
+                      {product.avg_rating
+                        ? parseFloat(product.avg_rating).toFixed(1)
+                        : "5.0"}
+                    </span>
+                  </div>
+
                   <h3 className="text-lg font-bold text-gray-800 line-clamp-2 leading-tight group-hover:text-rose-600 transition-colors">
                     {product.name}
                   </h3>
@@ -65,7 +76,6 @@ export default function Products({ products }) {
                   </p>
                 </div>
 
-                {/* Action Button */}
                 <button
                   onClick={(e) => handleAdd(e, product)}
                   className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-orange-500 text-white px-4 py-3.5 rounded-xl mt-5 font-bold shadow-md transition-all duration-300 hover:shadow-lg hover:from-rose-600 hover:to-orange-600 active:scale-95"

@@ -2,15 +2,22 @@ import React, { useState, useEffect } from "react";
 import CategoriesBar from "../../components/CategoriesBar";
 import Products from "../../components/Products";
 import Hero from "../../components/Hero";
+// You will create this component next!
+// import Sellers from "../../components/Sellers";
 import { useOutletContext } from "react-router-dom";
-import { Truck, ShieldCheck, Store } from "lucide-react";
+import { Truck, ShieldCheck, Store, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import Sellers from "../../components/Sellers";
 
 export default function HomePage() {
   const { selectedCategory, setSelectedCategory, searchQuery } =
     useOutletContext();
   const [products, setProducts] = useState([]);
   const [promotions, setPromotions] = useState([]);
+
+  // 1. ADD THIS STATE: Tracks which view the user is currently on
+  const [viewMode, setViewMode] = useState("products");
+
   const { t } = useTranslation();
 
   const fetchProductsByCategory = async (categoryId) => {
@@ -43,67 +50,53 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20">
-      {/* 1. HERO GOES FIRST */}
       <Hero promotions={promotions} />
 
-      {/* 2. CATEGORIES GO SECOND (Shopee Style) */}
-      <CategoriesBar
-        onCategorySelect={setSelectedCategory}
-        activeCategory={selectedCategory}
-      />
+      {/* 2. THE UI TOGGLE SWITCH */}
+      <div className="max-w-[1600px] mx-auto px-4 mt-8 mb-4 flex justify-center">
+        <div className="bg-gray-200/50 backdrop-blur-md p-1.5 rounded-full inline-flex shadow-inner">
+          <button
+            onClick={() => setViewMode("products")}
+            className={`flex items-center gap-2 px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+              viewMode === "products"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <Store size={18} />
+            {t("Browse Products")}
+          </button>
 
-      {/* 3. FEATURES SECTION */}
-      {/* <div className="max-w-[1300px] mx-auto px-4 my-6">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white/60 backdrop-blur-md border border-rose-100 rounded-[2rem] p-6 flex items-center gap-5 transition-transform hover:-translate-y-1 hover:shadow-lg">
-            <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center text-rose-500 shrink-0">
-              <Store size={32} />
-            </div>
-            <div className="text-start">
-              <h4 className="text-xl font-bold text-gray-800">
-                {t("Local Sellers") || "Local Sellers"}
-              </h4>
-              <p className="text-gray-500 text-sm mt-1">
-                {t("Support Yemeni businesses directly") ||
-                  "Support Yemeni businesses directly"}
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white/60 backdrop-blur-md border border-orange-100 rounded-[2rem] p-6 flex items-center gap-5 transition-transform hover:-translate-y-1 hover:shadow-lg">
-            <div className="w-16 h-16 rounded-full bg-orange-100 flex items-center justify-center text-orange-500 shrink-0">
-              <ShieldCheck size={32} />
-            </div>
-            <div className="text-start">
-              <h4 className="text-xl font-bold text-gray-800">
-                {t("Secure Payments") || "Secure Payments"}
-              </h4>
-              <p className="text-gray-500 text-sm mt-1">
-                {t("100% safe & trusted checkout") ||
-                  "100% safe & trusted checkout"}
-              </p>
-            </div>
-          </div>
-
-          <div className="bg-white/60 backdrop-blur-md border border-red-100 rounded-[2rem] p-6 flex items-center gap-5 transition-transform hover:-translate-y-1 hover:shadow-lg">
-            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center text-red-500 shrink-0">
-              <Truck size={32} />
-            </div>
-            <div className="text-start">
-              <h4 className="text-xl font-bold text-gray-800">
-                {t("Fast Delivery") || "Fast Delivery"}
-              </h4>
-              <p className="text-gray-500 text-sm mt-1">
-                {t("Get your items delivered quickly") ||
-                  "Get your items delivered quickly"}
-              </p>
-            </div>
-          </div>
+          <button
+            onClick={() => setViewMode("sellers")}
+            className={`flex items-center gap-2 px-8 py-2.5 rounded-full text-sm font-bold transition-all duration-300 ${
+              viewMode === "sellers"
+                ? "bg-white text-gray-900 shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            <Users size={18} />
+            {t("Browse Sellers")}
+          </button>
         </div>
-      </div> */}
+      </div>
 
-      {/* 4. PRODUCTS */}
-      <Products products={filterProducts} />
+      {/* 3. CONDITIONAL RENDERING */}
+      {viewMode === "products" ? (
+        <>
+          <CategoriesBar
+            onCategorySelect={setSelectedCategory}
+            activeCategory={selectedCategory}
+          />
+          <Products products={filterProducts} />
+        </>
+      ) : (
+        <div className="max-w-[1600px] mx-auto px-4 text-center">
+          {/* <Users size={48} className="mx-auto text-gray-300 mb-4" />
+          <h3 className="text-xl font-bold text-gray-800">Sellers Directory</h3> */}
+          <Sellers />
+        </div>
+      )}
     </div>
   );
 }

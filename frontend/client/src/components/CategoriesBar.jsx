@@ -91,7 +91,7 @@ export default function CategoriesBar({ onCategorySelect, activeCategory }) {
   };
 
   return (
-    <div className="max-w-[1300px] mx-auto px-4 my-2">
+    <div className="max-w-[1600px] mx-auto px-4 my-2">
       <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 p-4 md:p-6">
         <h3 className="text-lg md:text-xl font-extrabold text-gray-800 mb-4 px-">
           {t("Categories")}

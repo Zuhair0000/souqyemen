@@ -54,7 +54,7 @@ export default function MyProducts() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20 py-8">
-      <div className="max-w-[1300px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton />
 
         <div className="flex flex-col items-center justify-center mb-10 mt-4 text-center">

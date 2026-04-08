@@ -26,7 +26,7 @@ export default function Hero({ promotions }) {
   const post = promotions[currentIndex];
 
   return (
-    <div className="max-w-[1300px] mx-auto my-10 px-4">
+    <div className="max-w-[1600px] mx-auto my-10 px-4">
       <div className="flex items-center justify-between mb-8">
         <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
           {t("Current Promotions")}

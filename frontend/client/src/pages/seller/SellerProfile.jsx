@@ -40,7 +40,7 @@ export default function SellerProfile() {
         </NavBar>
       )}
 
-      <div className="flex-1 max-w-[1300px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <BackButton />
 
         {seller && (

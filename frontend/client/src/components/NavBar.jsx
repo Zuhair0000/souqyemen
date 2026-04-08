@@ -43,7 +43,7 @@ export default function NavBar({ setSelectedCategory, children }) {
 
   return (
     <nav className="w-full bg-white/80 backdrop-blur-xl shadow-sm sticky top-0 z-50 transition-all border-b border-rose-100">
-      <div className="max-w-[1300px] mx-auto flex items-center justify-between px-4 py-3 md:py-4">
+      <div className="max-w-[1600px] mx-auto flex items-center justify-between px-4 py-3 md:py-4">
         {/* BIGGER LOGO & BILINGUAL NAME */}
         <NavLink
           to="/"

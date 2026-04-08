@@ -4,12 +4,10 @@ import logo from "../../assets/Logo.jpeg";
 import { useCart } from "../../context/cartContext";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
-import { ShoppingCart, Store, MessageCircle } from "lucide-react";
+import { ShoppingCart, Store, MessageCircle, Star } from "lucide-react";
 
 export default function ProductDetail() {
   const { id } = useParams();
-
-  // FIXED: Restored your original separate state variables
   const [product, setProduct] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [quantity, setQuantity] = useState(1);
@@ -27,7 +25,7 @@ export default function ProductDetail() {
           throw new Error(`HTTP error! status: ${response.status}`);
         const { product, related } = await response.json();
         setProduct(product);
-        setRelatedProducts(related); // FIXED: properly setting related products
+        setRelatedProducts(related);
       } catch (error) {
         console.error("Failed to fetch product:", error.message);
       }
@@ -49,11 +47,10 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-white">
-      <div className="max-w-[1300px] mx-auto px-4 md:px-8 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         <BackButton />
 
         <div className="flex flex-col lg:flex-row gap-12 mt-6 mb-16">
-          {/* Left: Glowing Image Showcase */}
           <div className="w-full lg:w-1/2 flex justify-center">
             <div className="relative w-full max-w-[500px] aspect-square rounded-[2.5rem] bg-gradient-to-br from-rose-50 to-orange-50 flex items-center justify-center p-8 shadow-inner border border-rose-100/50 group">
               <img
@@ -68,11 +65,25 @@ export default function ProductDetail() {
             </div>
           </div>
 
-          {/* Right: Product Details */}
           <div className="w-full lg:w-1/2 flex flex-col justify-center text-start">
-            <span className="inline-block px-4 py-1.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold w-max mb-4">
-              {product.category}
-            </span>
+            {/* Category and Rating Section */}
+            <div className="flex items-center gap-4 mb-4">
+              <span className="inline-block px-4 py-1.5 bg-gray-100 text-gray-600 rounded-xl text-sm font-bold w-max">
+                {product.category}
+              </span>
+              <div className="flex items-center gap-1.5">
+                <Star size={20} className="fill-yellow-400 text-yellow-400" />
+                <span className="font-black text-lg text-gray-700">
+                  {product.avg_rating
+                    ? parseFloat(product.avg_rating).toFixed(1)
+                    : "5.0"}
+                </span>
+                <span className="text-gray-400 text-sm font-medium">
+                  ({product.total_reviews || 0} {t("reviews")})
+                </span>
+              </div>
+            </div>
+
             <h1 className="text-4xl md:text-5xl font-black text-gray-900 leading-tight mb-4">
               {product.name}
             </h1>
@@ -103,7 +114,6 @@ export default function ProductDetail() {
               <ShoppingCart size={24} /> {t("Add to cart")}
             </button>
 
-            {/* Seller Info Card */}
             <div className="bg-rose-50/50 border border-rose-100 rounded-[1.5rem] p-6 flex flex-col sm:flex-row items-center sm:justify-between gap-4">
               <div className="flex items-center gap-3 text-rose-900">
                 <Store size={24} className="text-rose-500" />
@@ -130,9 +140,8 @@ export default function ProductDetail() {
         </div>
       </div>
 
-      {/* Related Products Section */}
       <div className="bg-rose-50/50 py-16">
-        <div className="max-w-[1300px] mx-auto px-4 md:px-8">
+        <div className="max-w-[1600px] mx-auto px-4 md:px-8">
           <h3 className="text-3xl font-extrabold text-gray-800 mb-10">
             {t("Related products")}
           </h3>
@@ -157,6 +166,20 @@ export default function ProductDetail() {
                       }}
                     />
                   </div>
+
+                  {/* Related Product Rating added here too */}
+                  <div className="flex items-center gap-1 mb-1">
+                    <Star
+                      size={12}
+                      className="fill-yellow-400 text-yellow-400"
+                    />
+                    <span className="text-xs font-bold text-gray-500">
+                      {item.avg_rating
+                        ? parseFloat(item.avg_rating).toFixed(1)
+                        : "5.0"}
+                    </span>
+                  </div>
+
                   <h4 className="font-bold text-gray-800 line-clamp-1 mb-1">
                     {item.name}
                   </h4>

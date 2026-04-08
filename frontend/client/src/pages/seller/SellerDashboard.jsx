@@ -347,7 +347,7 @@ export default function SellerDashboard() {
 
   if (loading)
     return (
-      <div className="p-8 max-w-[1300px] mx-auto mt-8 bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20 min-h-screen animate-[fadeSlideUp_0.4s_ease_forwards]">
+      <div className="p-8 max-w-[1600px] mx-auto mt-8 bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20 min-h-screen animate-[fadeSlideUp_0.4s_ease_forwards]">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <SkeletonCard />
           <SkeletonCard />
