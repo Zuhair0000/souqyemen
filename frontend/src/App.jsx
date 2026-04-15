@@ -1,0 +1,183 @@
+import HomePage from "./pages/customer/HomePage";
+import "./index.css";
+import { Route, Routes } from "react-router-dom";
+import ProductDetail from "./pages/customer/ProductDetail";
+import ScrollToTop from "./components/ScrollToTop";
+import SignUpCustomer from "./pages/SignUpCustomer";
+import Login from "./pages/Login";
+import SignUpBusiness from "./pages/SignUpBusiness";
+
+import Profile from "./pages/customer/Profile";
+import MyOrders from "./pages/customer/MyOrders";
+import Cart from "./pages/customer/Cart";
+import SellerDashboard from "./pages/seller/SellerDashboard";
+import MyProducts from "./pages/seller/MyProducts";
+import AddProduct from "./pages/seller/AddProduct";
+import EditProduct from "./pages/seller/EditProduct";
+import SellerOrders from "./pages/seller/SellerOrders";
+import SellerProfile from "./pages/seller/SellerProfile";
+import ChatBox from "./components/ChatBox";
+import Inbox from "./pages/Inbox";
+import AdminDashboard from "./pages/admin/AdminDashboard";
+import SellerPosts from "./pages/seller/SellerPosts";
+import PromotionsFeed from "./pages/customer/PromotionsFeed";
+import PromotionDetails from "./pages/customer/PromotioDetail";
+import SettingsPage from "./pages/Settings";
+import Checkout from "./pages/customer/Checkout";
+import ProtectedRoute from "./components/ProtectedRoute";
+import CustomerLayout from "./pages/customer/CustomerLayout";
+import SellerLayout from "./pages/seller/SellerLayout";
+import DeliveryOrders from "./pages/delivery/DeliveryOrders";
+import Footer from "./components/Footer";
+
+function App() {
+  return (
+    <>
+      <ScrollToTop />
+      <Routes>
+        {/* Customer Routes */}
+        <Route element={<CustomerLayout />}>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <HomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/product/:id" element={<ProductDetail />} />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/orders"
+            element={
+              <ProtectedRoute>
+                <MyOrders />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <SettingsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            }
+          />
+          <Route path="/checkout" element={<Checkout />} />
+
+          <Route path="/promotions" element={<PromotionsFeed />} />
+          <Route path="/promotions/:id" element={<PromotionDetails />} />
+        </Route>
+
+        {/* Seller Routes */}
+        <Route element={<SellerLayout />}>
+          <Route
+            path="/seller/dashboard"
+            element={
+              <ProtectedRoute>
+                <SellerDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/add-product"
+            element={
+              <ProtectedRoute>
+                <AddProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/my-products"
+            element={
+              <ProtectedRoute>
+                <MyProducts />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/edit-product/:id"
+            element={
+              <ProtectedRoute>
+                <EditProduct />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/seller/orders/:id/status"
+            element={
+              <ProtectedRoute>
+                <SellerOrders />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/seller/posts" element={<SellerPosts />} />
+        </Route>
+
+        <Route
+          path="/seller/public/:id"
+          element={
+            <ProtectedRoute>
+              <SellerProfile />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Authentication & Public Routes */}
+        <Route path="/signup" element={<SignUpCustomer />} />
+        <Route path="/signup-business" element={<SignUpBusiness />} />
+        <Route path="/login" element={<Login />} />
+
+        {/* Other Protected Routes */}
+        <Route
+          path="/chat/:id"
+          element={
+            <ProtectedRoute>
+              <ChatBox />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/seller/inbox"
+          element={
+            <ProtectedRoute>
+              <Inbox />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/seller/chat/:id" element={<ChatBox />} />
+        <Route path="/admin/pending-sellers" element={<AdminDashboard />} />
+
+        {/* NEW ROUTE: Delivery Company Portal */}
+        <Route
+          path="/delivery/orders"
+          element={
+            <ProtectedRoute>
+              <DeliveryOrders />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+      <Footer />
+    </>
+  );
+}
+
+export default App;
