@@ -9,8 +9,6 @@ export default function RecommendedForYou({ userId }) {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [refresh, setRefresh] = useState(0);
-
   const { addToCart } = useCart();
   const { t } = useTranslation();
 
@@ -55,7 +53,7 @@ export default function RecommendedForYou({ userId }) {
     } else {
       setLoading(false);
     }
-  }, [userId, refresh]);
+  }, [userId]);
 
   if (loading) {
     return (
@@ -81,7 +79,6 @@ export default function RecommendedForYou({ userId }) {
     );
   }
 
-  // Hide the section completely if the AI has no suggestions yet
   if (products.length === 0) {
     return null;
   }
@@ -93,13 +90,6 @@ export default function RecommendedForYou({ userId }) {
           {t("Recommended For You")}
           <span className="block h-1.5 w-16 bg-gradient-to-r from-rose-500 to-orange-400 mt-3 rounded-full"></span>
         </h2>
-
-        <button
-          onClick={() => setRefresh((prev) => prev + 1)}
-          className="self-start sm:self-auto text-sm bg-white border border-gray-200 hover:border-rose-300 hover:text-rose-600 px-4 py-2 rounded-xl text-gray-600 font-bold shadow-sm transition-all duration-300"
-        >
-          🔄 {t("Refresh AI")}
-        </button>
       </div>
 
       <div className="grid gap-6 md:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -110,7 +100,6 @@ export default function RecommendedForYou({ userId }) {
             className="group no-underline outline-none"
           >
             <div className="relative bg-white rounded-[2rem] p-5 flex flex-col h-[420px] border border-gray-100 hover:border-rose-200 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(244,63,94,0.15)]">
-              {/* AI Match Floating Badge (The only unique part for recommendations) */}
               <div className="absolute top-7 right-7 z-10 bg-gradient-to-r from-emerald-500 to-teal-500 text-white text-[10px] uppercase tracking-wider font-bold px-3 py-1 rounded-full shadow-md flex items-center gap-1 backdrop-blur-sm">
                 <span>
                   ✨ {Math.round(product.predicted_rating * 20)}% Match
