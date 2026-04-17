@@ -4,12 +4,21 @@ import logo from "../assets/Logo.jpeg";
 import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
-import { Mail, Lock, Briefcase } from "lucide-react";
+import { Mail, Lock, Briefcase, X, Loader2, CheckCircle } from "lucide-react";
 
 export default function Login() {
   const [formData, setFormData] = useState({ emailOrPhone: "", password: "" });
   const navigate = useNavigate();
   const { t } = useTranslation();
+
+  // --- PASSWORD RESET STATES ---
+  const [showResetModal, setShowResetModal] = useState(false);
+  const [resetStep, setResetStep] = useState(1); // 1: Email, 2: OTP, 3: New Password
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetOtp, setResetOtp] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetError, setResetError] = useState("");
 
   const handleChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -69,8 +78,87 @@ export default function Login() {
     }
   };
 
+  // --- PASSWORD RESET HANDLERS ---
+  const handleSendResetOtp = async (e) => {
+    e.preventDefault();
+    setResetLoading(true);
+    setResetError("");
+    try {
+      // Reusing your existing OTP endpoint
+      const res = await fetch("http://localhost:3001/api/auth/send-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail }),
+      });
+      if (res.ok) setResetStep(2);
+      else {
+        const error = await res.json();
+        setResetError(error.message || t("Failed to send verification code."));
+      }
+    } catch (err) {
+      setResetError(t("Server error."));
+    }
+    setResetLoading(false);
+  };
+
+  const handleVerifyResetOtp = async (e) => {
+    e.preventDefault();
+    setResetLoading(true);
+    setResetError("");
+    try {
+      // Reusing your existing OTP verification endpoint
+      const res = await fetch("http://localhost:3001/api/auth/verify-otp", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail, otp: resetOtp }),
+      });
+      if (res.ok) setResetStep(3);
+      else setResetError(t("Incorrect or expired code."));
+    } catch (err) {
+      setResetError(t("Server error."));
+    }
+    setResetLoading(false);
+  };
+
+  const handleUpdatePassword = async (e) => {
+    e.preventDefault();
+    if (newPassword.length < 6) {
+      setResetError(t("Password must be at least 6 characters."));
+      return;
+    }
+    setResetLoading(true);
+    setResetError("");
+    try {
+      // Calls a new endpoint to actually update the password
+      const res = await fetch("http://localhost:3001/api/auth/reset-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: resetEmail, newPassword }),
+      });
+      if (res.ok) {
+        alert(t("Password updated successfully! You can now log in."));
+        closeResetModal();
+      } else {
+        const error = await res.json();
+        setResetError(error.message || t("Failed to update password."));
+      }
+    } catch (err) {
+      setResetError(t("Server error."));
+    }
+    setResetLoading(false);
+  };
+
+  const closeResetModal = () => {
+    setShowResetModal(false);
+    setResetStep(1);
+    setResetEmail("");
+    setResetOtp("");
+    setNewPassword("");
+    setResetError("");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-orange-50/30 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-rose-50/50 via-white to-orange-50/30 flex flex-col relative">
       <NavBar>{t("Need help?")}</NavBar>
 
       <div className="flex-1 flex flex-col md:flex-row justify-center items-center px-6 md:px-16 lg:px-24 py-10 gap-10">
@@ -123,6 +211,17 @@ export default function Login() {
               />
             </div>
 
+            {/* FORGOT PASSWORD LINK */}
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => setShowResetModal(true)}
+                className="text-sm font-bold text-rose-500 hover:text-rose-600 hover:underline transition-colors"
+              >
+                {t("Forgot Password?")}
+              </button>
+            </div>
+
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-rose-500 to-orange-500 text-white py-4 rounded-xl font-bold text-lg shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all mt-2"
@@ -145,7 +244,6 @@ export default function Login() {
             />
           </div>
 
-          {/* THE NEW UNIFIED BUSINESS BUTTON */}
           <div className="mb-6">
             <Link
               to="/signup-business"
@@ -167,6 +265,138 @@ export default function Login() {
           </p>
         </div>
       </div>
+
+      {/* --- FORGOT PASSWORD MODAL --- */}
+      {showResetModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-md p-8 relative animate-in fade-in zoom-in duration-200">
+            <button
+              onClick={closeResetModal}
+              className="absolute top-5 right-5 text-gray-400 hover:text-gray-700 transition-colors"
+            >
+              <X size={20} />
+            </button>
+
+            {resetStep === 1 && (
+              <form onSubmit={handleSendResetOtp} className="space-y-4">
+                <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-500 flex items-center justify-center mx-auto mb-4">
+                  <Mail size={24} />
+                </div>
+                <h3 className="text-2xl font-black text-center text-gray-900 mb-2">
+                  {t("Reset Password")}
+                </h3>
+                <p className="text-center text-gray-500 text-sm mb-6">
+                  {t(
+                    "Enter your email address to receive a verification code.",
+                  )}
+                </p>
+                <input
+                  type="email"
+                  placeholder={t("Email")}
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-rose-400"
+                />
+                {resetError && (
+                  <p className="text-rose-500 text-sm font-bold text-center">
+                    {resetError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="w-full bg-rose-500 text-white font-bold py-3 rounded-xl hover:bg-rose-600 transition-colors flex justify-center items-center gap-2"
+                >
+                  {resetLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    t("Send Code")
+                  )}
+                </button>
+              </form>
+            )}
+
+            {resetStep === 2 && (
+              <form onSubmit={handleVerifyResetOtp} className="space-y-4">
+                <div className="w-12 h-12 rounded-full bg-indigo-100 text-indigo-500 flex items-center justify-center mx-auto mb-4">
+                  <Lock size={24} />
+                </div>
+                <h3 className="text-2xl font-black text-center text-gray-900 mb-2">
+                  {t("Verify Code")}
+                </h3>
+                <p className="text-center text-gray-500 text-sm mb-6">
+                  {t("Enter the 6-digit code sent to")} <br />
+                  <span className="font-bold text-gray-800">{resetEmail}</span>
+                </p>
+                <input
+                  type="text"
+                  maxLength="6"
+                  placeholder="000000"
+                  value={resetOtp}
+                  onChange={(e) => setResetOtp(e.target.value)}
+                  required
+                  className="w-full text-center text-3xl font-black tracking-[0.5em] py-4 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-indigo-400"
+                />
+                {resetError && (
+                  <p className="text-rose-500 text-sm font-bold text-center">
+                    {resetError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="w-full bg-indigo-600 text-white font-bold py-3 rounded-xl hover:bg-indigo-700 transition-colors flex justify-center items-center gap-2"
+                >
+                  {resetLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    t("Verify")
+                  )}
+                </button>
+              </form>
+            )}
+
+            {resetStep === 3 && (
+              <form onSubmit={handleUpdatePassword} className="space-y-4">
+                <div className="w-12 h-12 rounded-full bg-green-100 text-green-500 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle size={24} />
+                </div>
+                <h3 className="text-2xl font-black text-center text-gray-900 mb-2">
+                  {t("Set New Password")}
+                </h3>
+                <p className="text-center text-gray-500 text-sm mb-6">
+                  {t("Please enter a new strong password for your account.")}
+                </p>
+                <input
+                  type="password"
+                  placeholder={t("New Password")}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl outline-none focus:ring-2 focus:ring-green-400"
+                />
+                {resetError && (
+                  <p className="text-rose-500 text-sm font-bold text-center">
+                    {resetError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={resetLoading}
+                  className="w-full bg-green-500 text-white font-bold py-3 rounded-xl hover:bg-green-600 transition-colors flex justify-center items-center gap-2"
+                >
+                  {resetLoading ? (
+                    <Loader2 size={18} className="animate-spin" />
+                  ) : (
+                    t("Update Password")
+                  )}
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

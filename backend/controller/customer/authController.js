@@ -111,6 +111,36 @@ exports.login = async (req, res) => {
   }
 };
 
+exports.resetPassword = async (req, res) => {
+  const { email, newPassword } = req.body;
+
+  if (!email || !newPassword) {
+    return res
+      .status(400)
+      .json({ message: "Email and new password are required" });
+  }
+
+  try {
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    const [result] = await db.query(
+      "UPDATE users SET password = ? WHERE email = ?",
+      [hashedPassword, email],
+    );
+
+    if (result.affectedRows === 0) {
+      return res
+        .status(404)
+        .json({ message: "No account found with this email" });
+    }
+
+    res.json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error("Error resetting password:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 exports.getProfile = async (req, res) => {
   const userId = req.user.id;
 

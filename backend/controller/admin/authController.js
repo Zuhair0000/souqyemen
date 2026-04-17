@@ -1,6 +1,14 @@
 const db = require("../../config/db");
+const nodemailer = require("nodemailer");
 
-// Fetch both pending Sellers and pending Delivery Companies
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
 exports.getPendingPartners = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -14,7 +22,6 @@ exports.getPendingPartners = async (req, res) => {
   }
 };
 
-// Approve or Reject either Sellers or Delivery Companies
 exports.updatePartnerStatus = async (req, res) => {
   const { id } = req.params;
   const { status } = req.body;
@@ -24,31 +31,79 @@ exports.updatePartnerStatus = async (req, res) => {
   }
 
   try {
-    const [result] = await db.query(
-      "UPDATE users SET status = ? WHERE id = ? AND role IN ('seller', 'delivery')",
-      [status, id],
+    const [userRows] = await db.query(
+      "SELECT name, email FROM users WHERE id = ? AND role IN ('seller', 'delivery')",
+      [id],
     );
 
-    // Optional: Add a quick check to make sure a row was actually updated
-    if (result.affectedRows === 0) {
+    if (userRows.length === 0) {
       return res
         .status(404)
         .json({ message: "Account not found or invalid role" });
     }
 
-    res.json({ message: `Account successfully ${status}` });
+    const { name: userName, email: userEmail } = userRows[0];
+
+    await db.query("UPDATE users SET status = ? WHERE id = ?", [status, id]);
+
+    const subject =
+      status === "approved"
+        ? "تمت الموافقة على حسابك في سوق اليمن! | Your SouqYemen Account is Approved!"
+        : "تحديث بخصوص حسابك في سوق اليمن | Update on your SouqYemen Account";
+
+    const htmlContent =
+      status === "approved"
+        ? `
+          <div dir="rtl" style="text-align: right; font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #a22f29;">مرحباً بك في سوق اليمن، ${userName}!</h2>
+            <p>أخبار رائعة! تمت <strong>الموافقة</strong> على حساب الشريك الخاص بك.</p>
+            <p>يمكنك الآن تسجيل الدخول إلى لوحة التحكم الخاصة بك والبدء في إدارة عملك.</p>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0;" />
+          
+          <div dir="ltr" style="text-align: left; font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #a22f29;">Welcome to SouqYemen, ${userName}!</h2>
+            <p>Great news! Your partner account has been <strong>approved</strong>.</p>
+            <p>You can now log in to your dashboard and start managing your business.</p>
+          </div>
+        `
+        : `
+          <div dir="rtl" style="text-align: right; font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #a22f29;">مرحباً ${userName}،</h2>
+            <p>نأسف لإبلاغك بأنه قد تم <strong>رفض</strong> طلب تسجيل حساب الشريك الخاص بك في الوقت الحالي.</p>
+            <p>يرجى التأكد من أن المستندات المرفوعة تتطابق مع تفاصيل عملك. تواصل مع الدعم الفني إذا كنت تعتقد أن هذا خطأ.</p>
+          </div>
+          
+          <hr style="border: none; border-top: 1px solid #eee; margin: 25px 0;" />
+          
+          <div dir="ltr" style="text-align: left; font-family: Arial, sans-serif; color: #333;">
+            <h2 style="color: #a22f29;">Hello ${userName},</h2>
+            <p>We regret to inform you that your partner account registration has been <strong>declined</strong> at this time.</p>
+            <p>Please ensure your uploaded documents match your business details. Contact support if you believe this was a mistake.</p>
+          </div>
+        `;
+
+    try {
+      await transporter.sendMail({
+        from: '"SouqYemen Admin" <no-reply@souqyemen.com>',
+        to: userEmail,
+        subject: subject,
+        html: htmlContent,
+      });
+    } catch (mailError) {
+      console.error("Email failed to send, but status was updated:", mailError);
+    }
+
+    res.json({ message: `Account successfully ${status} and email sent.` });
   } catch (error) {
     console.error("Error updating account status:", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
 
-// Fetch all users (Customers, Sellers, and Delivery Companies)
 exports.getAllUsers = async (req, res) => {
   try {
-    // Note: "role != 'admin'" automatically includes 'delivery', 'seller', and 'customer'.
-    // If you want to include banned users in the admin list (so the admin can see them),
-    // simply remove "AND status != 'banned'".
     const [users] = await db.query("SELECT * FROM users WHERE role != 'admin'");
 
     res.json(users);
@@ -58,7 +113,6 @@ exports.getAllUsers = async (req, res) => {
   }
 };
 
-// Ban a user (e.g., set status to 'banned')
 exports.banUser = async (req, res) => {
   const { id } = req.params;
 
@@ -71,12 +125,10 @@ exports.banUser = async (req, res) => {
   }
 };
 
-// This smartly restores the user's status based on their role
 exports.unbanUser = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // Customers go back to 'active', Sellers/Delivery go back to 'approved'
     await db.query(
       `
       UPDATE users 
@@ -93,7 +145,6 @@ exports.unbanUser = async (req, res) => {
   }
 };
 
-// Fetch all products
 exports.getAllProducts = async (req, res) => {
   try {
     const [products] = await db.query("SELECT * FROM products");
@@ -104,7 +155,6 @@ exports.getAllProducts = async (req, res) => {
   }
 };
 
-// Delete a product
 exports.deleteProduct = async (req, res) => {
   const { id } = req.params;
 
@@ -117,7 +167,6 @@ exports.deleteProduct = async (req, res) => {
   }
 };
 
-// Fetch all orders
 exports.getAllOrders = async (req, res) => {
   try {
     const [orders] = await db.query("SELECT * FROM orders");
@@ -130,7 +179,6 @@ exports.getAllOrders = async (req, res) => {
 
 exports.generateReport = async (req, res) => {
   try {
-    // 1️⃣ Basic counts
     const [[users]] = await db.query(
       "SELECT COUNT(*) as totalUsers FROM users",
     );
@@ -151,21 +199,6 @@ exports.generateReport = async (req, res) => {
       "SELECT IFNULL(SUM(total),0) as totalRevenue FROM orders WHERE status='completed'",
     );
 
-    // 2️⃣ Top 5 sellers by revenue
-    // const [topSellers] = await db.query(`
-    //   SELECT u.id, u.name,
-    //          IFNULL(SUM(o.total),0) as revenue
-    //   FROM users u
-    //   LEFT JOIN orders o
-    //     ON u.id = o.seller_id
-    //     AND o.status='completed'
-    //   WHERE u.role='seller'
-    //   GROUP BY u.id
-    //   ORDER BY revenue DESC
-    //   LIMIT 5
-    // `);
-
-    // 3️⃣ Top 5 products (ONLY if order_items exists)
     const [topProducts] = await db.query(`
       SELECT p.name,
              IFNULL(SUM(oi.quantity),0) as totalSold
@@ -185,7 +218,6 @@ exports.generateReport = async (req, res) => {
       totalProducts: products.totalProducts,
       totalOrders: orders.totalOrders,
       totalRevenue: revenue.totalRevenue,
-      // topSellers,
       topProducts,
     });
   } catch (error) {

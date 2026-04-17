@@ -36,13 +36,17 @@ export default function PendingPartners() {
     try {
       const token = localStorage.getItem("token");
       await axios.put(
-        `http://localhost:3001/api/admin/seller/${id}/status`,
+        `http://localhost:3001/api/admin/partner/${id}/status`,
         { status },
         { headers: { Authorization: `Bearer ${token}` } },
       );
+
       setPartners((prev) => prev.filter((s) => s.id !== id));
+
+      alert(t(`Partner successfully ${status}!`));
     } catch (err) {
       console.error("Error updating status", err);
+      alert(t("Failed to update status"));
     }
   };
 

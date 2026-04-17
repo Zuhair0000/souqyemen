@@ -4,7 +4,6 @@ const multer = require("multer");
 const db = require("../config/db");
 const nodemailer = require("nodemailer");
 
-// --- NODEMAILER SETUP ---
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -13,10 +12,8 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// Simple in-memory storage for OTPs
 const otpStore = {};
 
-// --- CONTROLLER IMPORTS ---
 const {
   registerCustomer,
   login,
@@ -24,11 +21,11 @@ const {
   updateProfile,
   changePassword,
   googleLogin,
+  resetPassword,
 } = require("../controller/customer/authController");
 
 const { registerSeller } = require("../controller/seller/authController");
 
-// ⚠️ Make sure this path points to wherever you saved the delivery controller!
 const {
   registerCompany,
 } = require("../controller/delivery/deliveryController");
@@ -38,19 +35,12 @@ const {
   authorizeRoles,
 } = require("../middleware/authMiddleware");
 
-// --- MULTER SETUP ---
-// We can use this exact same storage logic for BOTH sellers and delivery companies
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, "uploads/"),
   filename: (req, file, cb) => cb(null, Date.now() + "-" + file.originalname),
 });
 const upload = multer({ storage });
 
-// ==========================================
-//                 ROUTES
-// ==========================================
-
-// --- OTP VERIFICATION ROUTES ---
 router.post("/send-otp", async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ message: "Email is required" });
@@ -88,11 +78,9 @@ router.post("/verify-otp", (req, res) => {
   res.status(200).json({ message: "Email verified successfully" });
 });
 
-// --- REGISTRATION ROUTES ---
 router.post("/register/customer", registerCustomer);
 router.post("/google/login", googleLogin);
 
-// Seller Registration
 router.post(
   "/register/seller",
   upload.fields([
@@ -102,9 +90,8 @@ router.post(
   registerSeller,
 );
 
-// NEW: Delivery Company Registration
 router.post(
-  "/register/shipping", // <-- Matches the endpoint in your React file
+  "/register/shipping",
   upload.fields([
     { name: "idPhoto", maxCount: 1 },
     { name: "selfieWithId", maxCount: 1 },
@@ -112,13 +99,12 @@ router.post(
   registerCompany,
 );
 
-// --- ACCOUNT ROUTES ---
 router.post("/login", login);
+router.post("/reset-password", resetPassword);
 router.get("/profile", authenticate, getProfile);
 router.put("/profile", authenticate, updateProfile);
 router.put("/change-password", authenticate, changePassword);
 
-// --- PROTECTED TEST ROUTES ---
 router.get("/protected", authenticate, (req, res) => {
   res.json({ message: `Hello ${req.user.role}, access granted!` });
 });

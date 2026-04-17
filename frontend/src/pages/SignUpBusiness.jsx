@@ -18,20 +18,22 @@ import {
   Building,
 } from "lucide-react";
 
+const initialFormData = {
+  role: "seller",
+  businessName: "",
+  fullName: "",
+  email: "",
+  phoneNumber: "",
+  password: "",
+  idPhoto: null,
+  selfieWithId: null,
+};
+
 export default function SignUpBusiness() {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({
-    role: "seller",
-    businessName: "",
-    fullName: "",
-    email: "",
-    phoneNumber: "",
-    password: "",
-    idPhoto: null,
-    selfieWithId: null,
-  });
+  const [formData, setFormData] = useState(initialFormData);
 
   const [isEmailVerified, setIsEmailVerified] = useState(false);
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -41,6 +43,9 @@ export default function SignUpBusiness() {
 
   const [agreePolicies, setAgreePolicies] = useState(false);
   const [showPolicies, setShowPolicies] = useState(false);
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -113,6 +118,9 @@ export default function SignUpBusiness() {
       return;
     }
 
+    // Trigger the loading state
+    setIsSubmitting(true);
+
     const data = new FormData();
     Object.keys(formData).forEach((key) => data.append(key, formData[key]));
 
@@ -126,13 +134,18 @@ export default function SignUpBusiness() {
       const result = await res.json();
 
       if (res.ok) {
-        alert(t("Submitted for review! You will be notified upon approval."));
-        navigate("/login");
+        setFormData(initialFormData);
+        setIsEmailVerified(false);
+        setAgreePolicies(false);
+        setShowSuccessModal(true);
       } else {
         alert(result.message || t("Failed to register account"));
       }
     } catch (error) {
       console.error("Error:", error);
+      alert(t("Something went wrong during submission."));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -177,7 +190,6 @@ export default function SignUpBusiness() {
             encType="multipart/form-data"
             className="space-y-4"
           >
-            {/* ROLE SELECTION TOGGLE */}
             <div className="flex bg-gray-100 p-1 rounded-xl mb-6">
               <button
                 type="button"
@@ -250,7 +262,6 @@ export default function SignUpBusiness() {
               </div>
             </div>
 
-            {/* EMAIL WITH VERIFICATION BUTTON */}
             <div className="relative flex gap-2">
               <div className="relative flex-1">
                 <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-gray-400">
@@ -333,7 +344,6 @@ export default function SignUpBusiness() {
               </div>
             </div>
 
-            {/* FILE UPLOADS */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
               <label
                 className={`flex flex-col items-center justify-center w-full h-24 border-2 border-dashed rounded-xl cursor-pointer transition-colors ${
@@ -402,7 +412,6 @@ export default function SignUpBusiness() {
               </label>
             </div>
 
-            {/* POLICIES AGREEMENT */}
             <div className="flex items-center gap-3 pt-4">
               <input
                 type="checkbox"
@@ -434,19 +443,25 @@ export default function SignUpBusiness() {
               </label>
             </div>
 
-            {/* THE UNIFIED DYNAMIC BUTTON */}
             <button
               type="submit"
-              disabled={!isEmailVerified || !agreePolicies}
-              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all mt-6 ${
-                !isEmailVerified || !agreePolicies
+              disabled={!isEmailVerified || !agreePolicies || isSubmitting}
+              className={`w-full py-4 rounded-xl font-bold text-lg shadow-lg transition-all flex justify-center items-center gap-2 mt-6 ${
+                !isEmailVerified || !agreePolicies || isSubmitting
                   ? "bg-gray-300 text-gray-500 cursor-not-allowed"
                   : formData.role === "seller"
                     ? "bg-gradient-to-r from-rose-500 to-orange-500 text-white hover:shadow-xl hover:-translate-y-0.5"
                     : "bg-indigo-600 hover:bg-indigo-700 text-white hover:shadow-xl hover:-translate-y-0.5"
               }`}
             >
-              {t("Submit for Review")}
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="animate-spin" size={20} />
+                  {t("Submitting...")}
+                </>
+              ) : (
+                t("Submit for Review")
+              )}
             </button>
           </form>
 
@@ -468,7 +483,6 @@ export default function SignUpBusiness() {
         </div>
       </div>
 
-      {/* POLICIES MODAL */}
       {showPolicies && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-gray-900/40 backdrop-blur-sm">
           <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg p-6 md:p-8 relative animate-in fade-in zoom-in duration-200">
@@ -505,7 +519,6 @@ export default function SignUpBusiness() {
         </div>
       )}
 
-      {/* OTP VERIFICATION MODAL */}
       {showOtpModal && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
           <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm p-8 relative">
@@ -562,6 +575,33 @@ export default function SignUpBusiness() {
                 {t("Confirm Code")}
               </button>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-gray-900/60 backdrop-blur-sm">
+          <div className="bg-white rounded-[2rem] shadow-2xl w-full max-w-sm p-8 text-center relative animate-in fade-in zoom-in duration-300">
+            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+              <CheckCircle className="text-green-500" size={40} />
+            </div>
+            <h3 className="text-2xl font-black text-gray-900 mb-2">
+              {t("Application Sent!")}
+            </h3>
+            <p className="text-gray-500 font-medium mb-8">
+              {t(
+                "Your request has been successfully submitted for revision. We will notify you via email once approved.",
+              )}
+            </p>
+            <button
+              onClick={() => {
+                setShowSuccessModal(false);
+                navigate("/login");
+              }}
+              className="w-full bg-gray-900 text-white hover:bg-gray-800 font-bold py-4 rounded-xl shadow-lg transition-all"
+            >
+              {t("Go to Login")}
+            </button>
           </div>
         </div>
       )}

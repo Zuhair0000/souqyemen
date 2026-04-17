@@ -9,25 +9,28 @@ import {
   User,
   CreditCard,
   Banknote,
+  PackageCheck,
+  ArrowUpDown, // <-- Added sort icon
 } from "lucide-react";
+import logo from "../../assets/Logo.jpeg";
 
 export default function SellerOrders() {
   const [orders, setOrders] = useState([]);
   const [deliveryCompanies, setDeliveryCompanies] = useState([]);
   const [statusFilter, setStatusFilter] = useState("all");
 
-  // State for the assignment modal
+  // NEW: State for tracking sort order (descending by default)
+  const [sortOrder, setSortOrder] = useState("desc");
+
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedOrderId, setSelectedOrderId] = useState(null);
   const [selectedCompanyId, setSelectedCompanyId] = useState("");
 
-  // State for the tracking timeline modal
   const [trackingModalOpen, setTrackingModalOpen] = useState(false);
   const [activeTrackingUpdates, setActiveTrackingUpdates] = useState([]);
 
   const { t, i18n } = useTranslation();
 
-  // Fix RTL/LTR on refresh
   useEffect(() => {
     document.dir = i18n.language === "ar" ? "rtl" : "ltr";
   }, [i18n.language]);
@@ -37,7 +40,7 @@ export default function SellerOrders() {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
-      .then((data) => setOrders(data.orders))
+      .then((data) => setOrders(data.orders || data))
       .catch((err) => console.error("Error fetching orders", err));
   };
 
@@ -131,9 +134,17 @@ export default function SellerOrders() {
     }
   };
 
-  const filteredOrders = orders.filter((order) =>
-    statusFilter === "all" ? true : order.status === statusFilter,
-  );
+  // NEW: Filter AND Sort the orders
+  const sortedAndFilteredOrders = orders
+    .filter((order) =>
+      statusFilter === "all" ? true : order.status === statusFilter,
+    )
+    .sort((a, b) => {
+      // Sorting by order_id is the safest way to guarantee exact chronological order
+      return sortOrder === "desc"
+        ? b.order_id - a.order_id
+        : a.order_id - b.order_id;
+    });
 
   return (
     <div className="min-h-screen bg-[#fdfbf7] pb-20 py-8">
@@ -155,22 +166,36 @@ export default function SellerOrders() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 bg-white p-2 rounded-xl shadow-sm border border-gray-100">
-            <div className="pl-3 text-gray-400">
-              <Filter size={18} />
-            </div>
-            <select
-              className="bg-transparent font-bold text-gray-700 outline-none pr-4 py-2 appearance-none cursor-pointer"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value)}
+          <div className="flex flex-wrap items-center gap-3">
+            {/* SORT BUTTON */}
+            <button
+              onClick={() =>
+                setSortOrder(sortOrder === "desc" ? "asc" : "desc")
+              }
+              className="flex items-center gap-2 bg-white px-4 py-2.5 rounded-xl shadow-sm border border-gray-100 text-gray-700 font-bold hover:bg-gray-50 transition-colors active:scale-95"
             >
-              <option value="all">{t("All Orders")}</option>
-              <option value="pending">{t("Pending")}</option>
-              <option value="processing">{t("Processing")}</option>
-              <option value="shipped">{t("Shipped")}</option>
-              <option value="completed">{t("Completed")}</option>
-              <option value="cancelled">{t("Cancelled")}</option>
-            </select>
+              <ArrowUpDown size={18} className="text-gray-400" />
+              {sortOrder === "desc" ? t("Newest First") : t("Oldest First")}
+            </button>
+
+            {/* FILTER DROPDOWN */}
+            <div className="flex items-center gap-3 bg-white p-2.5 rounded-xl shadow-sm border border-gray-100">
+              <div className="pl-2 text-gray-400">
+                <Filter size={18} />
+              </div>
+              <select
+                className="bg-transparent font-bold text-gray-700 outline-none pr-4 appearance-none cursor-pointer"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="all">{t("All Orders")}</option>
+                <option value="pending">{t("Pending")}</option>
+                <option value="processing">{t("Processing")}</option>
+                <option value="shipped">{t("Shipped")}</option>
+                <option value="completed">{t("Completed")}</option>
+                <option value="cancelled">{t("Cancelled")}</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -181,127 +206,169 @@ export default function SellerOrders() {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full text-start">
-                <thead>
-                  <tr className="bg-gray-50/50 border-b border-gray-100">
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Order ID")}
-                    </th>
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Customer")}
-                    </th>
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Payment")}
-                    </th>
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Total")}
-                    </th>
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Status")}
-                    </th>
-                    <th className="px-6 py-4 text-xs font-black text-gray-500 uppercase tracking-wider text-start">
-                      {t("Action")}
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {filteredOrders.map((order) => {
-                    const isLocked = [
-                      "shipped",
-                      "out_for_delivery",
-                      "delivered",
-                      "completed",
-                    ].includes(order.status);
+          <div className="space-y-6">
+            {sortedAndFilteredOrders.map((order) => {
+              const isLocked = [
+                "shipped",
+                "out_for_delivery",
+                "delivered",
+                "completed",
+              ].includes(order.status);
 
-                    return (
-                      <tr
-                        key={order.order_id}
-                        className="hover:bg-gray-50/50 transition-colors"
-                      >
-                        <td className="px-6 py-5 font-black text-gray-900">
+              return (
+                <div
+                  key={order.order_id}
+                  className="bg-white rounded-[1.5rem] shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow"
+                >
+                  {/* Top Row: General Order Info */}
+                  <div className="flex flex-col md:flex-row items-start md:items-center justify-between p-6 bg-gray-50/50 border-b border-gray-100 gap-4">
+                    <div className="flex items-center gap-6">
+                      <div>
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-1">
+                          {t("Order ID")}
+                        </p>
+                        <p className="text-lg font-black text-gray-900">
                           #{order.order_id}
-                        </td>
+                        </p>
+                      </div>
 
-                        {/* CUSTOMER INFO */}
-                        <td className="px-6 py-5">
-                          <div className="flex flex-col">
-                            <span className="flex items-center gap-1 text-sm font-bold text-gray-800">
-                              <User size={14} className="text-gray-400" />{" "}
-                              {order.customer?.name}
-                            </span>
-                            <span className="flex items-center gap-1 text-xs text-indigo-600 font-medium mt-1">
-                              <MapPin size={12} />{" "}
-                              {order.customer?.location || t("No address")}
-                            </span>
-                          </div>
-                        </td>
-
-                        {/* PAYMENT METHOD */}
-                        <td className="px-6 py-5">
-                          <div
-                            className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold w-fit ${order.payment_method === "Cash" ? "bg-orange-100 text-orange-700" : "bg-blue-100 text-blue-700"}`}
-                          >
-                            {order.payment_method === "Cash" ? (
-                              <Banknote size={14} />
-                            ) : (
-                              <CreditCard size={14} />
-                            )}
-                            {t(order.payment_method)}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-5 font-bold text-green-600">
-                          ${Number(order.total).toFixed(2)}
-                        </td>
-
-                        <td className="px-6 py-5">
-                          <span
-                            className={`px-3 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider inline-block ${getStatusStyle(order.status)}`}
-                          >
-                            {t(order.status)}
-                          </span>
-                        </td>
-
-                        <td className="px-6 py-5">
-                          {isLocked ? (
-                            <button
-                              onClick={() => viewTracking(order.order_id)}
-                              className="flex items-center gap-1.5 px-4 py-2 bg-indigo-50 text-indigo-700 font-bold text-sm rounded-lg hover:bg-indigo-100 border border-indigo-200 transition-colors"
-                            >
-                              <MapPin size={16} /> {t("View Tracking")}
-                            </button>
+                      <div>
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-1">
+                          {t("Payment")}
+                        </p>
+                        <div
+                          className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold w-fit ${
+                            order.payment_method === "Cash"
+                              ? "bg-orange-100 text-orange-700"
+                              : "bg-blue-100 text-blue-700"
+                          }`}
+                        >
+                          {order.payment_method === "Cash" ? (
+                            <Banknote size={14} />
                           ) : (
-                            <select
-                              className="bg-gray-50 border border-gray-200 text-gray-700 text-sm font-bold rounded-lg px-3 py-2 outline-none focus:border-[#a22f29] focus:ring-1 focus:ring-[#a22f29] transition-all cursor-pointer"
-                              value={order.status}
-                              onChange={(e) =>
-                                handleStatusChange(
-                                  order.order_id,
-                                  e.target.value,
-                                )
-                              }
-                            >
-                              <option value="pending">{t("Pending")}</option>
-                              <option value="processing">
-                                {t("Processing")}
-                              </option>
-                              <option value="shipped">
-                                {t("Ship (Assign Logistics)")}
-                              </option>
-                              <option value="cancelled">
-                                {t("Cancelled")}
-                              </option>
-                            </select>
+                            <CreditCard size={14} />
                           )}
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                          {t(order.payment_method || "Card")}
+                        </div>
+                      </div>
+
+                      <div>
+                        <p className="text-xs font-black text-gray-500 uppercase tracking-wider mb-1">
+                          {t("Total")}
+                        </p>
+                        <p className="text-lg font-black text-green-600">
+                          ${Number(order.total).toFixed(2)}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-4 w-full md:w-auto">
+                      <div className="flex-1 md:flex-none text-end">
+                        <span
+                          className={`px-4 py-2 rounded-xl text-sm font-bold uppercase tracking-wider inline-block ${getStatusStyle(order.status)}`}
+                        >
+                          {t(order.status)}
+                        </span>
+                      </div>
+
+                      <div className="flex-1 md:flex-none">
+                        {isLocked ? (
+                          <button
+                            onClick={() => viewTracking(order.order_id)}
+                            className="w-full flex items-center justify-center gap-1.5 px-6 py-2.5 bg-indigo-50 text-indigo-700 font-bold text-sm rounded-xl hover:bg-indigo-100 border border-indigo-200 transition-colors"
+                          >
+                            <MapPin size={16} /> {t("View Tracking")}
+                          </button>
+                        ) : (
+                          <select
+                            className="w-full bg-white border border-gray-200 text-gray-700 text-sm font-bold rounded-xl px-4 py-2.5 outline-none focus:border-[#a22f29] focus:ring-2 focus:ring-[#a22f29]/20 transition-all cursor-pointer"
+                            value={order.status}
+                            onChange={(e) =>
+                              handleStatusChange(order.order_id, e.target.value)
+                            }
+                          >
+                            <option value="pending">{t("Pending")}</option>
+                            <option value="processing">
+                              {t("Processing")}
+                            </option>
+                            <option value="shipped">
+                              {t("Ship (Assign Logistics)")}
+                            </option>
+                            <option value="cancelled">{t("Cancelled")}</option>
+                          </select>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Bottom Row: Customer & Items */}
+                  <div className="flex flex-col md:flex-row divide-y md:divide-y-0 md:divide-x divide-gray-100">
+                    {/* Customer Info Column */}
+                    <div className="p-6 md:w-1/3 bg-white">
+                      <h4 className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <User size={14} /> {t("Customer Details")}
+                      </h4>
+                      <p className="text-lg font-bold text-gray-900 mb-1">
+                        {order.customer?.name || "Unknown"}
+                      </p>
+                      <p className="flex items-start gap-1.5 text-sm font-medium text-gray-500 mt-2">
+                        <MapPin
+                          size={16}
+                          className="text-[#a22f29] shrink-0 mt-0.5"
+                        />
+                        {order.customer?.location ||
+                          t("No address provided by customer")}
+                      </p>
+                    </div>
+
+                    {/* Items List Column */}
+                    <div className="p-6 md:w-2/3 bg-gray-50/30">
+                      <h4 className="text-xs font-black text-gray-500 uppercase tracking-wider mb-4 flex items-center gap-2">
+                        <PackageCheck size={16} /> {t("Items to Pack")}
+                      </h4>
+                      {order.items && (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          {order.items.map((item, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm"
+                            >
+                              <div className="w-16 h-16 rounded-lg bg-gray-50 overflow-hidden shrink-0 border border-gray-100 p-1">
+                                <img
+                                  src={
+                                    item.image
+                                      ? `http://localhost:3001${item.image}`
+                                      : logo
+                                  }
+                                  alt={item.name}
+                                  className="w-full h-full object-cover rounded-md"
+                                  onError={(e) => {
+                                    e.target.src = logo;
+                                  }}
+                                />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <p className="text-sm font-bold text-gray-900 truncate">
+                                  {item.name}
+                                </p>
+                                <div className="flex items-center gap-3 mt-1.5">
+                                  <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
+                                    {t("Qty")}: {item.quantity}
+                                  </span>
+                                  <span className="text-xs font-black text-rose-600">
+                                    ${Number(item.price).toFixed(2)}
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
@@ -374,7 +441,11 @@ export default function SellerOrders() {
                   {activeTrackingUpdates.map((track, i) => (
                     <div key={i} className="relative pl-6">
                       <div
-                        className={`absolute -left-[25px] top-1 w-4 h-4 rounded-full border-4 border-white ${i === activeTrackingUpdates.length - 1 ? "bg-indigo-600" : "bg-gray-400"}`}
+                        className={`absolute -left-[25px] top-1 w-4 h-4 rounded-full border-4 border-white ${
+                          i === activeTrackingUpdates.length - 1
+                            ? "bg-indigo-600"
+                            : "bg-gray-400"
+                        }`}
                       ></div>
                       <p
                         className={`text-sm font-bold ${i === activeTrackingUpdates.length - 1 ? "text-indigo-800" : "text-gray-700"}`}

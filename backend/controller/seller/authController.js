@@ -36,7 +36,7 @@ exports.registerSeller = async (req, res) => {
     const query = `INSERT INTO users (business_name, name, email, password, phone, id_photo, selfie_with_id, role, status)
                    VALUES (?, ?, ?, ?, ?, ?, ?, 'seller', 'pending')`;
 
-    db.query(
+    await db.query(
       query,
       [
         businessName,

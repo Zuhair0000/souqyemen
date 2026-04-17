@@ -402,5 +402,21 @@
   "Hurry! Only": "أسرع! تبقى",
   "left in stock.": "فقط في المخزون.",
   "Out of Stock": "نفذت الكمية",
-  "No low stock items": "لا توجد منتجات منخفضة المخزون"
+  "No low stock items": "لا توجد منتجات منخفضة المخزون",
+  "Newest First": "الأحدث أولاً",
+  "Oldest First": "الأقدم أولاً",
+  "Submitting...": "جاري الإرسال...",
+  "Application Sent!": "تم إرسال الطلب!",
+  "Your request has been successfully submitted for revision. We will notify you via email once approved.": "تم إرسال طلبك بنجاح للمراجعة. سنقوم بإعلامك عبر البريد الإلكتروني بمجرد الموافقة.",
+  "Go to Login": "الذهاب لتسجيل الدخول",
+  "Something went wrong during submission.": "حدث خطأ ما أثناء الإرسال.",
+  "Forgot Password?": "هل نسيت كلمة المرور؟",
+  "Reset Password": "إعادة تعيين كلمة المرور",
+  "Enter your email address to receive a verification code.": "أدخل بريدك الإلكتروني لتلقي رمز التحقق.",
+  "Send Code": "إرسال الرمز",
+  "Enter the 6-digit code sent to": "أدخل الرمز المكون من 6 أرقام المرسل إلى",
+  "Set New Password": "تعيين كلمة مرور جديدة",
+  "Please enter a new strong password for your account.": "يرجى إدخال كلمة مرور جديدة وقوية لحسابك.",
+  "Update Password": "تحديث كلمة المرور",
+  "Password updated successfully! You can now log in.": "تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول."
 }

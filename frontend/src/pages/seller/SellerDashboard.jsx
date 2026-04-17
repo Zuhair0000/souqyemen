@@ -205,15 +205,11 @@ export default function SellerDashboard() {
   const reportRef = useRef();
   const { t } = useTranslation();
 
-  // ==========================================
-  // UPDATED SECURE PDF GENERATOR
-  // ==========================================
   const handleDownloadPDF = () => {
     if (!data) return;
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.getWidth();
 
-    // 1. BRANDED HEADER
     pdf.setFillColor(162, 47, 41); // #a22f29
     pdf.rect(0, 0, pageWidth, 45, "F");
 

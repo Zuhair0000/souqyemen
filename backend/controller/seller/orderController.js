@@ -43,11 +43,11 @@ exports.getSellerOrders = async (req, res) => {
             phone: row.customer_phone,
             location: row.customer_location,
           },
-          products: [],
+          items: [],
         };
       }
 
-      grouped[row.order_id].products.push({
+      grouped[row.order_id].items.push({
         name: row.product_name,
         quantity: row.quantity,
         price: row.price,
