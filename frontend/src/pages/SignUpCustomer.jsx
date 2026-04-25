@@ -104,13 +104,19 @@ export default function SignUpCustomer() {
     }
 
     try {
-      // Send the clean data to the customer registration route
+      const payload = {
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        otp: otpCode,
+      };
+
       const res = await fetch(
         "http://localhost:3001/api/auth/register/customer",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(payload),
         },
       );
       const result = await res.json();

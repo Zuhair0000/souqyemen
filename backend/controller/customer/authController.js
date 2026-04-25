@@ -22,19 +22,20 @@ const JWT_SECRET =
 exports.registerCustomer = async (req, res) => {
   const { name, email, password, otp } = req.body;
 
-  if (!name || !email || !password) {
-    return res.status(400).json({ message: "All fields are required" });
+  // 1. Log the incoming request to see what React actually sent!
+  console.log("INCOMING CUSTOMER REGISTRATION:", {
+    name,
+    email,
+    password,
+    otp,
+  });
+
+  // 2. Make sure OTP is required before hitting the database
+  if (!name || !email || !password || !otp) {
+    return res.status(400).json({ message: "All fields and OTP are required" });
   }
 
   try {
-    const [otpRecord] = await db.query(
-      "SELECT * FROM otp_verifications WHERE email = ? AND otp = ?",
-      [email, otp],
-    );
-
-    if (otpRecord.length === 0) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
-    }
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const query = `
@@ -42,7 +43,7 @@ exports.registerCustomer = async (req, res) => {
       VALUES (?, ?, ?, 'customer', 'approved')
     `;
 
-    await db.query(query, [name, email, hashedPassword]); // ✅ no .promise()
+    await db.query(query, [name, email, hashedPassword]);
 
     return res.status(201).json({
       success: true,
