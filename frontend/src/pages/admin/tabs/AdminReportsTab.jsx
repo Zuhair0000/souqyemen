@@ -23,7 +23,7 @@ export default function AdminReportsTab() {
   const fetchReport = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3001/api/admin/report", {
+      const res = await axios.get("https://souqyemen.store/api/admin/report", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReport(res.data);

@@ -92,7 +92,7 @@ export default function Checkout() {
 
     try {
       const response = await fetch(
-        "http://localhost:3001/api/orders/checkout",
+        "https://souqyemen.store/api/orders/checkout",
         {
           method: "POST",
           headers: {

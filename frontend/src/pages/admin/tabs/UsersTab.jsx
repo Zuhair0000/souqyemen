@@ -18,7 +18,7 @@ export default function UsersTab() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3001/api/admin/users", {
+      const res = await axios.get("https://souqyemen.store/api/admin/users", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
@@ -37,8 +37,8 @@ export default function UsersTab() {
       try {
         const token = localStorage.getItem("token");
         const endpoint = isBanned
-          ? `http://localhost:3001/api/admin/users/${id}/unban`
-          : `http://localhost:3001/api/admin/users/${id}/ban`;
+          ? `https://souqyemen.store/api/admin/users/${id}/unban`
+          : `https://souqyemen.store/api/admin/users/${id}/ban`;
 
         await axios.put(
           endpoint,

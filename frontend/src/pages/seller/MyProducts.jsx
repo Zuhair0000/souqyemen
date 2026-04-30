@@ -22,9 +22,12 @@ export default function MyProducts() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:3001/api/seller/my-products", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await fetch(
+        "https://souqyemen.store/api/seller/my-products",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       if (!res.ok) throw new Error("Unauthorized");
       const data = await res.json();
       setProducts(data);
@@ -46,7 +49,7 @@ export default function MyProducts() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:3001/api/seller/products/${id}`,
+        `https://souqyemen.store/api/seller/products/${id}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
       );
       if (!res.ok) throw new Error("Failed to delete");
@@ -141,7 +144,7 @@ export default function MyProducts() {
                   <img
                     src={
                       product.image
-                        ? `http://localhost:3001${product.image}`
+                        ? `https://souqyemen.store${product.image}`
                         : logo
                     }
                     alt={product.name}

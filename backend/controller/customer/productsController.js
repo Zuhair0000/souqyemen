@@ -132,7 +132,7 @@ exports.review = async (req, res) => {
 
 //   try {
 //     const response = await fetch(
-//       `http://127.0.0.1:8000/api/recommend/${userId}`,
+//       `http://ai-engine:8000/api/recommend/${userId}`,
 //     );
 //     const aiData = await response.json();
 //     const aiRecs = aiData.recommendations; // This is the list of 5 products
@@ -171,7 +171,7 @@ exports.getAIRecommendations = async (req, res) => {
   try {
     // 1. Call the FastAPI server
     const response = await fetch(
-      `http://127.0.0.1:8000/api/recommend/${userId}`,
+      `http://ai-engine:8000/api/recommend/${userId}`,
     );
 
     if (!response.ok) {

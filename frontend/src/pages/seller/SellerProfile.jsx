@@ -20,7 +20,9 @@ export default function SellerProfile() {
 
   useEffect(() => {
     const fetchSeller = async () => {
-      const res = await fetch(`http://localhost:3001/api/seller/public/${id}`);
+      const res = await fetch(
+        `https://souqyemen.store/api/seller/public/${id}`,
+      );
       const data = await res.json();
       setSeller(data.seller);
       setProducts(data.products);
@@ -108,7 +110,7 @@ export default function SellerProfile() {
               >
                 <div className="w-full aspect-square bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-2">
                   <img
-                    src={`http://localhost:3001${product.image}`}
+                    src={`https://souqyemen.store${product.image}`}
                     alt={product.name}
                     className="w-full h-full object-cover mix-blend-multiply rounded-lg group-hover:scale-105 transition-transform duration-500"
                   />

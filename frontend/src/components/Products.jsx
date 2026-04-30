@@ -58,7 +58,12 @@ export default function Products({ products }) {
                   <img
                     src={
                       product.image
-                        ? `http://localhost:3001${product.image}`
+                        ? product.image.startsWith("http")
+                          ? product.image.replace(
+                              "https://souqyemen.store",
+                              "https://souqyemen.store",
+                            ) // Fixes old Mac URLs
+                          : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}` // Fixes relative paths
                         : logo
                     }
                     alt={product.name}

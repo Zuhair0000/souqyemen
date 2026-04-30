@@ -11,9 +11,12 @@ export default function ProductsTab() {
   const fetchProducts = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3001/api/admin/products", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axios.get(
+        "https://souqyemen.store/api/admin/products",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
       setProducts(res.data);
     } catch (err) {
       console.error("Error fetching products", err);
@@ -24,7 +27,7 @@ export default function ProductsTab() {
     if (window.confirm(t("Are you sure you want to remove this product?"))) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`http://localhost:3001/api/admin/products/${id}`, {
+        await axios.delete(`https://souqyemen.store/api/admin/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts((prev) => prev.filter((p) => p.id !== id));

@@ -24,7 +24,7 @@ export default function AddProduct() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/categories")
+    fetch("https://souqyemen.store/api/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));
@@ -47,7 +47,7 @@ export default function AddProduct() {
     Object.entries(form).forEach(([key, value]) => formData.append(key, value));
 
     try {
-      const res = await fetch("http://localhost:3001/api/seller/products", {
+      const res = await fetch("https://souqyemen.store/api/seller/products", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

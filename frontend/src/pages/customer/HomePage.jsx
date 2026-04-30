@@ -33,8 +33,8 @@ export default function HomePage() {
   const fetchProductsByCategory = async (categoryId) => {
     try {
       const url = categoryId
-        ? `http://localhost:3001/api/products/category/${categoryId}`
-        : "http://localhost:3001/api/products";
+        ? `https://souqyemen.store/api/products/category/${categoryId}`
+        : "https://souqyemen.store/api/products";
       const res = await fetch(url);
       const data = await res.json();
       setProducts(data);
@@ -48,7 +48,7 @@ export default function HomePage() {
   }, [selectedCategory]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/posts")
+    fetch("https://souqyemen.store/api/posts")
       .then((res) => res.json())
       .then((data) => setPromotions(data))
       .catch((err) => console.error("Error fetching promotions:", err));

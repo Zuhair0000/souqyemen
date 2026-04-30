@@ -11,7 +11,7 @@ export default function PromotionsFeed() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    axios.get("http://localhost:3001/api/posts").then((res) => {
+    axios.get("https://souqyemen.store/api/posts").then((res) => {
       setPosts(res.data);
     });
   }, []);
@@ -46,7 +46,12 @@ export default function PromotionsFeed() {
                   <img
                     src={
                       post.profile_photo
-                        ? `http://localhost:3001${post.profile_photo}`
+                        ? post.profile_photo.startsWith("http")
+                          ? post.profile_photo.replace(
+                              "https://souqyemen.store",
+                              "https://souqyemen.store",
+                            )
+                          : `https://souqyemen.store${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
                         : logo
                     }
                     alt="Business"
@@ -78,7 +83,14 @@ export default function PromotionsFeed() {
                 {post.image && (
                   <div className="w-full rounded-[1.5rem] overflow-hidden bg-gray-50 border border-gray-100 relative">
                     <img
-                      src={`http://localhost:3001/${post.image.replace(/^\/?uploads/, "uploads")}`}
+                      src={
+                        post.image.startsWith("http")
+                          ? post.image.replace(
+                              "https://souqyemen.store",
+                              "https://souqyemen.store",
+                            )
+                          : `https://souqyemen.store${post.image.startsWith("/") ? "" : "/"}${post.image}`
+                      }
                       alt="Post"
                       className="w-full max-h-[450px] object-cover transition-transform duration-700 group-hover:scale-105"
                     />

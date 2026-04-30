@@ -36,27 +36,20 @@ exports.registerSeller = async (req, res) => {
     const query = `INSERT INTO users (business_name, name, email, password, phone, id_photo, selfie_with_id, role, status)
                    VALUES (?, ?, ?, ?, ?, ?, ?, 'seller', 'pending')`;
 
-    await db.query(
-      query,
-      [
-        businessName,
-        fullName,
-        email,
-        hashedPassword,
-        phoneNumber,
-        idPhoto,
-        selfieWithId,
-      ],
-      (err) => {
-        if (err) {
-          console.error("DB Error:", err);
-          return res.status(500).json({ message: "Database error" });
-        }
-        res.status(201).json({ message: "Seller submitted for approval" });
-      },
-    );
+    await db.query(query, [
+      businessName,
+      fullName,
+      email,
+      hashedPassword,
+      phoneNumber,
+      idPhoto,
+      selfieWithId,
+    ]);
+
+    return res.status(201).json({ message: "Seller submitted for approval" });
   } catch (err) {
-    res.status(500).json({ message: "Error while registering seller" });
+    console.error("Registration Error:", err);
+    return res.status(500).json({ message: "Error while registering seller" });
   }
 };
 

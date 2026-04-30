@@ -25,7 +25,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `http://localhost:3001/api/products/${id}`,
+          `https://souqyemen.store/api/products/${id}`,
         );
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -71,7 +71,14 @@ export default function ProductDetail() {
             <div className="relative w-full max-w-[500px] aspect-square rounded-[2.5rem] bg-gradient-to-br from-rose-50 to-orange-50 flex items-center justify-center p-8 shadow-inner border border-rose-100/50 group">
               <img
                 src={
-                  product.image ? `http://localhost:3001${product.image}` : logo
+                  product.image
+                    ? product.image.startsWith("http")
+                      ? product.image.replace(
+                          "https://souqyemen.store",
+                          "https://souqyemen.store",
+                        )
+                      : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}`
+                    : logo
                 }
                 alt={product.name}
                 onError={(e) => {
@@ -196,7 +203,14 @@ export default function ProductDetail() {
                   <div className="w-full aspect-square bg-gray-50 rounded-xl mb-4 p-2 overflow-hidden flex items-center justify-center">
                     <img
                       src={
-                        item.image ? `http://localhost:3001${item.image}` : logo
+                        item.image
+                          ? item.image.startsWith("http")
+                            ? item.image.replace(
+                                "https://souqyemen.store",
+                                "https://souqyemen.store",
+                              )
+                            : `https://souqyemen.store${item.image.startsWith("/") ? "" : "/"}${item.image}`
+                          : logo
                       }
                       alt={item.name}
                       className="w-full h-full object-cover mix-blend-multiply rounded-lg"

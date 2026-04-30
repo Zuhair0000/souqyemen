@@ -27,7 +27,7 @@ export default function MyOrders() {
 
   const fetchOrders = () => {
     axios
-      .get("http://localhost:3001/api/user/orders", {
+      .get("https://souqyemen.store/api/user/orders", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setOrders([...res.data].sort((a, b) => b.id - a.id)))
@@ -46,7 +46,7 @@ export default function MyOrders() {
     ) {
       try {
         await axios.put(
-          `http://localhost:3001/api/orders/user/orders/${orderId}/complete`,
+          `https://souqyemen.store/api/orders/user/orders/${orderId}/complete`,
           {},
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -62,7 +62,7 @@ export default function MyOrders() {
   const submitRating = async (orderId, productId) => {
     try {
       await axios.post(
-        "http://localhost:3001/api/products/review",
+        "https://souqyemen.store/api/products/review",
         {
           order_id: orderId,
           product_id: productId,

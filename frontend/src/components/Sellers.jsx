@@ -13,7 +13,7 @@ export default function Sellers({ searchQuery }) {
     const fetchSellers = async () => {
       try {
         // Point this to the new Node.js endpoint you just created
-        const res = await fetch("http://localhost:3001/api/seller/sellers");
+        const res = await fetch("https://souqyemen.store/api/seller/sellers");
         const data = await res.json();
         setSellers(data);
       } catch (err) {
@@ -68,7 +68,7 @@ export default function Sellers({ searchQuery }) {
                   <img
                     src={
                       seller.image
-                        ? `http://localhost:3001${seller.image}`
+                        ? `https://souqyemen.store${seller.image}`
                         : logo
                     }
                     alt={seller.business_name}

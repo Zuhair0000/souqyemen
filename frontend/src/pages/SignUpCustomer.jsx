@@ -51,7 +51,7 @@ export default function SignUpCustomer() {
 
     setIsSendingOtp(true);
     try {
-      const res = await fetch("http://localhost:3001/api/auth/send-otp", {
+      const res = await fetch("https://souqyemen.store/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -77,7 +77,7 @@ export default function SignUpCustomer() {
     setOtpError("");
 
     try {
-      const res = await fetch("http://localhost:3001/api/auth/verify-otp", {
+      const res = await fetch("https://souqyemen.store/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp: otpCode }),
@@ -112,7 +112,7 @@ export default function SignUpCustomer() {
       };
 
       const res = await fetch(
-        "http://localhost:3001/api/auth/register/customer",
+        "https://souqyemen.store/api/auth/register/customer",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -131,7 +131,7 @@ export default function SignUpCustomer() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch("http://localhost:3001/api/auth/google/login", {
+      const res = await fetch("https://souqyemen.store/api/auth/google/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),

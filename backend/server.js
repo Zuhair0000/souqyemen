@@ -32,7 +32,13 @@ dotenv.config();
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://souqyemen.store", // Added HTTPS version
+      "http://souqyemen.store",
+      "http://34.230.3.210.nip.io",
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   }),
 );
@@ -53,10 +59,16 @@ app.get("/api/posts/:id", getPostById);
 app.use("/api/products", productsRoutes);
 
 const server = http.createServer(app);
-const io = require("socket.io")(server, {
+const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://souqyemen.store", // Added HTTPS version
+      "http://souqyemen.store",
+      "http://34.230.3.210.nip.io",
+    ],
     methods: ["GET", "POST"],
+    credentials: true,
   },
 });
 

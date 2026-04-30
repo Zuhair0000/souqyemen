@@ -23,14 +23,14 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:3001/api/products/${id}`, {
+        const res = await fetch(`https://souqyemen.store/api/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
         setProduct(data.product);
         if (data.product.image)
-          setPreview(`http://localhost:3001${data.product.image}`);
+          setPreview(`https://souqyemen.store${data.product.image}`);
       } catch (err) {
         alert(t("Failed to load product."));
       } finally {
@@ -63,7 +63,7 @@ export default function EditProduct() {
       );
 
       const res = await fetch(
-        `http://localhost:3001/api/seller/edit-product/${id}`,
+        `https://souqyemen.store/api/seller/edit-product/${id}`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` }, // Removed application/json to let browser set multipart/form-data

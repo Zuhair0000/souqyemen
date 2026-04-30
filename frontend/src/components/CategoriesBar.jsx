@@ -18,7 +18,7 @@ export default function CategoriesBar({ onCategorySelect, activeCategory }) {
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/products/categories")
+    fetch("https://souqyemen.store/api/products/categories")
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));

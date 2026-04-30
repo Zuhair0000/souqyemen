@@ -16,7 +16,7 @@ export default function Profile() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3001/api/user/profile", {
+      .get("https://souqyemen.store/api/user/profile", {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -46,7 +46,7 @@ export default function Profile() {
   const handleUpdate = (e) => {
     e.preventDefault();
     axios
-      .put("http://localhost:3001/api/user/profile", formData, {
+      .put("https://souqyemen.store/api/user/profile", formData, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

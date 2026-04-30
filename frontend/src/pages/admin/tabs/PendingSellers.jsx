@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import { useTranslation } from "react-i18next";
 import {
   User,
@@ -9,6 +8,9 @@ import {
   XCircle,
   FileImage,
 } from "lucide-react";
+
+// Centralize the backend URL so it only needs to be updated in one place
+const API_BASE = "https://souqyemen.store";
 
 export default function PendingPartners() {
   const [partners, setPartners] = useState([]);
@@ -22,11 +24,17 @@ export default function PendingPartners() {
   const fetchPendingPartners = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get(
-        "http://localhost:3001/api/admin/pending-partners",
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
-      setPartners(res.data);
+      const res = await fetch(`${API_BASE}/api/admin/pending-partners`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!res.ok) throw new Error("Failed to load partners");
+
+      const data = await res.json();
+      setPartners(data);
     } catch (err) {
       console.error("Error fetching partners", err);
     }
@@ -35,19 +43,33 @@ export default function PendingPartners() {
   const updateStatus = async (id, status) => {
     try {
       const token = localStorage.getItem("token");
-      await axios.put(
-        `http://localhost:3001/api/admin/partner/${id}/status`,
-        { status },
-        { headers: { Authorization: `Bearer ${token}` } },
-      );
+      const res = await fetch(`${API_BASE}/api/admin/partner/${id}/status`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ status }),
+      });
+
+      if (!res.ok) throw new Error("Failed to update status");
 
       setPartners((prev) => prev.filter((s) => s.id !== id));
-
       alert(t(`Partner successfully ${status}!`));
     } catch (err) {
       console.error("Error updating status", err);
       alert(t("Failed to update status"));
     }
+  };
+
+  // Helper function to safely construct image URLs
+  const getImageUrl = (filename) => {
+    if (!filename) return "";
+    // Prevents double-slashing if your DB accidentally saved "uploads/image.jpg"
+    const safePath = filename.startsWith("uploads/")
+      ? filename
+      : `uploads/${filename}`;
+    return `${API_BASE}/${safePath}`;
   };
 
   return (
@@ -98,13 +120,11 @@ export default function PendingPartners() {
                   <div
                     className="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl overflow-hidden cursor-zoom-in hover:border-[#a22f29] transition-colors"
                     onClick={() =>
-                      setPreviewImage(
-                        `http://localhost:3001/uploads/${seller.id_photo}`,
-                      )
+                      setPreviewImage(getImageUrl(seller.id_photo))
                     }
                   >
                     <img
-                      src={`http://localhost:3001/uploads/${seller.id_photo}`}
+                      src={getImageUrl(seller.id_photo)}
                       alt="ID"
                       className="w-full h-full object-cover mix-blend-multiply p-1"
                     />
@@ -117,13 +137,11 @@ export default function PendingPartners() {
                   <div
                     className="aspect-square bg-gray-50 border-2 border-dashed border-gray-200 rounded-xl overflow-hidden cursor-zoom-in hover:border-[#a22f29] transition-colors"
                     onClick={() =>
-                      setPreviewImage(
-                        `http://localhost:3001/uploads/${seller.selfie_with_id}`,
-                      )
+                      setPreviewImage(getImageUrl(seller.selfie_with_id))
                     }
                   >
                     <img
-                      src={`http://localhost:3001/uploads/${seller.selfie_with_id}`}
+                      src={getImageUrl(seller.selfie_with_id)}
                       alt="Selfie"
                       className="w-full h-full object-cover mix-blend-multiply p-1"
                     />

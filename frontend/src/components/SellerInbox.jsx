@@ -12,7 +12,7 @@ export default function SellerInbox() {
     const fetchInbox = async () => {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:3001/api/seller/inbox/${seller.id}`,
+        `https://souqyemen.store/api/seller/inbox/${seller.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

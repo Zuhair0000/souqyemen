@@ -11,7 +11,7 @@ export default function PromotionDetails() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch(`http://localhost:3001/api/posts/${id}`)
+    fetch(`https://souqyemen.store/api/posts/${id}`)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const text = await res.text();
@@ -40,7 +40,14 @@ export default function PromotionDetails() {
           {post.image && (
             <div className="w-full h-[300px] md:h-[450px] bg-gray-900 relative">
               <img
-                src={`http://localhost:3001/${post.image.replace(/^\/?uploads/, "uploads")}`}
+                src={
+                  post.image.startsWith("http")
+                    ? post.image.replace(
+                        "https://souqyemen.store",
+                        "https://souqyemen.store",
+                      )
+                    : `https://souqyemen.store${post.image.startsWith("/") ? "" : "/"}${post.image}`
+                }
                 alt={post.title}
                 className="w-full h-full object-cover opacity-90"
               />
@@ -58,7 +65,12 @@ export default function PromotionDetails() {
                 <img
                   src={
                     post.profile_photo
-                      ? `http://localhost:3001${post.profile_photo}`
+                      ? post.profile_photo.startsWith("http")
+                        ? post.profile_photo.replace(
+                            "https://souqyemen.store",
+                            "https://souqyemen.store",
+                          )
+                        : `https://souqyemen.store${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
                       : logo
                   }
                   alt={post.business_name || t("Business")}

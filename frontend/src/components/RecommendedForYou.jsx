@@ -24,7 +24,7 @@ export default function RecommendedForYou({ userId }) {
 
       try {
         const response = await fetch(
-          `http://localhost:3001/api/products/for-you/${userId}`,
+          `https://souqyemen.store/api/products/for-you/${userId}`,
         );
 
         if (!response.ok) {
@@ -110,7 +110,7 @@ export default function RecommendedForYou({ userId }) {
                 <img
                   src={
                     product.image
-                      ? `http://localhost:3001${product.image}`
+                      ? `https://souqyemen.store${product.image}`
                       : logo
                   }
                   alt={product.name}

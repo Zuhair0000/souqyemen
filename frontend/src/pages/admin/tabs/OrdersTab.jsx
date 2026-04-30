@@ -11,7 +11,7 @@ export default function OrdersTab() {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("http://localhost:3001/api/admin/orders", {
+      const res = await axios.get("https://souqyemen.store/api/admin/orders", {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);

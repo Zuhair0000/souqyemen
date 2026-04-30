@@ -38,9 +38,12 @@ export default function DeliveryOrders() {
 
   const fetchActiveOrders = async () => {
     try {
-      const res = await axios.get("http://localhost:3001/api/delivery/orders", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
+      const res = await axios.get(
+        "https://souqyemen.store/api/delivery/orders",
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        },
+      );
       setActiveOrders(res.data);
     } catch (err) {
       console.error(err);
@@ -50,7 +53,7 @@ export default function DeliveryOrders() {
   const fetchHistoryOrders = async () => {
     try {
       const res = await axios.get(
-        "http://localhost:3001/api/delivery/history",
+        "https://souqyemen.store/api/delivery/history",
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -70,7 +73,7 @@ export default function DeliveryOrders() {
     if (!updateText.trim()) return;
     try {
       await axios.post(
-        `http://localhost:3001/api/delivery/orders/${orderId}/tracking`,
+        `https://souqyemen.store/api/delivery/orders/${orderId}/tracking`,
         { update_text: updateText },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -88,7 +91,7 @@ export default function DeliveryOrders() {
     if (window.confirm(t("Confirm package has been delivered?"))) {
       try {
         await axios.put(
-          `http://localhost:3001/api/delivery/orders/${orderId}/deliver`,
+          `https://souqyemen.store/api/delivery/orders/${orderId}/deliver`,
           {},
           {
             headers: {

@@ -50,7 +50,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("http://localhost:3001/api/auth/login", {
+      const res = await fetch("https://souqyemen.store/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -65,7 +65,7 @@ export default function Login() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch("http://localhost:3001/api/auth/google/login", {
+      const res = await fetch("https://souqyemen.store/api/auth/google/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -85,7 +85,7 @@ export default function Login() {
     setResetError("");
     try {
       // Reusing your existing OTP endpoint
-      const res = await fetch("http://localhost:3001/api/auth/send-otp", {
+      const res = await fetch("https://souqyemen.store/api/auth/send-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail }),
@@ -107,7 +107,7 @@ export default function Login() {
     setResetError("");
     try {
       // Reusing your existing OTP verification endpoint
-      const res = await fetch("http://localhost:3001/api/auth/verify-otp", {
+      const res = await fetch("https://souqyemen.store/api/auth/verify-otp", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail, otp: resetOtp }),
@@ -130,11 +130,14 @@ export default function Login() {
     setResetError("");
     try {
       // Calls a new endpoint to actually update the password
-      const res = await fetch("http://localhost:3001/api/auth/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email: resetEmail, newPassword }),
-      });
+      const res = await fetch(
+        "https://souqyemen.store/api/auth/reset-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email: resetEmail, newPassword }),
+        },
+      );
       if (res.ok) {
         alert(t("Password updated successfully! You can now log in."));
         closeResetModal();

@@ -36,7 +36,7 @@ export default function SellerOrders() {
   }, [i18n.language]);
 
   const fetchOrders = () => {
-    fetch("http://localhost:3001/api/seller/orders", {
+    fetch("https://souqyemen.store/api/seller/orders", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -46,7 +46,7 @@ export default function SellerOrders() {
 
   useEffect(() => {
     fetchOrders();
-    fetch("http://localhost:3001/api/seller/delivery-companies", {
+    fetch("https://souqyemen.store/api/seller/delivery-companies", {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -90,7 +90,7 @@ export default function SellerOrders() {
   ) => {
     try {
       const res = await fetch(
-        `http://localhost:3001/api/seller/orders/${orderId}/status`,
+        `https://souqyemen.store/api/seller/orders/${orderId}/status`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +121,7 @@ export default function SellerOrders() {
   const viewTracking = async (orderId) => {
     try {
       const res = await fetch(
-        `http://localhost:3001/api/seller/orders/${orderId}/tracking`,
+        `https://souqyemen.store/api/seller/orders/${orderId}/tracking`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -337,7 +337,7 @@ export default function SellerOrders() {
                                 <img
                                   src={
                                     item.image
-                                      ? `http://localhost:3001${item.image}`
+                                      ? `https://souqyemen.store${item.image}`
                                       : logo
                                   }
                                   alt={item.name}

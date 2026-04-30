@@ -19,7 +19,7 @@ export default function SettingsPage() {
     setLoading(true);
     axios
       .put(
-        "http://localhost:3001/api/user/change-password",
+        "https://souqyemen.store/api/user/change-password",
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } },
       )

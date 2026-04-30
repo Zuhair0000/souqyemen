@@ -315,7 +315,7 @@ export default function SellerDashboard() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "http://localhost:3001/api/seller/dashboard",
+          "https://souqyemen.store/api/seller/dashboard",
           { headers: { Authorization: `Bearer ${token}` } },
         );
         setAnalytics(res.data);

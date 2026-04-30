@@ -7,7 +7,7 @@ import Icons from "./Icons";
 import BackButton from "./BackButton";
 import { Send, UserCircle2 } from "lucide-react";
 
-const socket = io("http://localhost:3001");
+const socket = io("https://souqyemen.store");
 
 export default function ChatBox() {
   const { id: receiverId } = useParams();
@@ -23,7 +23,7 @@ export default function ChatBox() {
 
     socket.on("receiveMessage", (data) => setChat((prev) => [...prev, data]));
 
-    fetch(`http://localhost:3001/api/messages/${user.id}/${receiverId}`)
+    fetch(`https://souqyemen.store/api/messages/${user.id}/${receiverId}`)
       .then((res) => res.json())
       .then((data) => setChat(data))
       .catch((err) => console.error("Failed to fetch messages", err));
@@ -51,7 +51,7 @@ export default function ChatBox() {
       setMessage("");
 
       try {
-        await fetch("http://localhost:3001/api/messages", {
+        await fetch("https://souqyemen.store/api/messages", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
