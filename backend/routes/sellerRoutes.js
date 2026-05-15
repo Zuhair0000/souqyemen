@@ -12,10 +12,16 @@ const orderController = require("../controller/seller/orderController");
 const postController = require("../controller/seller/postController");
 const productsController = require("../controller/seller/productsController");
 const messageController = require("../controller/seller/messageController");
+const { updateProfileImage } = require("../controller/seller/authController");
 
 // Public Route (No auth needed)
 router.get("/public/:id", dashboardController.getPublicSellerProfile);
 router.get("/sellers", dashboardController.getAllSellers);
+router.post(
+  "/update-profile-image/:id",
+  upload.single("image_profile"),
+  updateProfileImage,
+);
 
 router.use(authenticate, authorizeRoles("seller"));
 

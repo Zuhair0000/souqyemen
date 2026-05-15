@@ -1,2 +1,16 @@
-backend/ .env
+# Ignore Node Modules
+node_modules/
+backend/node_modules/
+frontend/node_modules/
+
+# Ignore Security Files
+.env
+**/.env
 docker-compose.yml
+
+# Ignore User Uploads (but keep the folder)
+backend/uploads/*
+!backend/uploads/.gitkeep
+
+# Ignore Mac OS Junk
+.DS_Store
