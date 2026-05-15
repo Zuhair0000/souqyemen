@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
 });
 // ENV secret key or hardcoded for now
 const JWT_SECRET =
-  "8cbf7645a1e3b8723e1d5f934b8d7e614e6d77c8b798e3b257456bcd312f74c1";
+  process.env.JWT_SECRET || "souqyemen_master_key_998877_auth_secure";
 
 exports.registerCustomer = async (req, res) => {
   const { name, email, password, otp } = req.body;
