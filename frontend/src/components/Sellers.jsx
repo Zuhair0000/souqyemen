@@ -68,7 +68,7 @@ export default function Sellers({ searchQuery }) {
                   <img
                     src={
                       seller.profile_photo
-                        ? `https://souqyemen.store${seller.image}`
+                        ? `https://souqyemen.store${seller.profile_photo}`
                         : logo
                     }
                     alt={seller.business_name}
@@ -82,7 +82,7 @@ export default function Sellers({ searchQuery }) {
 
                 {/* Seller Info */}
                 <h3 className="text-xl font-bold text-gray-800 line-clamp-1 group-hover:text-orange-500 transition-colors">
-                  {seller.store_name}
+                  {seller.business_name}
                 </h3>
                 <p className="text-sm text-gray-500 mt-1 flex items-center gap-1">
                   <Store size={14} /> {seller.owner_name}
