@@ -197,6 +197,10 @@ exports.requestOtp = async (req, res) => {
 exports.updateProfileImage = async (req, res) => {
   const userId = req.params.id;
 
+  if (req.user && req.user.id !== parseInt(userId)) {
+    return res.status(403).json({ success: false, message: "Forbidden" });
+  }
+
   if (!req.file) {
     return res
       .status(400)
@@ -210,6 +214,7 @@ exports.updateProfileImage = async (req, res) => {
     // Update the existing image_profile column in the users table
     const query = "UPDATE users SET profile_photo = ? WHERE id = ?";
     await db.query(query, [imagePath, userId]);
+    console.log("Saved to DB:", imagePath, "for user:", userId);
 
     return res.status(200).json({
       success: true,

@@ -64,30 +64,41 @@ exports.getMyProducts = async (req, res) => {
 };
 
 exports.getPublicSellerProfile = async (req, res) => {
-  const sellerId = req.params.id;
-
+  const { id } = req.params;
   try {
-    const [[seller]] = await db.query(
-      "SELECT id, business_name, description, profile_photo, phone AS contact FROM users WHERE id = ? AND role = 'seller'",
-      [sellerId],
-    );
-
-    if (!seller) {
+    // 1. Get the seller info
+    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [id]);
+    if (rows.length === 0) {
       return res.status(404).json({ message: "Seller not found" });
     }
 
+    const user = rows[0];
+
+    // 2. 🚨 ADD THIS LINE: Fetch the seller's products so the variable exists!
     const [products] = await db.query(
-      "SELECT id, name, price, image FROM products WHERE seller_id = ?",
-      [sellerId],
+      "SELECT id, name, price, description, image, stock FROM products WHERE seller_id = ?",
+      [id],
     );
 
-    res.json({ seller, products });
-  } catch (err) {
-    console.error("Error fetching public seller profile:", err);
-    res.status(500).json({ message: "Server error" });
+    // 3. Send everything back smoothly
+    res.json({
+      success: true,
+      seller: {
+        id: user.id,
+        business_name: user.business_name,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        status: user.status,
+        image_profile: user.profile_photo || null, // Your beautiful image mapping
+      },
+      products: products || [], // Now this variable exists perfectly!
+    });
+  } catch (error) {
+    console.error("Public Profile Fetch Error:", error);
+    res.status(500).json({ message: "Internal server error" });
   }
 };
-
 // GET /api/seller/analytics
 exports.getSellerAnalytics = async (req, res) => {
   const sellerId = req.user.id;

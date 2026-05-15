@@ -65,8 +65,13 @@ export default function SellerProfile() {
       const result = await response.json();
 
       if (result.success) {
-        // Instantly update the UI with the new image
+        // 1. Instantly update the local component view state
         setSeller((prev) => ({ ...prev, image_profile: result.imagePath }));
+
+        // 2. 🚨 FIXED: Sync localStorage so reloads/navigation bars keep the asset visible
+        const storedUser = JSON.parse(localStorage.getItem("user")) || {};
+        storedUser.image_profile = result.imagePath;
+        localStorage.setItem("user", JSON.stringify(storedUser));
       } else {
         alert(result.message || t("Upload failed"));
       }

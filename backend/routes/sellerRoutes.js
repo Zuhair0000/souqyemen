@@ -16,12 +16,13 @@ const { updateProfileImage } = require("../controller/seller/authController");
 
 // Public Route (No auth needed)
 router.get("/public/:id", dashboardController.getPublicSellerProfile);
-router.get("/sellers", dashboardController.getAllSellers);
 router.post(
   "/update-profile-image/:id",
+  authenticate,
   upload.single("image_profile"),
   updateProfileImage,
 );
+router.get("/sellers", dashboardController.getAllSellers);
 
 router.use(authenticate, authorizeRoles("seller"));
 
@@ -54,10 +55,5 @@ router.get("/orders/:id/tracking", orderController.getOrderTracking);
 // Messages & Inbox
 router.get("/inbox/:sellerId", messageController.getInbox);
 router.get("/messages/:user1/:user2", messageController.getChatHistory);
-router.post(
-  "/api/seller/update-profile-image/:id",
-  upload.single("image_profile"),
-  updateProfileImage,
-);
 
 module.exports = router;
