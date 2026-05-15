@@ -207,8 +207,13 @@ exports.updateProfileImage = async (req, res) => {
 
   try {
     // Update the existing image_profile column in the users table
+<<<<<<< HEAD
     const query = "UPDATE users SET image_profile = ? WHERE id = ?";
     await db.promise().query(query, [imagePath, userId]);
+=======
+    const query = "UPDATE users SET profile_photo = ? WHERE id = ?";
+    await db.query(query, [imagePath, userId]);
+>>>>>>> a5c9ee442b07babe369bb8751c13051fde624a11
 
     return res.status(200).json({
       success: true,
