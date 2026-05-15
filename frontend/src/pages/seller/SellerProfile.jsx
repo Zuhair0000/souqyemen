@@ -52,7 +52,7 @@ export default function SellerProfile() {
       const token = localStorage.getItem("token"); // Ensure token is sent if route is protected
 
       const response = await fetch(
-        `http://localhost:3001/api/seller/update-profile-image/${id}`,
+        `https://souqyemen.store/api/seller/update-profile-image/${id}`,
         {
           method: "POST",
           headers: {
@@ -102,20 +102,10 @@ export default function SellerProfile() {
               <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white p-2 shadow-lg -mt-16 md:-mt-20 z-10 shrink-0 relative group">
                 <div className="w-full h-full rounded-full bg-gray-50 flex items-center justify-center overflow-hidden relative">
                   {/* Profile Image Logic */}
-                  {/* <img
-                    src={
-                      seller.image_profile
-                        ? `https://souqyemen.store${seller.image_profile}`
-                        : logo
-                    }
-                    alt="Seller"
-                    className="w-full h-full object-cover"
-                  /> */}
-
                   <img
                     src={
                       seller.image_profile
-                        ? `http://localhost:3001${seller.image_profile}`
+                        ? `https://souqyemen.store${seller.image_profile}`
                         : logo
                     }
                     alt="Seller"
