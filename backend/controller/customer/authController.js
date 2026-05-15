@@ -106,6 +106,7 @@ exports.login = async (req, res) => {
         business_name: user.business_name || null,
         id_photo: user.id_photo || null,
         selfie_with_id: user.selfie_with_id || null,
+        image_profile: user.profile_photo || null,
       },
     });
   } catch (error) {
@@ -166,6 +167,7 @@ exports.getProfile = async (req, res) => {
       business_name: user.business_name || null,
       id_photo: user.id_photo || null,
       selfie_with_id: user.selfie_with_id || null,
+      image_profile: user.profile_photo || null,
     });
   } catch (error) {
     console.error("Get Profile Error:", error);

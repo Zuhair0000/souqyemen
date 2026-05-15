@@ -61,9 +61,7 @@ exports.getProfile = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const [rows] = await db
-      .promise()
-      .query("SELECT * FROM users WHERE id = ?", [userId]);
+    const [rows] = await db.query("SELECT * FROM users WHERE id = ?", [userId]);
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
