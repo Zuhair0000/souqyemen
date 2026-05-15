@@ -79,7 +79,7 @@ exports.getProfile = async (req, res) => {
       business_name: user.business_name || null,
       id_photo: user.id_photo || null,
       selfie_with_id: user.selfie_with_id || null,
-      image_profile: user.image_profile || null, // ADDED THIS
+      image_profile: user.profile_photo || null, // ADDED THIS
     });
   } catch (error) {
     console.error("Get Profile Error:", error);
