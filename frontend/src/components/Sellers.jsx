@@ -67,7 +67,7 @@ export default function Sellers({ searchQuery }) {
                 <div className="w-24 h-24 mb-4 rounded-full bg-gradient-to-br from-orange-50 to-rose-50 border-4 border-white shadow-md overflow-hidden flex items-center justify-center p-1">
                   <img
                     src={
-                      seller.image
+                      seller.profile_photo
                         ? `https://souqyemen.store${seller.image}`
                         : logo
                     }

@@ -212,11 +212,13 @@ exports.getSellerAnalytics = async (req, res) => {
 
 exports.getAllSellers = async (req, res) => {
   try {
+    // 🚨 FIXED: Added profile_photo to the selected column fields
     const sql = `
             SELECT 
                 id, 
                 name AS owner_name, 
                 business_name, 
+                profile_photo,
                 role
             FROM users 
             WHERE role = 'seller'
