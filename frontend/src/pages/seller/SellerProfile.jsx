@@ -6,12 +6,19 @@ import NavBar from "../../components/NavBar";
 import Icons from "../../components/Icons";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
-import { MessageCircle, Store, PackageSearch } from "lucide-react";
+import {
+  MessageCircle,
+  Store,
+  PackageSearch,
+  Camera,
+  Loader2,
+} from "lucide-react";
 
 export default function SellerProfile() {
   const { id } = useParams();
   const [seller, setSeller] = useState(null);
   const [products, setProducts] = useState([]);
+  const [isUploading, setIsUploading] = useState(false);
   const { t } = useTranslation();
 
   const user = JSON.parse(localStorage.getItem("user"));
@@ -32,6 +39,45 @@ export default function SellerProfile() {
 
   const isSameSeller = role === "seller" && loggedInUserId === parseInt(id);
 
+  // Handle the image upload process
+  const handleImageUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("image_profile", file);
+
+    try {
+      setIsUploading(true);
+      const token = localStorage.getItem("token"); // Ensure token is sent if route is protected
+
+      const response = await fetch(
+        `https://souqyemen.store/api/seller/update-profile-image/${id}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        },
+      );
+
+      const result = await response.json();
+
+      if (result.success) {
+        // Instantly update the UI with the new image
+        setSeller((prev) => ({ ...prev, image_profile: result.imagePath }));
+      } else {
+        alert(result.message || t("Upload failed"));
+      }
+    } catch (err) {
+      console.error(err);
+      alert(t("An error occurred while uploading."));
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20 flex flex-col">
       {isSameSeller ? (
@@ -47,19 +93,45 @@ export default function SellerProfile() {
 
         {seller && (
           <div className="bg-white rounded-[2rem] shadow-sm border border-gray-100 overflow-hidden mb-12 mt-4">
-            {/* Store Banner (Solid Vibrant Color) */}
+            {/* Store Banner */}
             <div className="h-32 md:h-48 bg-[#a22f29] w-full relative"></div>
 
             {/* Store Info Container */}
             <div className="px-6 md:px-12 pb-8 md:pb-12 relative flex flex-col md:flex-row gap-6 md:gap-8 items-center md:items-start text-center md:text-start">
-              {/* Floating Avatar */}
-              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white p-2 shadow-lg -mt-16 md:-mt-20 z-10 shrink-0">
-                <div className="w-full h-full rounded-full bg-gray-50 flex items-center justify-center overflow-hidden">
+              {/* Floating Avatar with Interactive Upload */}
+              <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white p-2 shadow-lg -mt-16 md:-mt-20 z-10 shrink-0 relative group">
+                <div className="w-full h-full rounded-full bg-gray-50 flex items-center justify-center overflow-hidden relative">
+                  {/* Profile Image Logic */}
                   <img
-                    src={logo}
+                    src={
+                      seller.image_profile
+                        ? `https://souqyemen.store${seller.image_profile}`
+                        : logo
+                    }
                     alt="Seller"
-                    className="w-full h-full object-cover mix-blend-multiply"
+                    className="w-full h-full object-cover"
                   />
+
+                  {/* Upload Overlay (Only visible to the logged-in seller) */}
+                  {isSameSeller && (
+                    <label className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center gap-1 cursor-pointer opacity-0 group-hover:opacity-100 transition-opacity duration-200 text-white text-xs font-medium">
+                      {isUploading ? (
+                        <Loader2 className="animate-spin" size={24} />
+                      ) : (
+                        <>
+                          <Camera size={24} />
+                          <span>{t("Upload Photo")}</span>
+                        </>
+                      )}
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={handleImageUpload}
+                        disabled={isUploading}
+                      />
+                    </label>
+                  )}
                 </div>
               </div>
 

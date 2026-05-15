@@ -1,2 +1,51 @@
-backend/ .env
+# =========================================
+# 1. SECURITY & CREDENTIALS (CRITICAL)
+# =========================================
+.env
+**/.env
 docker-compose.yml
+
+# =========================================
+# 2. NODE.JS (Frontend & Backend)
+# =========================================
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+
+# =========================================
+# 3. FRONTEND BUILD FILES (React)
+# =========================================
+dist/
+build/
+.eslintcache
+
+# =========================================
+# 4. USER UPLOADS (Profile Photos, IDs, etc.)
+# =========================================
+# Ignore everything inside the uploads folder...
+# backend/uploads/*
+# ...Except for a .gitkeep file so the folder structure is preserved on Ubuntu!
+# !backend/uploads/.gitkeep
+
+# =========================================
+# 5. PYTHON / FASTAPI (AI Engine)
+# =========================================
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.pytest_cache/
+
+# =========================================
+# 6. MACOS & iCLOUD JUNK
+# =========================================
+.DS_Store
+.AppleDouble
+.LSOverride
+# Catch iCloud sync duplicates
+* 2
+* 3
+* 4

@@ -12,6 +12,7 @@ const orderController = require("../controller/seller/orderController");
 const postController = require("../controller/seller/postController");
 const productsController = require("../controller/seller/productsController");
 const messageController = require("../controller/seller/messageController");
+const { updateProfileImage } = require("../controller/seller/authController");
 
 // Public Route (No auth needed)
 router.get("/public/:id", dashboardController.getPublicSellerProfile);
@@ -48,5 +49,10 @@ router.get("/orders/:id/tracking", orderController.getOrderTracking);
 // Messages & Inbox
 router.get("/inbox/:sellerId", messageController.getInbox);
 router.get("/messages/:user1/:user2", messageController.getChatHistory);
+router.post(
+  "/api/seller/update-profile-image/:id",
+  upload.single("image_profile"),
+  updateProfileImage,
+);
 
 module.exports = router;

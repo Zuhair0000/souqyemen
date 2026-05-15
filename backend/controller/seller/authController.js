@@ -76,6 +76,7 @@ exports.getProfile = async (req, res) => {
       business_name: user.business_name || null,
       id_photo: user.id_photo || null,
       selfie_with_id: user.selfie_with_id || null,
+      image_profile: user.image_profile || null, // ADDED THIS
     });
   } catch (error) {
     console.error("Get Profile Error:", error);
@@ -186,5 +187,38 @@ exports.requestOtp = async (req, res) => {
   } catch (error) {
     console.error("OTP Error:", error);
     res.status(500).json({ message: "Failed to send OTP email" });
+  }
+};
+
+// ==========================================
+// NEW: Update Profile Image
+// ==========================================
+exports.updateProfileImage = async (req, res) => {
+  const userId = req.params.id;
+
+  if (!req.file) {
+    return res
+      .status(400)
+      .json({ success: false, message: "No file uploaded" });
+  }
+
+  // Create the public path for the image
+  const imagePath = `/uploads/${req.file.filename}`;
+
+  try {
+    // Update the existing image_profile column in the users table
+    const query = "UPDATE users SET image_profile = ? WHERE id = ?";
+    await db.promise().query(query, [imagePath, userId]);
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile image updated successfully",
+      imagePath: imagePath,
+    });
+  } catch (error) {
+    console.error("Update Profile Image Error:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 };
