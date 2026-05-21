@@ -104,12 +104,23 @@ export default function SellerInbox() {
                     </div>
                   </div>
 
-                  {/* Action Icon */}
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center text-gray-300 group-hover:text-rose-500 group-hover:bg-white group-hover:shadow-sm transition-all duration-300 shrink-0">
-                    <ChevronRight
-                      size={22}
-                      className={isArabic ? "rotate-180" : ""}
-                    />
+                  {/* Action Icon & Notification Badge Container */}
+                  <div className="flex items-center gap-3">
+                    {/* NEW: The Unread Message Badge */}
+                    {chatUser.unread_count > 0 && (
+                      <div className="flex items-center justify-center bg-red-500 text-white font-bold text-xs rounded-full h-7 w-7 shadow-md animate-bounce">
+                        {chatUser.unread_count > 99
+                          ? "99+"
+                          : chatUser.unread_count}
+                      </div>
+                    )}
+
+                    <div className="w-10 h-10 rounded-full flex items-center justify-center text-gray-300 group-hover:text-rose-500 group-hover:bg-white group-hover:shadow-sm transition-all duration-300 shrink-0">
+                      <ChevronRight
+                        size={22}
+                        className={isArabic ? "rotate-180" : ""}
+                      />
+                    </div>
                   </div>
                 </Link>
               ))}

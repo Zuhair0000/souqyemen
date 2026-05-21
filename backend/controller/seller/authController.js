@@ -56,6 +56,50 @@ exports.registerSeller = async (req, res) => {
   }
 };
 
+// 5. Verify the 6-digit OTP code
+exports.verifyOtp = async (req, res) => {
+  const { email, otp } = req.body;
+
+  if (!email || !otp) {
+    return res
+      .status(400)
+      .json({ message: "Email and verification code are required." });
+  }
+
+  try {
+    // Query matches email & OTP, and calculates age in minutes using DB time directly
+    const query = `
+      SELECT *, TIMESTAMPDIFF(MINUTE, created_at, NOW()) AS age_minutes 
+      FROM otp_verifications 
+      WHERE email = ? AND otp = ?
+    `;
+
+    const [rows] = await db.query(query, [email, otp]);
+
+    // If no row matches, the code is plain wrong
+    if (rows.length === 0) {
+      return res.status(400).json({ message: "Incorrect verification code." });
+    }
+
+    // If the code was generated more than 15 minutes ago
+    if (rows[0].age_minutes > 15) {
+      return res
+        .status(400)
+        .json({ message: "Verification code has expired." });
+    }
+
+    // Success! Delete the code from the table so it can't be used a second time
+    await db.query("DELETE FROM otp_verifications WHERE email = ?", [email]);
+
+    return res.status(200).json({ message: "Email verified successfully!" });
+  } catch (error) {
+    console.error("Verify OTP Error:", error);
+    return res
+      .status(500)
+      .json({ message: "Internal server error during verification." });
+  }
+};
+
 // Seller Profile
 exports.getProfile = async (req, res) => {
   const userId = req.user.id;
