@@ -164,14 +164,24 @@ exports.postMessages = async (req, res) => {
   }
 };
 
+// PUT THIS IN userController.js
 exports.getInbox = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // This is the logged-in user's ID
   try {
+    // We join the messages table with itself essentially to group by sender
+    // and count how many of those messages have is_read = 0
     const [rows] = await db.query(
-      `SELECT DISTINCT u.id, u.name, u.email
+      `SELECT 
+         u.id, 
+         u.name, 
+         u.email,
+         SUM(CASE WHEN m.is_read = 0 THEN 1 ELSE 0 END) as unread_count,
+         MAX(m.timestamp) as last_message_time
        FROM messages m
        JOIN users u ON u.id = m.sender_id
-       WHERE m.receiver_id = ?`,
+       WHERE m.receiver_id = ?
+       GROUP BY u.id, u.name, u.email
+       ORDER BY last_message_time DESC`,
       [id],
     );
 
@@ -179,5 +189,49 @@ exports.getInbox = async (req, res) => {
   } catch (err) {
     console.error("Inbox error:", err);
     res.status(500).json({ message: "Failed to fetch inbox" });
+  }
+};
+
+// 1. Fetch the number of unread messages
+exports.getUnreadCount = async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+
+    const query = `
+      SELECT COUNT(*) AS unreadCount 
+      FROM messages 
+      WHERE receiver_id = ? AND is_read = 0
+    `;
+
+    // CHANGED: db.execute to db.query
+    const [rows] = await db.query(query, [sellerId]);
+
+    res.status(200).json({
+      unreadCount: rows[0].unreadCount || 0,
+    });
+  } catch (error) {
+    console.error("Error fetching unread messages count:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// 2. Mark all messages as read when the seller opens their inbox
+exports.markAllAsRead = async (req, res) => {
+  try {
+    const sellerId = req.user.id;
+
+    const query = `
+      UPDATE messages 
+      SET is_read = 1 
+      WHERE receiver_id = ? AND is_read = 0
+    `;
+
+    // CHANGED: db.execute to db.query
+    await db.query(query, [sellerId]);
+
+    res.status(200).json({ message: "All notifications cleared" });
+  } catch (error) {
+    console.error("Error marking messages as read:", error);
+    res.status(500).json({ message: "Server error" });
   }
 };

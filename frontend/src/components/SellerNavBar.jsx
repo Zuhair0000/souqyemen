@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
 import {
   LayoutDashboard,
   PlusCircle,
@@ -20,6 +21,11 @@ export default function SellerNavBar({ children }) {
   const navigate = useNavigate();
   const sellerId = localStorage.getItem("sellerId");
   const [isOpen, setIsOpen] = useState(false);
+
+  // Notification States
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+
   const dropdownRef = useRef(null);
   const { t, i18n } = useTranslation();
 
@@ -34,7 +40,73 @@ export default function SellerNavBar({ children }) {
     i18n.changeLanguage(newLang);
   };
 
-  // CRITICAL FIX: This effect runs on load and ensures the layout matches the saved language
+  // --- NEW: Handle clicking the messages icon ---
+  const handleMessagesClick = async () => {
+    if (unreadMessagesCount > 0) {
+      // 1. Instantly clear the badge on the frontend so it feels fast
+      setUnreadMessagesCount(0);
+
+      // 2. Tell the backend to update the database to is_read = 1
+      try {
+        const token = localStorage.getItem("token");
+        await axios.put(
+          "https://souqyemen.store/api/messages/mark-read",
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+      } catch (error) {
+        console.error("Failed to mark messages as read", error);
+      }
+    }
+  };
+
+  // Fetch notifications
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      // Fetch Orders
+      try {
+        const ordersRes = await axios.get(
+          "https://souqyemen.store/api/seller/orders",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        const orders = ordersRes.data.orders || ordersRes.data;
+        const pendingCount = orders.filter(
+          (order) => order.status?.toLowerCase() === "pending",
+        ).length;
+        setNewOrdersCount(pendingCount);
+      } catch (error) {
+        console.error("Failed to fetch pending orders", error);
+      }
+
+      // Fetch Unread Messages
+      try {
+        const msgRes = await axios.get(
+          "https://souqyemen.store/api/messages/unread",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setUnreadMessagesCount(msgRes.data.unreadCount || 0);
+      } catch (error) {
+        console.error("Failed to fetch unread messages", error);
+      }
+    };
+
+    fetchNotifications();
+
+    // Poll every 30 seconds
+    const intervalId = setInterval(fetchNotifications, 30000);
+    return () => clearInterval(intervalId);
+  }, []);
+
+  // RTL Layout fix
   useEffect(() => {
     const dir = i18n.language === "ar" ? "rtl" : "ltr";
     document.dir = dir;
@@ -52,7 +124,6 @@ export default function SellerNavBar({ children }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Smaller, tighter link styles
   const linkClass = ({ isActive }) => `
     flex items-center gap-1.5 py-2 px-3 rounded-lg text-sm font-bold transition-all duration-200
     ${
@@ -62,6 +133,7 @@ export default function SellerNavBar({ children }) {
     }
   `;
 
+  // Notice we added the `onClick` property to the Messages object here
   const navItems = [
     { to: "/seller/dashboard", icon: LayoutDashboard, label: t("Dashboard") },
     { to: "/seller/add-product", icon: PlusCircle, label: t("Add Item") },
@@ -72,7 +144,12 @@ export default function SellerNavBar({ children }) {
       icon: ShoppingCart,
       label: t("Orders"),
     },
-    { to: "/seller/inbox", icon: MessageSquare, label: t("Messages") },
+    {
+      to: "/seller/inbox",
+      icon: MessageSquare,
+      label: t("Messages"),
+      onClick: handleMessagesClick,
+    },
     {
       to: `/seller/public/${sellerId}`,
       icon: UserCircle2,
@@ -82,9 +159,8 @@ export default function SellerNavBar({ children }) {
 
   return (
     <nav className="w-full py-5 bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-200 sticky top-0 z-50">
-      {/* Reduced padding (py-2) for a slimmer navbar */}
       <div className="max-w-[1500px] mx-auto flex items-center justify-between px-4 py-2">
-        {/* Smaller Logo */}
+        {/* Logo */}
         <NavLink
           to="/seller/dashboard"
           className="flex items-center gap-3 transition-transform hover:scale-105"
@@ -106,18 +182,41 @@ export default function SellerNavBar({ children }) {
 
         {children}
 
-        {/* Desktop Menu - Tighter Gap */}
+        {/* Desktop Menu */}
         <div className="hidden xl:flex items-center gap-1">
           {navItems.map((item) => (
-            <NavLink key={item.to} to={item.to} className={linkClass}>
-              <item.icon size={18} />
+            <NavLink
+              key={item.to}
+              to={item.to}
+              className={linkClass}
+              onClick={() => {
+                if (item.onClick) item.onClick();
+              }} // Triggers the clear badge function if it exists
+            >
+              <div className="relative">
+                <item.icon size={18} />
+
+                {/* Orders Badge */}
+                {item.to.includes("/orders") && newOrdersCount > 0 && (
+                  <span className="absolute -top-1.5 -end-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-1 ring-white">
+                    {newOrdersCount > 99 ? "99+" : newOrdersCount}
+                  </span>
+                )}
+
+                {/* Messages Badge */}
+                {item.to.includes("/inbox") && unreadMessagesCount > 0 && (
+                  <span className="absolute -top-1.5 -end-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-1 ring-white">
+                    {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
+                  </span>
+                )}
+              </div>
               <span>{item.label}</span>
             </NavLink>
           ))}
 
           <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
-          {/* Language Toggle (Slimmer) */}
+          {/* Language Toggle */}
           <button
             onClick={toggleLanguage}
             className="flex items-center gap-1.5 py-2 px-3 rounded-lg text-sm font-bold text-gray-700 hover:bg-gray-100 transition-colors"
@@ -126,7 +225,7 @@ export default function SellerNavBar({ children }) {
             <span>{i18n.language === "en" ? "AR" : "EN"}</span>
           </button>
 
-          {/* Logout Button (Slimmer) */}
+          {/* Logout Button */}
           <button
             onClick={handleLogout}
             className="flex items-center gap-1.5 py-2 px-3 ms-1 rounded-lg text-sm font-bold text-white bg-gray-900 hover:bg-gray-800 shadow-sm transition-colors"
@@ -139,9 +238,14 @@ export default function SellerNavBar({ children }) {
         {/* Mobile Hamburger */}
         <button
           onClick={() => setIsOpen((prev) => !prev)}
-          className="xl:hidden text-[#a22f29] p-1.5 rounded-lg hover:bg-[#f9eaea] transition-colors"
+          className="xl:hidden text-[#a22f29] p-1.5 rounded-lg hover:bg-[#f9eaea] transition-colors relative"
         >
           {isOpen ? <X size={28} /> : <Menu size={28} />}
+
+          {/* Mobile hamburger indicator if ANY notifications exist */}
+          {!isOpen && (newOrdersCount > 0 || unreadMessagesCount > 0) && (
+            <span className="absolute top-0 end-0 flex h-3 w-3 rounded-full bg-red-500 ring-2 ring-white"></span>
+          )}
         </button>
       </div>
 
@@ -157,9 +261,28 @@ export default function SellerNavBar({ children }) {
                 key={item.to}
                 to={item.to}
                 className={linkClass}
-                onClick={() => setIsOpen(false)}
+                onClick={() => {
+                  if (item.onClick) item.onClick();
+                  setIsOpen(false);
+                }}
               >
-                <item.icon size={20} />
+                <div className="relative">
+                  <item.icon size={20} />
+
+                  {/* Mobile Orders Badge */}
+                  {item.to.includes("/orders") && newOrdersCount > 0 && (
+                    <span className="absolute -top-1 -end-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                      {newOrdersCount}
+                    </span>
+                  )}
+
+                  {/* Mobile Messages Badge */}
+                  {item.to.includes("/inbox") && unreadMessagesCount > 0 && (
+                    <span className="absolute -top-1 -end-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white">
+                      {unreadMessagesCount}
+                    </span>
+                  )}
+                </div>
                 <span>{item.label}</span>
               </NavLink>
             ))}

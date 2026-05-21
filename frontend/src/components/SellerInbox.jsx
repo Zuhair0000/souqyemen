@@ -41,11 +41,22 @@ export default function SellerInbox() {
               key={user.id}
               className="no-underline text-inherit"
             >
-              <div className="bg-white border border-gray-300 rounded-lg px-5 py-4 mb-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg">
-                <h4 className="text-lg font-semibold text-gray-800 mb-1">
-                  {user.name}
-                </h4>
-                <p className="text-sm text-gray-600">{user.email}</p>
+              {/* Added flex and justify-between to space the text and the badge */}
+              <div className="bg-white border border-gray-300 rounded-lg px-5 py-4 mb-4 transition-all duration-200 hover:-translate-y-1 hover:shadow-lg flex items-center justify-between">
+                {/* Left side: Name and Email */}
+                <div>
+                  <h4 className="text-lg font-semibold text-gray-800 mb-1">
+                    {user.name}
+                  </h4>
+                  <p className="text-sm text-gray-600">{user.email}</p>
+                </div>
+
+                {/* Right side: New Message Badge */}
+                {user.unread_count > 0 && (
+                  <div className="flex items-center justify-center bg-red-500 text-white font-bold text-xs rounded-full h-7 w-7 shadow-sm">
+                    {user.unread_count > 99 ? "99+" : user.unread_count}
+                  </div>
+                )}
               </div>
             </Link>
           ))
