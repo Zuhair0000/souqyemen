@@ -2,10 +2,8 @@ import React, { useState, useEffect } from "react";
 import CategoriesBar from "../../components/CategoriesBar";
 import Products from "../../components/Products";
 import Hero from "../../components/Hero";
-// You will create this component next!
-// import Sellers from "../../components/Sellers";
 import { useOutletContext } from "react-router-dom";
-import { Truck, ShieldCheck, Store, Users } from "lucide-react";
+import { Store, Users } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import Sellers from "../../components/Sellers";
 import RecommendedForYou from "../../components/RecommendedForYou";
@@ -16,17 +14,15 @@ export default function HomePage() {
   const [products, setProducts] = useState([]);
   const [promotions, setPromotions] = useState([]);
 
-  // 1. ADD THIS STATE: Tracks which view the user is currently on
+  // Tracks which view the user is currently on
   const [viewMode, setViewMode] = useState("products");
-
   const [currentUser, setCurrentUser] = useState(null);
-
   const { t } = useTranslation();
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setCurrentUser(JSON.parse(storedUser)); // Convert the string back to an object
+      setCurrentUser(JSON.parse(storedUser));
     }
   }, []);
 
@@ -62,8 +58,8 @@ export default function HomePage() {
     <div className="min-h-screen bg-gradient-to-br from-rose-50/40 via-orange-50/30 to-white pb-20">
       <Hero promotions={promotions} />
 
-      {/* 2. THE UI TOGGLE SWITCH */}
-      <div className="max-w-[1600px] mx-auto px-4 mt-8 mb-4 flex justify-center">
+      {/* THE UI TOGGLE SWITCH */}
+      <div className="max-w-[1800px] mx-auto px-4 xl:px-8 mt-8 mb-6 flex justify-center">
         <div className="bg-gray-200/50 backdrop-blur-md p-1.5 rounded-full inline-flex shadow-inner">
           <button
             onClick={() => setViewMode("products")}
@@ -91,22 +87,28 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* 3. CONDITIONAL RENDERING */}
+      {/* CONDITIONAL RENDERING */}
       {viewMode === "products" ? (
-        <>
-          {currentUser && currentUser.id && (
-            <RecommendedForYou userId={currentUser.id} />
-          )}
-          <CategoriesBar
-            onCategorySelect={setSelectedCategory}
-            activeCategory={selectedCategory}
-          />
-          <Products products={filterProducts} />
-        </>
+        // Flex Container for Sidebar Layout on Desktop
+        <div className="max-w-[1800px] mx-auto px-4 xl:px-8 flex flex-col lg:flex-row gap-6 lg:gap-10 items-start">
+          {/* Categories Sidebar (Sticky) */}
+          <div className="w-full lg:w-[260px] xl:w-[280px] shrink-0 sticky top-[75px] lg:top-[90px] z-40">
+            <CategoriesBar
+              onCategorySelect={setSelectedCategory}
+              activeCategory={selectedCategory}
+            />
+          </div>
+
+          {/* Main Products Area */}
+          <div className="flex-1 min-w-0 flex flex-col gap-8">
+            {currentUser && currentUser.id && (
+              <RecommendedForYou userId={currentUser.id} />
+            )}
+            <Products products={filterProducts} />
+          </div>
+        </div>
       ) : (
-        <div className="max-w-[1600px] mx-auto px-4 text-center">
-          {/* <Users size={48} className="mx-auto text-gray-300 mb-4" />
-          <h3 className="text-xl font-bold text-gray-800">Sellers Directory</h3> */}
+        <div className="max-w-[1800px] mx-auto px-4 xl:px-8 text-center">
           <Sellers />
         </div>
       )}
