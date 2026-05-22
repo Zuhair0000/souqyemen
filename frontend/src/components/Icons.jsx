@@ -4,10 +4,12 @@ import { Heart, ShoppingCart, User, Megaphone, House } from "lucide-react";
 import { useCart } from "../context/cartContext";
 import { FiMessageSquare } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
+import axios from "axios"; // Added axios for the API call
 
 export default function Icons() {
   const [user, setUser] = useState(null);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [unreadMessagesCount, setUnreadMessagesCount] = useState(0); // New state for messages
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const { cartCount } = useCart();
@@ -23,6 +25,34 @@ export default function Icons() {
       }
     }
   }, []);
+
+  // --- NEW: Fetch Unread Messages ---
+  useEffect(() => {
+    // Only fetch if a user is logged in
+    if (!user || !localStorage.getItem("token")) return;
+
+    const fetchUnreadMessages = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await axios.get(
+          "https://souqyemen.store/api/messages/unread",
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          },
+        );
+        setUnreadMessagesCount(res.data.unreadCount || 0);
+      } catch (error) {
+        console.error("Failed to fetch unread messages", error);
+      }
+    };
+
+    fetchUnreadMessages();
+
+    // Poll every 30 seconds to keep the badge updated
+    const interval = setInterval(fetchUnreadMessages, 30000);
+    return () => clearInterval(interval);
+  }, [user]);
+  // ----------------------------------
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -68,9 +98,20 @@ export default function Icons() {
       </NavLink>
 
       {/* Messages */}
-      <NavLink to="/seller/inbox" className={baseIcon}>
+      {/* Updated to dynamically route based on user role and clear badge on click */}
+      <NavLink
+        to={user?.role === "seller" ? "/seller/inbox" : "/inbox"}
+        className={`${baseIcon} relative`}
+        onClick={() => setUnreadMessagesCount(0)}
+      >
         <FiMessageSquare size={20} />{" "}
         <span className="md:hidden">{t("Messages")}</span>
+        {/* NEW: Notification Badge for Messages */}
+        {unreadMessagesCount > 0 && (
+          <span className="absolute -top-1.5 -end-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white shadow-sm ring-1 ring-white animate-bounce">
+            {unreadMessagesCount > 99 ? "99+" : unreadMessagesCount}
+          </span>
+        )}
       </NavLink>
 
       {/* Promotions */}

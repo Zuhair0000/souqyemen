@@ -40,28 +40,6 @@ export default function SellerNavBar({ children }) {
     i18n.changeLanguage(newLang);
   };
 
-  // --- NEW: Handle clicking the messages icon ---
-  const handleMessagesClick = async () => {
-    if (unreadMessagesCount > 0) {
-      // 1. Instantly clear the badge on the frontend so it feels fast
-      setUnreadMessagesCount(0);
-
-      // 2. Tell the backend to update the database to is_read = 1
-      try {
-        const token = localStorage.getItem("token");
-        await axios.put(
-          "https://souqyemen.store/api/messages/mark-read",
-          {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
-        );
-      } catch (error) {
-        console.error("Failed to mark messages as read", error);
-      }
-    }
-  };
-
   // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
@@ -101,7 +79,8 @@ export default function SellerNavBar({ children }) {
 
     fetchNotifications();
 
-    // Poll every 30 seconds
+    // Poll every 30 seconds so the badge updates naturally
+    // after a user marks a specific chat as read inside ChatBox.jsx
     const intervalId = setInterval(fetchNotifications, 30000);
     return () => clearInterval(intervalId);
   }, []);
@@ -133,7 +112,7 @@ export default function SellerNavBar({ children }) {
     }
   `;
 
-  // Notice we added the `onClick` property to the Messages object here
+  // Removed the custom onClick handler from the Inbox item
   const navItems = [
     { to: "/seller/dashboard", icon: LayoutDashboard, label: t("Dashboard") },
     { to: "/seller/add-product", icon: PlusCircle, label: t("Add Item") },
@@ -148,7 +127,6 @@ export default function SellerNavBar({ children }) {
       to: "/seller/inbox",
       icon: MessageSquare,
       label: t("Messages"),
-      onClick: handleMessagesClick,
     },
     {
       to: `/seller/public/${sellerId}`,
@@ -185,14 +163,7 @@ export default function SellerNavBar({ children }) {
         {/* Desktop Menu */}
         <div className="hidden xl:flex items-center gap-1">
           {navItems.map((item) => (
-            <NavLink
-              key={item.to}
-              to={item.to}
-              className={linkClass}
-              onClick={() => {
-                if (item.onClick) item.onClick();
-              }} // Triggers the clear badge function if it exists
-            >
+            <NavLink key={item.to} to={item.to} className={linkClass}>
               <div className="relative">
                 <item.icon size={18} />
 
@@ -261,10 +232,7 @@ export default function SellerNavBar({ children }) {
                 key={item.to}
                 to={item.to}
                 className={linkClass}
-                onClick={() => {
-                  if (item.onClick) item.onClick();
-                  setIsOpen(false);
-                }}
+                onClick={() => setIsOpen(false)}
               >
                 <div className="relative">
                   <item.icon size={20} />

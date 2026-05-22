@@ -148,16 +148,20 @@ exports.getMessages = async (req, res) => {
 exports.postMessages = async (req, res) => {
   const { sender_id, receiver_id, message } = req.body;
 
-  if (!sender_id || !receiver_id || !message) {
-    return res.status(400).json({ error: "Missing fields" });
+  const image_url = req.file ? `/uploads/${req.file.filename}` : null;
+
+  if (!sender_id || !receiver_id || (!message && !image_url)) {
+    return res.status(400).json({ error: "Cannot send an empty message" });
   }
 
   try {
     const sql =
-      "INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)";
-    await db.query(sql, [sender_id, receiver_id, message]);
+      "INSERT INTO messages (sender_id, receiver_id, message, image_url) VALUES (?, ?, ?, ?)";
+    await db.query(sql, [sender_id, receiver_id, message || "", image_url]);
 
-    res.status(201).json({ success: true, message: "Message saved" });
+    res
+      .status(201)
+      .json({ success: true, message: "Message saved", image_url });
   } catch (err) {
     console.error("Error saving message:", err);
     res.status(500).json({ error: "Database error" });

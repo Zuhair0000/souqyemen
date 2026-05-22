@@ -162,6 +162,17 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* NEW ROUTE: Customer Inbox */}
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <Inbox />
+            </ProtectedRoute>
+          }
+        />
+
         <Route path="/seller/chat/:id" element={<ChatBox />} />
         <Route path="/admin/pending-sellers" element={<AdminDashboard />} />
 
