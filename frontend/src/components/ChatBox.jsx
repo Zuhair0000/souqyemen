@@ -19,6 +19,9 @@ export default function ChatBox() {
   const [chat, setChat] = useState([]);
   const [isSending, setIsSending] = useState(false);
 
+  // 🔥 NEW: State for fullscreen image modal
+  const [fullScreenImage, setFullScreenImage] = useState(null);
+
   const chatContainerRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -177,12 +180,17 @@ export default function ChatBox() {
                         : "bg-white text-gray-800 border border-gray-100 rounded-t-2xl rounded-br-2xl rounded-bl-sm"
                     }`}
                   >
-                    {/* Render Image if it exists */}
+                    {/* 🔥 Render Image if it exists (Now Clickable) 🔥 */}
                     {msg.image_url && (
                       <img
                         src={`https://souqyemen.store${msg.image_url}`}
                         alt="attachment"
-                        className="max-w-full rounded-lg mb-2 object-cover border border-white/20"
+                        onClick={() =>
+                          setFullScreenImage(
+                            `https://souqyemen.store${msg.image_url}`,
+                          )
+                        }
+                        className="max-w-full rounded-lg mb-2 object-cover border border-white/20 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"
                         style={{ maxHeight: "250px" }}
                       />
                     )}
@@ -258,6 +266,30 @@ export default function ChatBox() {
           </div>
         </div>
       </div>
+
+      {/* 🔥 THE FULLSCREEN IMAGE MODAL 🔥 */}
+      {fullScreenImage && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm p-4 sm:p-8 animate-in fade-in duration-200"
+          onClick={() => setFullScreenImage(null)} // Closes when clicking the background
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => setFullScreenImage(null)}
+            className="absolute top-4 right-4 md:top-8 md:right-8 text-white/70 hover:text-white bg-black/50 hover:bg-black/80 rounded-full p-2 transition-all z-50"
+          >
+            <X size={32} />
+          </button>
+
+          {/* The Image */}
+          <img
+            src={fullScreenImage}
+            alt="fullscreen attachment"
+            onClick={(e) => e.stopPropagation()} // Prevents closing when clicking the image itself
+            className="max-w-full max-h-full object-contain rounded-xl shadow-2xl"
+          />
+        </div>
+      )}
     </div>
   );
 }
