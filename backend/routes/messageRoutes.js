@@ -23,7 +23,7 @@ const upload = multer({ storage });
 // 1. Static routes MUST come first!
 router.get("/unread", authenticate, getUnreadCount);
 router.put("/mark-read", authenticate, markAllAsRead);
-router.post("/", postMessages);
+router.post("/", upload.single("image"), postMessages);
 
 // 2. Dynamic parameter routes MUST come last!
 router.get("/:user1/:user2", getMessages);
