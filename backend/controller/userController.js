@@ -146,7 +146,7 @@ exports.getMessages = async (req, res) => {
 };
 
 exports.postMessages = async (req, res) => {
-  const { sender_id, receiver_id, message } = req.body;
+  const { sender_id, receiver_id, message } = req.body || {};
 
   const image_url = req.file ? `/uploads/${req.file.filename}` : null;
 
