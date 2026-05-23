@@ -3,7 +3,7 @@ import logo from "../assets/Logo.jpeg"; // Adjust path if needed
 import { Link } from "react-router-dom";
 import { useCart } from "../context/cartContext"; // Adjust path if needed
 import { useTranslation } from "react-i18next";
-import { ShoppingCart, Star } from "lucide-react";
+import { ShoppingCart, Star, X } from "lucide-react";
 
 export default function RecommendedForYou({ userId }) {
   const [products, setProducts] = useState([]);
@@ -11,10 +11,17 @@ export default function RecommendedForYou({ userId }) {
   const [error, setError] = useState(null);
   const { addToCart } = useCart();
   const { t } = useTranslation();
+  const [toast, setToast] = useState(null);
+
+  const showToast = (productName) => {
+    setToast(productName);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   const handleAdd = (e, product) => {
     e.preventDefault(); // Prevents the Link navigation when clicking "Add to cart"
     addToCart(product);
+    showToast(product.name);
   };
 
   useEffect(() => {
@@ -85,6 +92,35 @@ export default function RecommendedForYou({ userId }) {
 
   return (
     <div className="p-4 max-w-[1600px] mx-auto my-12">
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: "24px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            animation: "slideDown 0.35s cubic-bezier(0.16,1,0.3,1)",
+          }}
+          className="flex items-center gap-3 bg-white border border-rose-200 px-5 py-3.5 rounded-[20px] shadow-[0_8px_32px_-8px_rgba(244,63,94,0.18),0_2px_8px_-2px_rgba(0,0,0,0.06)] max-w-xs"
+        >
+          <div className="w-9 h-9 rounded-[10px] flex-shrink-0 bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center">
+            <ShoppingCart size={18} className="text-white" />
+          </div>
+          <div className="flex flex-col gap-0.5 overflow-hidden">
+            <span className="text-[15px] font-bold text-gray-900">
+              {t("Added to cart!")}
+            </span>
+            <span className="text-[13px] text-gray-500 truncate">{toast}</span>
+          </div>
+          <button
+            onClick={() => setToast(null)}
+            className="ml-1 w-7 h-7 rounded-lg flex-shrink-0 bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+          >
+            <X size={13} className="text-gray-400" />
+          </button>
+        </div>
+      )}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-10 gap-4">
         <h2 className="text-3xl md:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-gray-900 to-gray-600 tracking-tight">
           {t("Recommended For You")}
@@ -137,7 +173,8 @@ export default function RecommendedForYou({ userId }) {
                   {product.name}
                 </h3>
                 <p className="text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500 mt-auto pt-3">
-                  ${parseFloat(product.price).toFixed(2)}
+                  {t("YER")}
+                  {parseFloat(product.price).toFixed(2)}
                 </p>
               </div>
 

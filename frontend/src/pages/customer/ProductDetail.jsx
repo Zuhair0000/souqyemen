@@ -10,6 +10,7 @@ import {
   MessageCircle,
   Star,
   AlertCircle,
+  X,
 } from "lucide-react";
 
 export default function ProductDetail() {
@@ -20,6 +21,13 @@ export default function ProductDetail() {
 
   const { addToCart } = useCart();
   const { t } = useTranslation();
+
+  const [toast, setToast] = useState(null);
+
+  const showToast = (productName) => {
+    setToast(productName);
+    setTimeout(() => setToast(null), 2500);
+  };
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -43,7 +51,10 @@ export default function ProductDetail() {
 
   const handleAdd = (e) => {
     e.preventDefault();
-    if (product) addToCart({ ...product, quantity: parseInt(quantity) });
+    if (product) {
+      addToCart({ ...product, quantity: parseInt(quantity) });
+      showToast(product.name);
+    }
   };
 
   const handleQuantityChange = (e) => {
@@ -63,6 +74,35 @@ export default function ProductDetail() {
 
   return (
     <div className="min-h-screen bg-white">
+      {toast && (
+        <div
+          style={{
+            position: "fixed",
+            top: "24px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 9999,
+            animation: "slideDown 0.35s cubic-bezier(0.16,1,0.3,1)",
+          }}
+          className="flex items-center gap-3 bg-white border border-rose-200 px-5 py-3.5 rounded-[20px] shadow-[0_8px_32px_-8px_rgba(244,63,94,0.18),0_2px_8px_-2px_rgba(0,0,0,0.06)] max-w-xs"
+        >
+          <div className="w-9 h-9 rounded-[10px] flex-shrink-0 bg-gradient-to-br from-rose-500 to-orange-500 flex items-center justify-center">
+            <ShoppingCart size={18} className="text-white" />
+          </div>
+          <div className="flex flex-col gap-0.5 overflow-hidden">
+            <span className="text-[15px] font-bold text-gray-900">
+              {t("Added to cart!")}
+            </span>
+            <span className="text-[13px] text-gray-500 truncate">{toast}</span>
+          </div>
+          <button
+            onClick={() => setToast(null)}
+            className="ml-1 w-7 h-7 rounded-lg flex-shrink-0 bg-gray-50 border border-gray-200 flex items-center justify-center hover:bg-gray-100 transition-colors"
+          >
+            <X size={13} className="text-gray-400" />
+          </button>
+        </div>
+      )}
       <div className="max-w-[1600px] mx-auto px-4 md:px-8 py-8">
         <BackButton />
 
@@ -112,7 +152,8 @@ export default function ProductDetail() {
               {product.name}
             </h1>
             <p className="text-4xl font-black text-transparent bg-clip-text bg-gradient-to-r from-rose-500 to-orange-500 mb-6">
-              ${product.price}
+              {t("YER")}
+              {product.price}
             </p>
             <p className="text-lg text-gray-600 leading-relaxed mb-8">
               {product.description}

@@ -403,13 +403,14 @@
   "Your request has been successfully submitted for revision. We will notify you via email once approved.": "Your request has been successfully submitted for revision. We will notify you via email once approved.",
   "Go to Login": "Go to Login",
   "Something went wrong during submission.": "Something went wrong during submission.",
-  "Forgot Password?": "هل نسيت كلمة المرور؟",
-  "Reset Password": "إعادة تعيين كلمة المرور",
-  "Enter your email address to receive a verification code.": "أدخل بريدك الإلكتروني لتلقي رمز التحقق.",
-  "Send Code": "إرسال الرمز",
-  "Enter the 6-digit code sent to": "أدخل الرمز المكون من 6 أرقام المرسل إلى",
-  "Set New Password": "تعيين كلمة مرور جديدة",
-  "Please enter a new strong password for your account.": "يرجى إدخال كلمة مرور جديدة وقوية لحسابك.",
-  "Update Password": "تحديث كلمة المرور",
-  "Password updated successfully! You can now log in.": "تم تحديث كلمة المرور بنجاح! يمكنك الآن تسجيل الدخول."
+  "Forgot Password?": "Forgot Password?",
+  "Reset Password": "Reset Password",
+  "Enter your email address to receive a verification code.": "Enter your email address to receive a verification code.",
+  "Send Code": "Send Code",
+  "Enter the 6-digit code sent to": "Enter the 6-digit code sent to",
+  "Set New Password": "Set New Password",
+  "Please enter a new strong password for your account.": "Please enter a new strong password for your account.",
+  "Update Password": "Update Password",
+  "Password updated successfully! You can now log in.": "Password updated successfully! You can now log in.",
+  "YER": "YER"
 }
