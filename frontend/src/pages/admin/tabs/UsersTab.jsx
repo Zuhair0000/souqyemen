@@ -14,6 +14,8 @@ import {
   Store,
   Truck,
   User,
+  Download,
+  ZoomIn,
 } from "lucide-react";
 
 export default function UsersTab() {
@@ -21,6 +23,8 @@ export default function UsersTab() {
   const [search, setSearch] = useState("");
   const [roleFilter, setRoleFilter] = useState("all");
   const [selectedUser, setSelectedUser] = useState(null);
+  const [lightboxPhoto, setLightboxPhoto] = useState(null);
+  const [zoom, setZoom] = useState(1);
   const { t } = useTranslation();
 
   const fetchUsers = async () => {
@@ -98,6 +102,23 @@ export default function UsersTab() {
     }
   };
 
+  const photoUrl = (filename) => `https://souqyemen.store/uploads/${filename}`;
+
+  const handleDownload = async (filename) => {
+    try {
+      const response = await fetch(photoUrl(filename));
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error("Download failed", err);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* SEARCH */}
@@ -141,7 +162,6 @@ export default function UsersTab() {
         ) : (
           filteredUsers.map((user) => {
             const isBanned = user.status === "banned";
-
             return (
               <div
                 key={user.id}
@@ -180,7 +200,6 @@ export default function UsersTab() {
                 </div>
 
                 <div className="flex items-center gap-2 w-full sm:w-auto">
-                  {/* EYE BUTTON — sellers and delivery only */}
                   {(user.role === "seller" || user.role === "delivery") && (
                     <button
                       onClick={() => setSelectedUser(user)}
@@ -189,8 +208,6 @@ export default function UsersTab() {
                       <Eye size={16} /> {t("View")}
                     </button>
                   )}
-
-                  {/* BAN / UNBAN */}
                   {user.role !== "admin" && (
                     <button
                       onClick={() => toggleBanStatus(user.id, user.status)}
@@ -220,111 +237,214 @@ export default function UsersTab() {
 
       {/* VERIFICATION MODAL */}
       {selectedUser && (
-        <>
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
+          onClick={() => setSelectedUser(null)}
+        >
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4"
-            onClick={() => setSelectedUser(null)}
+            className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg p-8 relative"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="bg-white rounded-[2rem] shadow-2xl w-full max-w-lg p-8 relative"
-              onClick={(e) => e.stopPropagation()}
+            {/* Close */}
+            <button
+              onClick={() => setSelectedUser(null)}
+              className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
             >
-              {/* Close */}
-              <button
-                onClick={() => setSelectedUser(null)}
-                className="absolute top-5 right-5 w-9 h-9 flex items-center justify-center rounded-xl bg-gray-100 hover:bg-gray-200 transition-colors"
-              >
-                <X size={18} className="text-gray-600" />
-              </button>
+              <X size={18} className="text-gray-600" />
+            </button>
 
-              {/* Header */}
-              <div className="mb-6">
-                <h3 className="text-2xl font-black text-gray-900">
-                  {selectedUser.name}
-                </h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <span
-                    className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${getRoleBadge(selectedUser.role)}`}
+            {/* Header */}
+            <div className="mb-6">
+              <h3 className="text-2xl font-black text-gray-900">
+                {selectedUser.name}
+              </h3>
+              <div className="flex items-center gap-2 mt-1">
+                <span
+                  className={`px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider ${getRoleBadge(selectedUser.role)}`}
+                >
+                  {t(selectedUser.role)}
+                </span>
+                {selectedUser.status === "banned" && (
+                  <span className="flex items-center gap-1 bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
+                    <Ban size={12} /> {t("Banned")}
+                  </span>
+                )}
+              </div>
+            </div>
+
+            {/* Info */}
+            <div className="space-y-2 mb-6">
+              <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
+                <span className="font-bold text-gray-400 w-16">{t("ID")}</span>
+                <span className="font-bold text-gray-800">
+                  #{selectedUser.id}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
+                <Mail size={14} className="text-gray-400 shrink-0" />
+                <span className="font-bold text-gray-800 truncate">
+                  {selectedUser.email}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
+                <Phone size={14} className="text-gray-400 shrink-0" />
+                <span className="font-bold text-gray-800">
+                  {selectedUser.phone || "---"}
+                </span>
+              </div>
+            </div>
+
+            {/* Photos */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* ID Photo */}
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  {t("ID Photo")}
+                </p>
+                {selectedUser.id_photo ? (
+                  <button
+                    onClick={() => {
+                      setLightboxPhoto(selectedUser.id_photo);
+                      setZoom(1);
+                    }}
+                    className="w-full relative group rounded-2xl overflow-hidden border border-gray-200 cursor-zoom-in"
                   >
-                    {t(selectedUser.role)}
-                  </span>
-                  {selectedUser.status === "banned" && (
-                    <span className="flex items-center gap-1 bg-red-100 text-red-700 px-2.5 py-1 rounded-lg text-xs font-bold uppercase tracking-wider">
-                      <Ban size={12} /> {t("Banned")}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Info */}
-              <div className="space-y-2 mb-6">
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
-                  <span className="font-bold text-gray-400 w-16">
-                    {t("ID")}
-                  </span>
-                  <span className="font-bold text-gray-800">
-                    #{selectedUser.id}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
-                  <Mail size={14} className="text-gray-400 shrink-0" />
-                  <span className="font-bold text-gray-800 truncate">
-                    {selectedUser.email}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600 bg-gray-50 px-4 py-2.5 rounded-xl">
-                  <Phone size={14} className="text-gray-400 shrink-0" />
-                  <span className="font-bold text-gray-800">
-                    {selectedUser.phone || "---"}
-                  </span>
-                </div>
-              </div>
-
-              {/* Photos */}
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    {t("ID Photo")}
-                  </p>
-                  {selectedUser.id_photo ? (
                     <img
-                      src={`https://souqyemen.store/uploads/${selectedUser.id_photo}`}
+                      src={photoUrl(selectedUser.id_photo)}
                       alt="ID"
                       onError={(e) => {
                         e.target.onerror = null;
                       }}
-                      className="w-full aspect-video object-cover rounded-2xl border border-gray-200"
+                      className="w-full aspect-video object-cover transition-opacity duration-200 group-hover:opacity-60"
                     />
-                  ) : (
-                    <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-xs font-bold">
-                      {t("Not uploaded")}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <ZoomIn size={28} className="text-gray-900" />
                     </div>
-                  )}
-                </div>
+                  </button>
+                ) : (
+                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-xs font-bold">
+                    {t("Not uploaded")}
+                  </div>
+                )}
+              </div>
 
-                <div>
-                  <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
-                    {t("Selfie with ID")}
-                  </p>
-                  {selectedUser.selfie_with_id ? (
+              {/* Selfie with ID */}
+              <div>
+                <p className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">
+                  {t("Selfie with ID")}
+                </p>
+                {selectedUser.selfie_with_id ? (
+                  <button
+                    onClick={() => {
+                      setLightboxPhoto(selectedUser.selfie_with_id);
+                      setZoom(1);
+                    }}
+                    className="w-full relative group rounded-2xl overflow-hidden border border-gray-200 cursor-zoom-in"
+                  >
                     <img
-                      src={`https://souqyemen.store/uploads/${selectedUser.selfie_with_id}`}
+                      src={photoUrl(selectedUser.selfie_with_id)}
                       alt="Selfie with ID"
                       onError={(e) => {
                         e.target.onerror = null;
                       }}
-                      className="w-full aspect-video object-cover rounded-2xl border border-gray-200"
+                      className="w-full aspect-video object-cover transition-opacity duration-200 group-hover:opacity-60"
                     />
-                  ) : (
-                    <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-xs font-bold">
-                      {t("Not uploaded")}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                      <ZoomIn size={28} className="text-gray-900" />
                     </div>
-                  )}
-                </div>
+                  </button>
+                ) : (
+                  <div className="w-full aspect-video rounded-2xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-xs font-bold">
+                    {t("Not uploaded")}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        </>
+        </div>
+      )}
+
+      {/* LIGHTBOX */}
+      {/* LIGHTBOX */}
+      {lightboxPhoto && (
+        <div
+          className="fixed inset-0 z-[60] flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm p-4"
+          onClick={() => {
+            setLightboxPhoto(null);
+            setZoom(1);
+          }}
+        >
+          {/* Top bar */}
+          <div
+            className="flex items-center justify-between w-full max-w-8xl mb-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Zoom controls */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() =>
+                  setZoom((z) => Math.max(1, parseFloat((z - 0.25).toFixed(2))))
+                }
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg transition-colors"
+              >
+                −
+              </button>
+              <span className="text-white text-sm font-bold w-12 text-center">
+                {Math.round(zoom * 100)}%
+              </span>
+              <button
+                onClick={() =>
+                  setZoom((z) => Math.min(4, parseFloat((z + 0.25).toFixed(2))))
+                }
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 text-white font-bold text-lg transition-colors"
+              >
+                +
+              </button>
+              <button
+                onClick={() => setZoom(1)}
+                className="text-white/60 hover:text-white text-xs font-bold px-2 py-1 rounded-lg bg-white/10 hover:bg-white/20 transition-colors ml-1"
+              >
+                {t("Reset")}
+              </button>
+            </div>
+
+            {/* Download + Close */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => handleDownload(lightboxPhoto)}
+                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2.5 rounded-xl font-bold text-sm transition-colors"
+              >
+                <Download size={16} /> {t("Download")}
+              </button>
+              <button
+                onClick={() => {
+                  setLightboxPhoto(null);
+                  setZoom(1);
+                }}
+                className="w-9 h-9 flex items-center justify-center rounded-xl bg-white/10 hover:bg-white/20 transition-colors"
+              >
+                <X size={18} className="text-white" />
+              </button>
+            </div>
+          </div>
+
+          {/* Image */}
+          <div
+            className="overflow-auto max-w-8xl w-full max-h-[100vh] flex items-center justify-center rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={photoUrl(lightboxPhoto)}
+              alt="Full view"
+              style={{
+                transform: `scale(${zoom})`,
+                transformOrigin: "center center",
+                transition: "transform 0.2s ease",
+              }}
+              className="max-w-full max-h-[100vh] object-contain rounded-2xl"
+            />
+          </div>
+        </div>
       )}
     </div>
   );
