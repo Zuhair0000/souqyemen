@@ -36,12 +36,22 @@ model = SouqYemenRecommender(num_users=len(user_encoder.classes_), num_products=
 model.load_state_dict(torch.load('souqyemen_ncf_weights.pth', weights_only=True))
 model.eval()
 
+top_popular_ids = df['product_id'].value_counts().head(20).index.tolist()
+fallback_products_df = products_df[products_df['id'].isin(top_popular_ids)].copy()
+
 @app.get("/api/recommend/{user_id}")
 def get_recommendations(user_id: int, top_n: int = 5):
     try:
         user_encoded = user_encoder.transform([user_id])[0]
     except ValueError:
-        raise HTTPException(status_code=404, detail="User ID not found in AI database.")
+        recs = fallback_products_df.head(top_n).copy()
+        recs['predicted_rating'] = 5.0
+        
+        return{
+            'user_id': user_id,
+            'recommendations': recs.to_dict(orient='records'),
+            'note': 'cold_start_fallback'
+        }
     
     user_history = df[df['user_id'] == user_id]['product_id'].tolist()
     all_products = df['product_id'].unique().tolist()
@@ -55,6 +65,11 @@ def get_recommendations(user_id: int, top_n: int = 5):
         predicted_ratings = model(user_tensor, product_tensor)
         
     top_scores, top_indices = torch.topk(predicted_ratings, top_n)
+    
+    if top_scores.dim() == 0:
+        top_scores = top_scores.unsqueeze(0)
+        top_indices = top_indices.unsqueeze(0)
+        
     top_encoded_products = product_tensor[top_indices].numpy()
     top_real_products = product_encoder.inverse_transform(top_encoded_products)
     
