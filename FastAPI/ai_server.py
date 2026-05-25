@@ -46,7 +46,7 @@ def get_recommendations(user_id: int, top_n: int = 5):
     except ValueError:
         recs = fallback_products_df.head(top_n).copy()
         recs['predicted_rating'] = 5.0
-        
+        recs['match_percentage'] = 100.0
         return{
             'user_id': user_id,
             'recommendations': recs.to_dict(orient='records'),
@@ -73,9 +73,17 @@ def get_recommendations(user_id: int, top_n: int = 5):
     top_encoded_products = product_tensor[top_indices].numpy()
     top_real_products = product_encoder.inverse_transform(top_encoded_products)
     
-    recs = products_df[products_df['id'].isin(top_real_products)].copy()
-    recs['predicted_rating'] = top_scores.numpy()
-    recs = recs.sort_values(by='predicted_rating', ascending=False)
+    results_df = pd.DataFrame({
+        'id': top_real_products,
+        'predicted_rating': top_scores.numpy()
+    })
+    
+    recs = results_df.merge(products_df, on='id', how='left')
+    
+   
+    recs['match_percentage'] = (1 / (1 + np.exp(-recs['predicted_rating']))) * 100
+    
+    recs['match_percentage'] = recs['match_percentage'].round(1)
     
     return {
         "user_id": user_id,
