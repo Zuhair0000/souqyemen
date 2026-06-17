@@ -143,13 +143,15 @@ export default function MyProducts() {
                 <div className="w-full h-44 bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-2 relative">
                   <img
                     src={
-                      product.image
+                      product.image &&
+                      product.image !== "null" &&
+                      product.image !== "undefined"
                         ? `https://souqyemen.store${product.image}`
                         : logo
                     }
                     alt={product.name}
                     onError={(e) => {
-                      e.target.onerror = null;
+                      e.target.onerror = null; // Prevents infinite fallback loops
                       e.target.src = logo;
                     }}
                     className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"

@@ -98,8 +98,8 @@ export default function Products({ products }) {
                           ? product.image.replace(
                               "https://souqyemen.store",
                               "https://souqyemen.store",
-                            ) // Fixes old Mac URLs
-                          : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}` // Fixes relative paths
+                            )
+                          : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}`
                         : logo
                     }
                     alt={product.name}
