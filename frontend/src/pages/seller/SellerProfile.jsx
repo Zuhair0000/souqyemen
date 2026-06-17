@@ -187,9 +187,19 @@ export default function SellerProfile() {
               >
                 <div className="w-full aspect-square bg-gray-50 rounded-xl mb-4 overflow-hidden flex items-center justify-center p-2">
                   <img
-                    src={`https://souqyemen.store${product.image}`}
+                    src={
+                      product.image &&
+                      product.image !== "null" &&
+                      product.image !== "undefined"
+                        ? `https://souqyemen.store${product.image}`
+                        : logo
+                    }
                     alt={product.name}
-                    className="w-full h-full object-cover mix-blend-multiply rounded-lg group-hover:scale-105 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.onerror = null; // Prevents infinite fallback loops
+                      e.target.src = logo;
+                    }}
+                    className="w-full h-full object-cover rounded-xl transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
                 <h4 className="text-lg font-bold text-gray-800 line-clamp-1 mb-1 group-hover:text-[#a22f29] transition-colors">
