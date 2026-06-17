@@ -11,7 +11,7 @@ exports.createPost = async (req, res) => {
   try {
     await db.query(
       "INSERT INTO posts (seller_id, title, content, image) VALUES (?, ?, ?, ?)",
-      [sellerId, title, content, imagePath]
+      [sellerId, title, content, imagePath],
     );
     res.status(201).json({ message: "Post created" });
   } catch (err) {
@@ -26,7 +26,7 @@ exports.getMyPosts = async (req, res) => {
   try {
     const [posts] = await db.query(
       "SELECT * FROM posts WHERE seller_id = ? ORDER BY created_at DESC",
-      [sellerId]
+      [sellerId],
     );
     res.json(posts);
   } catch (err) {
@@ -46,7 +46,7 @@ exports.getAllPosts = async (req, res) => {
   users.id AS seller_id
 FROM posts
 JOIN users ON posts.seller_id = users.id
-ORDER BY posts.created_at DESC;`
+ORDER BY posts.created_at DESC;`,
     );
     res.json(posts);
   } catch (err) {
@@ -61,21 +61,25 @@ exports.getPostById = async (req, res) => {
     const [post] = await db.query(
       `
       SELECT 
-  posts.*, 
-  users.business_name, 
-  users.profile_photo, 
-  users.id AS seller_id
-
-FROM posts
-JOIN users ON posts.seller_id = users.id
-ORDER BY posts.created_at DESC;`,
-      [postId]
+        posts.*, 
+        users.business_name, 
+        users.profile_photo, 
+        users.id AS seller_id
+      FROM posts
+      JOIN users ON posts.seller_id = users.id
+      WHERE posts.id = ? -- THIS IS THE MISSING PIECE!
+      ORDER BY posts.created_at DESC;
+      `,
+      [postId],
     );
+
     if (!post.length) {
       return res.status(404).json({ message: "Post not found" });
     }
+
     res.json(post[0]);
   } catch (err) {
+    console.error("Error fetching post by ID:", err);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -96,7 +100,7 @@ exports.updatePost = async (req, res) => {
   try {
     const [[post]] = await db.query(
       "SELECT * FROM posts WHERE id = ? AND seller_id = ?",
-      [postId, sellerId]
+      [postId, sellerId],
     );
     if (!post) return res.status(404).json({ message: "Post not found" });
 
@@ -107,7 +111,7 @@ exports.updatePost = async (req, res) => {
 
     await db.query(
       `UPDATE posts SET title = ?, content = ?, image = COALESCE(?, image) WHERE id = ? AND seller_id = ?`,
-      [title, content, image, postId, sellerId]
+      [title, content, image, postId, sellerId],
     );
 
     res.json({ message: "Post updated successfully" });
@@ -125,7 +129,7 @@ exports.deletePost = async (req, res) => {
   try {
     const [[post]] = await db.query(
       "SELECT * FROM posts WHERE id = ? AND seller_id = ?",
-      [postId, sellerId]
+      [postId, sellerId],
     );
     if (!post) return res.status(404).json({ message: "Post not found" });
 

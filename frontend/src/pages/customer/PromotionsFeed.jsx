@@ -12,6 +12,7 @@ export default function PromotionsFeed() {
 
   useEffect(() => {
     axios.get("https://souqyemen.store/api/posts").then((res) => {
+      console.log("Posts data:", res.data);
       setPosts(res.data);
     });
   }, []);
