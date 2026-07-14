@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { User, Mail, Phone, MapPin, Edit3 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function Profile() {
   const [user, setUser] = useState(null);
@@ -16,7 +17,7 @@ export default function Profile() {
 
   useEffect(() => {
     axios
-      .get("https://souqyemen.store/api/user/profile", {
+      .get(`${API_URL}/api/user/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {
@@ -46,7 +47,7 @@ export default function Profile() {
   const handleUpdate = (e) => {
     e.preventDefault();
     axios
-      .put("https://souqyemen.store/api/user/profile", formData, {
+      .put(`${API_URL}/api/user/profile`, formData, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => {

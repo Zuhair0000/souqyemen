@@ -73,14 +73,14 @@ exports.login = async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "Invalid email or password" });
     }
 
     const user = rows[0];
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(401).json({ message: "Incorrect password" });
+      return res.status(401).json({ message: "Invalid email or password" });
     }
 
     if (user.role === "seller" && user.status !== "approved") {

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { API_URL } from "../config";
 
 export default function Hero({ promotions }) {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -45,10 +46,10 @@ export default function Hero({ promotions }) {
                 src={
                   post.image.startsWith("http")
                     ? post.image.replace(
-                        "https://souqyemen.store",
-                        "https://souqyemen.store",
+                        API_URL,
+                        API_URL,
                       )
-                    : `https://souqyemen.store${post.image.startsWith("/") ? "" : "/"}${post.image}`
+                    : `${API_URL}${post.image.startsWith("/") ? "" : "/"}${post.image}`
                 }
                 alt={post.title}
                 className="h-72 md:h-[450px] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]"

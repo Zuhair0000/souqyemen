@@ -17,6 +17,7 @@ import {
   Loader2,
   Building,
 } from "lucide-react";
+import { API_URL } from "../config";
 
 const initialFormData = {
   role: "seller",
@@ -64,7 +65,7 @@ export default function SignUpBusiness() {
 
     setIsSendingOtp(true);
     try {
-      const res = await fetch("https://souqyemen.store/api/auth/send-otp", {
+      const res = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email }),
@@ -89,7 +90,7 @@ export default function SignUpBusiness() {
     setOtpError("");
 
     try {
-      const res = await fetch("https://souqyemen.store/api/auth/verify-otp", {
+      const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: formData.email, otp: otpCode }),
@@ -126,8 +127,8 @@ export default function SignUpBusiness() {
 
     const endpoint =
       formData.role === "seller"
-        ? "https://souqyemen.store/api/auth/register/seller"
-        : "https://souqyemen.store/api/delivery/auth/register";
+        ? `${API_URL}/api/auth/register/seller`
+        : `${API_URL}/api/delivery/auth/register`;
 
     try {
       const res = await fetch(endpoint, { method: "POST", body: data });

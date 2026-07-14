@@ -12,6 +12,7 @@ import {
   AlertCircle,
   X,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export default function ProductDetail() {
     const fetchProduct = async () => {
       try {
         const response = await fetch(
-          `https://souqyemen.store/api/products/${id}`,
+          `${API_URL}/api/products/${id}`,
         );
         if (!response.ok)
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -114,10 +115,10 @@ export default function ProductDetail() {
                   product.image
                     ? product.image.startsWith("http")
                       ? product.image.replace(
-                          "https://souqyemen.store",
-                          "https://souqyemen.store",
+                          API_URL,
+                          API_URL,
                         )
-                      : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}`
+                      : `${API_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`
                     : logo
                 }
                 alt={product.name}
@@ -247,10 +248,10 @@ export default function ProductDetail() {
                         item.image
                           ? item.image.startsWith("http")
                             ? item.image.replace(
-                                "https://souqyemen.store",
-                                "https://souqyemen.store",
+                                API_URL,
+                                API_URL,
                               )
-                            : `https://souqyemen.store${item.image.startsWith("/") ? "" : "/"}${item.image}`
+                            : `${API_URL}${item.image.startsWith("/") ? "" : "/"}${item.image}`
                           : logo
                       }
                       alt={item.name}

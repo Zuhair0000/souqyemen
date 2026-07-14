@@ -4,6 +4,7 @@ import NavBar from "../components/NavBar";
 import Icons from "../components/Icons";
 import { useTranslation } from "react-i18next";
 import { ShieldCheck, KeyRound } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function SettingsPage() {
   const [currentPassword, setCurrentPassword] = useState("");
@@ -19,7 +20,7 @@ export default function SettingsPage() {
     setLoading(true);
     axios
       .put(
-        "https://souqyemen.store/api/user/change-password",
+        `${API_URL}/api/user/change-password`,
         { currentPassword, newPassword },
         { headers: { Authorization: `Bearer ${token}` } },
       )

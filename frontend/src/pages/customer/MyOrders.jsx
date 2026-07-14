@@ -10,6 +10,7 @@ import {
   MapPin,
   Star,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function MyOrders() {
   const [orders, setOrders] = useState([]);
@@ -27,7 +28,7 @@ export default function MyOrders() {
 
   const fetchOrders = () => {
     axios
-      .get("https://souqyemen.store/api/user/orders", {
+      .get(`${API_URL}/api/user/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       .then((res) => setOrders([...res.data].sort((a, b) => b.id - a.id)))
@@ -46,7 +47,7 @@ export default function MyOrders() {
     ) {
       try {
         await axios.put(
-          `https://souqyemen.store/api/orders/user/orders/${orderId}/complete`,
+          `${API_URL}/api/orders/user/orders/${orderId}/complete`,
           {},
           { headers: { Authorization: `Bearer ${token}` } },
         );
@@ -62,7 +63,7 @@ export default function MyOrders() {
   const submitRating = async (orderId, productId) => {
     try {
       await axios.post(
-        "https://souqyemen.store/api/products/review",
+        `${API_URL}/api/products/review`,
         {
           order_id: orderId,
           product_id: productId,

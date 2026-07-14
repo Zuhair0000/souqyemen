@@ -9,6 +9,7 @@ import {
   Trash2,
   Megaphone,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function SellerPosts() {
   const [posts, setPosts] = useState([]);
@@ -21,7 +22,7 @@ export default function SellerPosts() {
   const token = localStorage.getItem("token");
 
   const fetchMyPosts = async () => {
-    const res = await axios.get("https://souqyemen.store/api/seller/my-posts", {
+    const res = await axios.get(`${API_URL}/api/seller/my-posts`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     setPosts(res.data);
@@ -48,12 +49,12 @@ export default function SellerPosts() {
     };
     if (editingId) {
       await axios.put(
-        `https://souqyemen.store/api/seller/posts/${editingId}`,
+        `${API_URL}/api/seller/posts/${editingId}`,
         formData,
         { headers },
       );
     } else {
-      await axios.post("https://souqyemen.store/api/seller/posts", formData, {
+      await axios.post(`${API_URL}/api/seller/posts`, formData, {
         headers,
       });
     }
@@ -70,7 +71,7 @@ export default function SellerPosts() {
     setImageFile(null);
     setPreview(
       post.image
-        ? `https://souqyemen.store/${post.image.replace(/^\/?uploads/, "uploads")}`
+        ? `${API_URL}/${post.image.replace(/^\/?uploads/, "uploads")}`
         : null,
     );
     setEditingId(post.id);
@@ -79,7 +80,7 @@ export default function SellerPosts() {
 
   const handleDelete = async (id) => {
     if (window.confirm(t("Are you sure you want to delete this post?"))) {
-      await axios.delete(`https://souqyemen.store/api/seller/posts/${id}`, {
+      await axios.delete(`${API_URL}/api/seller/posts/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchMyPosts();
@@ -197,7 +198,7 @@ export default function SellerPosts() {
                   {post.image && (
                     <div className="w-full h-48 bg-gray-50">
                       <img
-                        src={`https://souqyemen.store/${post.image.replace(/^\/?uploads/, "uploads")}`}
+                        src={`${API_URL}/${post.image.replace(/^\/?uploads/, "uploads")}`}
                         alt="Post"
                         className="w-full h-full object-cover"
                       />

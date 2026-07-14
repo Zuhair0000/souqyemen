@@ -4,6 +4,7 @@ import logo from "../../assets/Logo.jpeg";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
 import { MessageCircle, Calendar } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function PromotionDetails() {
   const { id } = useParams();
@@ -11,7 +12,7 @@ export default function PromotionDetails() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch(`https://souqyemen.store/api/posts/${id}`)
+    fetch(`${API_URL}/api/posts/${id}`)
       .then(async (res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const text = await res.text();
@@ -43,10 +44,10 @@ export default function PromotionDetails() {
                 src={
                   post.image.startsWith("http")
                     ? post.image.replace(
-                        "https://souqyemen.store",
-                        "https://souqyemen.store",
+                        API_URL,
+                        API_URL,
                       )
-                    : `https://souqyemen.store${post.image.startsWith("/") ? "" : "/"}${post.image}`
+                    : `${API_URL}${post.image.startsWith("/") ? "" : "/"}${post.image}`
                 }
                 alt={post.title}
                 className="w-full h-full object-cover opacity-90"
@@ -67,10 +68,10 @@ export default function PromotionDetails() {
                     post.profile_photo
                       ? post.profile_photo.startsWith("http")
                         ? post.profile_photo.replace(
-                            "https://souqyemen.store",
-                            "https://souqyemen.store",
+                            API_URL,
+                            API_URL,
                           )
-                        : `https://souqyemen.store${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
+                        : `${API_URL}${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
                       : logo
                   }
                   alt={post.business_name || t("Business")}

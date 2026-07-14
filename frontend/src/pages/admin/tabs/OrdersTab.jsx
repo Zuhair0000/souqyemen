@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Search, ShoppingBag, Hash } from "lucide-react";
+import { API_URL } from "../../../config";
 
 export default function OrdersTab() {
   const [orders, setOrders] = useState([]);
@@ -11,7 +12,7 @@ export default function OrdersTab() {
   const fetchOrders = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://souqyemen.store/api/admin/orders", {
+      const res = await axios.get(`${API_URL}/api/admin/orders`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setOrders(res.data);

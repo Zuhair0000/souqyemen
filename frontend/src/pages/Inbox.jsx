@@ -6,6 +6,7 @@ import NavBar from "../components/NavBar";
 import Icons from "../components/Icons";
 import { useTranslation } from "react-i18next";
 import { MessageSquare, ChevronRight, MessageCircle } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function SellerInbox() {
   const [inbox, setInbox] = useState([]);
@@ -18,7 +19,7 @@ export default function SellerInbox() {
     const fetchInbox = async () => {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://souqyemen.store/api/user/inbox/${user.id}`,
+        `${API_URL}/api/user/inbox/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

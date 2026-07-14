@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/cartContext"; // Adjust path if needed
 import { useTranslation } from "react-i18next";
 import { ShoppingCart, Star, X } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function RecommendedForYou({ userId }) {
   const [products, setProducts] = useState([]);
@@ -31,7 +32,7 @@ export default function RecommendedForYou({ userId }) {
 
       try {
         const response = await fetch(
-          `https://souqyemen.store/api/products/for-you/${userId}`,
+          `${API_URL}/api/products/for-you/${userId}`,
         );
 
         if (!response.ok) {
@@ -146,7 +147,7 @@ export default function RecommendedForYou({ userId }) {
                 <img
                   src={
                     product.image
-                      ? `https://souqyemen.store${product.image}`
+                      ? `${API_URL}${product.image}`
                       : logo
                   }
                   alt={product.name}

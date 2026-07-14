@@ -17,6 +17,7 @@ import {
   Download,
   ZoomIn,
 } from "lucide-react";
+import { API_URL } from "../../../config";
 
 export default function UsersTab() {
   const [users, setUsers] = useState([]);
@@ -30,7 +31,7 @@ export default function UsersTab() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://souqyemen.store/api/admin/users", {
+      const res = await axios.get(`${API_URL}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setUsers(res.data);
@@ -49,8 +50,8 @@ export default function UsersTab() {
       try {
         const token = localStorage.getItem("token");
         const endpoint = isBanned
-          ? `https://souqyemen.store/api/admin/users/${id}/unban`
-          : `https://souqyemen.store/api/admin/users/${id}/ban`;
+          ? `${API_URL}/api/admin/users/${id}/unban`
+          : `${API_URL}/api/admin/users/${id}/ban`;
 
         await axios.put(
           endpoint,
@@ -102,7 +103,7 @@ export default function UsersTab() {
     }
   };
 
-  const photoUrl = (filename) => `https://souqyemen.store/uploads/${filename}`;
+  const photoUrl = (filename) => `${API_URL}/uploads/${filename}`;
 
   const handleDownload = async (filename) => {
     try {

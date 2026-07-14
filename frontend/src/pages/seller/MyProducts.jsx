@@ -10,6 +10,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import logo from "../../assets/Logo.jpeg";
+import { API_URL } from "../../config";
 
 export default function MyProducts() {
   const [products, setProducts] = useState([]);
@@ -23,7 +24,7 @@ export default function MyProducts() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        "https://souqyemen.store/api/seller/my-products",
+        `${API_URL}/api/seller/my-products`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -49,7 +50,7 @@ export default function MyProducts() {
     try {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://souqyemen.store/api/seller/products/${id}`,
+        `${API_URL}/api/seller/products/${id}`,
         { method: "DELETE", headers: { Authorization: `Bearer ${token}` } },
       );
       if (!res.ok) throw new Error("Failed to delete");
@@ -146,7 +147,7 @@ export default function MyProducts() {
                       product.image &&
                       product.image !== "null" &&
                       product.image !== "undefined"
-                        ? `https://souqyemen.store${product.image}`
+                        ? `${API_URL}${product.image}`
                         : logo
                     }
                     alt={product.name}

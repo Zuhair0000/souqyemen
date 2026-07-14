@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import SellerNavBar from "./SellerNavBar";
 import { useTranslation } from "react-i18next"; // Added import
+import { API_URL } from "../config";
 
 export default function SellerInbox() {
   const [inbox, setInbox] = useState([]);
@@ -12,7 +13,7 @@ export default function SellerInbox() {
     const fetchInbox = async () => {
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `https://souqyemen.store/api/seller/inbox/${seller.id}`,
+        `${API_URL}/api/seller/inbox/${seller.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

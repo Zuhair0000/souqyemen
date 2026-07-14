@@ -5,13 +5,14 @@ import logo from "../../assets/Logo.jpeg";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
 import { Sparkles } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function PromotionsFeed() {
   const [posts, setPosts] = useState([]);
   const { t } = useTranslation();
 
   useEffect(() => {
-    axios.get("https://souqyemen.store/api/posts").then((res) => {
+    axios.get(`${API_URL}/api/posts`).then((res) => {
       console.log("Posts data:", res.data);
       setPosts(res.data);
     });
@@ -49,10 +50,10 @@ export default function PromotionsFeed() {
                       post.profile_photo
                         ? post.profile_photo.startsWith("http")
                           ? post.profile_photo.replace(
-                              "https://souqyemen.store",
-                              "https://souqyemen.store",
+                              API_URL,
+                              API_URL,
                             )
-                          : `https://souqyemen.store${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
+                          : `${API_URL}${post.profile_photo.startsWith("/") ? "" : "/"}${post.profile_photo}`
                         : logo
                     }
                     alt="Business"
@@ -87,10 +88,10 @@ export default function PromotionsFeed() {
                       src={
                         post.image.startsWith("http")
                           ? post.image.replace(
-                              "https://souqyemen.store",
-                              "https://souqyemen.store",
+                              API_URL,
+                              API_URL,
                             )
-                          : `https://souqyemen.store${post.image.startsWith("/") ? "" : "/"}${post.image}`
+                          : `${API_URL}${post.image.startsWith("/") ? "" : "/"}${post.image}`
                       }
                       alt="Post"
                       className="w-full max-h-[450px] object-cover transition-transform duration-700 group-hover:scale-105"
