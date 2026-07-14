@@ -26,6 +26,6 @@ router.put("/mark-read", authenticate, markAllAsRead);
 router.post("/", upload.single("image"), postMessages);
 
 // 2. Dynamic parameter routes MUST come last!
-router.get("/:user1/:user2", getMessages);
+router.get("/:user1/:user2", authenticate, getMessages);
 
 module.exports = router;
