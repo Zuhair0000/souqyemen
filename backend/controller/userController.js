@@ -31,9 +31,6 @@ exports.updateProfile = async (req, res) => {
   }
 };
 
-// GET /api/user/orders
-// GET /api/user/orders
-// GET /api/user/orders
 exports.getMyOrders = async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -52,11 +49,6 @@ exports.getMyOrders = async (req, res) => {
         ORDER BY o.id DESC`,
       [req.user.id],
     );
-
-    // Let's print the very first raw row from the DB to see if product_id exists!
-    if (rows.length > 0) {
-      console.log("RAW DB ROW:", rows[0]);
-    }
 
     const ordersMap = {};
     const orderIds = [];
