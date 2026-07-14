@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import BackButton from "../../components/BackButton";
 import { useTranslation } from "react-i18next";
 import { UploadCloud, Tag, DollarSign, Archive, Type } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function EditProduct() {
   const { id } = useParams();
@@ -23,14 +24,14 @@ export default function EditProduct() {
     const fetchProduct = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`https://souqyemen.store/api/products/${id}`, {
+        const res = await fetch(`${API_URL}/api/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!res.ok) throw new Error("Failed to fetch product");
         const data = await res.json();
         setProduct(data.product);
         if (data.product.image)
-          setPreview(`https://souqyemen.store${data.product.image}`);
+          setPreview(`${API_URL}${data.product.image}`);
       } catch (err) {
         alert(t("Failed to load product."));
       } finally {
@@ -63,7 +64,7 @@ export default function EditProduct() {
       );
 
       const res = await fetch(
-        `https://souqyemen.store/api/seller/edit-product/${id}`,
+        `${API_URL}/api/seller/edit-product/${id}`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` }, // Removed application/json to let browser set multipart/form-data

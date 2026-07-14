@@ -5,6 +5,7 @@ import { useCart } from "../context/cartContext";
 import { FiMessageSquare } from "react-icons/fi";
 import { useTranslation } from "react-i18next";
 import axios from "axios"; // Added axios for the API call
+import { API_URL } from "../config";
 
 export default function Icons() {
   const [user, setUser] = useState(null);
@@ -35,7 +36,7 @@ export default function Icons() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://souqyemen.store/api/messages/unread",
+          `${API_URL}/api/messages/unread`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },

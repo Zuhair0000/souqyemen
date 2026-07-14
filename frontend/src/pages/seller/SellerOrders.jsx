@@ -13,6 +13,7 @@ import {
   ArrowUpDown, // <-- Added sort icon
 } from "lucide-react";
 import logo from "../../assets/Logo.jpeg";
+import { API_URL } from "../../config";
 
 export default function SellerOrders() {
   const [orders, setOrders] = useState([]);
@@ -36,7 +37,7 @@ export default function SellerOrders() {
   }, [i18n.language]);
 
   const fetchOrders = () => {
-    fetch("https://souqyemen.store/api/seller/orders", {
+    fetch(`${API_URL}/api/seller/orders`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -46,7 +47,7 @@ export default function SellerOrders() {
 
   useEffect(() => {
     fetchOrders();
-    fetch("https://souqyemen.store/api/seller/delivery-companies", {
+    fetch(`${API_URL}/api/seller/delivery-companies`, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
     })
       .then((res) => res.json())
@@ -90,7 +91,7 @@ export default function SellerOrders() {
   ) => {
     try {
       const res = await fetch(
-        `https://souqyemen.store/api/seller/orders/${orderId}/status`,
+        `${API_URL}/api/seller/orders/${orderId}/status`,
         {
           method: "PUT",
           headers: {
@@ -121,7 +122,7 @@ export default function SellerOrders() {
   const viewTracking = async (orderId) => {
     try {
       const res = await fetch(
-        `https://souqyemen.store/api/seller/orders/${orderId}/tracking`,
+        `${API_URL}/api/seller/orders/${orderId}/tracking`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -337,7 +338,7 @@ export default function SellerOrders() {
                                 <img
                                   src={
                                     item.image
-                                      ? `https://souqyemen.store${item.image}`
+                                      ? `${API_URL}${item.image}`
                                       : logo
                                   }
                                   alt={item.name}

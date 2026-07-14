@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { GoogleLogin } from "@react-oauth/google";
 import { Mail, Lock, Briefcase, X, Loader2, CheckCircle } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function Login() {
   const [formData, setFormData] = useState({ emailOrPhone: "", password: "" });
@@ -50,7 +51,7 @@ export default function Login() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("https://souqyemen.store/api/auth/login", {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
@@ -65,7 +66,7 @@ export default function Login() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const res = await fetch("https://souqyemen.store/api/auth/google/login", {
+      const res = await fetch(`${API_URL}/api/auth/google/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token: credentialResponse.credential }),
@@ -85,7 +86,7 @@ export default function Login() {
     setResetError("");
     try {
       // Reusing your existing OTP endpoint
-      const res = await fetch("https://souqyemen.store/api/auth/send-otp", {
+      const res = await fetch(`${API_URL}/api/auth/send-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail }),
@@ -107,7 +108,7 @@ export default function Login() {
     setResetError("");
     try {
       // Reusing your existing OTP verification endpoint
-      const res = await fetch("https://souqyemen.store/api/auth/verify-otp", {
+      const res = await fetch(`${API_URL}/api/auth/verify-otp`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email: resetEmail, otp: resetOtp }),
@@ -131,7 +132,7 @@ export default function Login() {
     try {
       // Calls a new endpoint to actually update the password
       const res = await fetch(
-        "https://souqyemen.store/api/auth/reset-password",
+        `${API_URL}/api/auth/reset-password`,
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },

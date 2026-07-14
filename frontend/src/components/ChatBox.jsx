@@ -6,8 +6,9 @@ import NavBar from "./NavBar";
 import Icons from "./Icons";
 import BackButton from "./BackButton";
 import { Send, UserCircle2, ImagePlus, X } from "lucide-react";
+import { API_URL } from "../config";
 
-const socket = io("https://souqyemen.store");
+const socket = io(API_URL);
 
 export default function ChatBox() {
   const { id: receiverId } = useParams();
@@ -32,7 +33,7 @@ export default function ChatBox() {
 
     socket.on("receiveMessage", (data) => setChat((prev) => [...prev, data]));
 
-    fetch(`https://souqyemen.store/api/messages/${user.id}/${receiverId}`)
+    fetch(`${API_URL}/api/messages/${user.id}/${receiverId}`)
       .then((res) => res.json())
       .then((data) => setChat(data))
       .catch((err) => console.error("Failed to fetch messages", err));
@@ -42,7 +43,7 @@ export default function ChatBox() {
       try {
         const token = localStorage.getItem("token");
         if (!token) return;
-        await fetch("https://souqyemen.store/api/messages/mark-read", {
+        await fetch(`${API_URL}/api/messages/mark-read`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -100,7 +101,7 @@ export default function ChatBox() {
 
     try {
       // 1. Send to server FIRST to get the image URL
-      const res = await fetch("https://souqyemen.store/api/messages", {
+      const res = await fetch(`${API_URL}/api/messages`, {
         method: "POST",
         // Note: Do NOT set Content-Type to application/json when sending FormData
         body: formData,
@@ -183,11 +184,11 @@ export default function ChatBox() {
                     {/* 🔥 Render Image if it exists (Now Clickable) 🔥 */}
                     {msg.image_url && (
                       <img
-                        src={`https://souqyemen.store${msg.image_url}`}
+                        src={`${API_URL}${msg.image_url}`}
                         alt="attachment"
                         onClick={() =>
                           setFullScreenImage(
-                            `https://souqyemen.store${msg.image_url}`,
+                            `${API_URL}${msg.image_url}`,
                           )
                         }
                         className="max-w-full rounded-lg mb-2 object-cover border border-white/20 cursor-pointer hover:opacity-90 transition-opacity shadow-sm"

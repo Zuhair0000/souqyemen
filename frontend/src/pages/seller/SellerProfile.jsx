@@ -13,6 +13,7 @@ import {
   Camera,
   Loader2,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function SellerProfile() {
   const { id } = useParams();
@@ -28,7 +29,7 @@ export default function SellerProfile() {
   useEffect(() => {
     const fetchSeller = async () => {
       const res = await fetch(
-        `https://souqyemen.store/api/seller/public/${id}`,
+        `${API_URL}/api/seller/public/${id}`,
       );
       const data = await res.json();
       setSeller(data.seller);
@@ -52,7 +53,7 @@ export default function SellerProfile() {
       const token = localStorage.getItem("token"); // Ensure token is sent if route is protected
 
       const response = await fetch(
-        `https://souqyemen.store/api/seller/update-profile-image/${id}`,
+        `${API_URL}/api/seller/update-profile-image/${id}`,
         {
           method: "POST",
           headers: {
@@ -110,7 +111,7 @@ export default function SellerProfile() {
                   <img
                     src={
                       seller.image_profile
-                        ? `https://souqyemen.store${seller.image_profile}`
+                        ? `${API_URL}${seller.image_profile}`
                         : logo
                     }
                     alt="Seller"
@@ -191,7 +192,7 @@ export default function SellerProfile() {
                       product.image &&
                       product.image !== "null" &&
                       product.image !== "undefined"
-                        ? `https://souqyemen.store${product.image}`
+                        ? `${API_URL}${product.image}`
                         : logo
                     }
                     alt={product.name}

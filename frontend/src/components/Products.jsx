@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { useCart } from "../context/cartContext";
 import { useTranslation } from "react-i18next";
 import { ShoppingCart, Star, ChevronDown, AlertCircle, X } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function Products({ products }) {
   const { addToCart } = useCart();
@@ -96,10 +97,10 @@ export default function Products({ products }) {
                       product.image
                         ? product.image.startsWith("http")
                           ? product.image.replace(
-                              "https://souqyemen.store",
-                              "https://souqyemen.store",
+                              API_URL,
+                              API_URL,
                             )
-                          : `https://souqyemen.store${product.image.startsWith("/") ? "" : "/"}${product.image}`
+                          : `${API_URL}${product.image.startsWith("/") ? "" : "/"}${product.image}`
                         : logo
                     }
                     alt={product.name}

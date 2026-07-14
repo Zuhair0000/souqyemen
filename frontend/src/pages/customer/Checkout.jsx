@@ -12,6 +12,7 @@ import {
   Banknote,
   MapPin,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("Visa/MasterCard");
@@ -92,7 +93,7 @@ export default function Checkout() {
 
     try {
       const response = await fetch(
-        "https://souqyemen.store/api/orders/checkout",
+        `${API_URL}/api/orders/checkout`,
         {
           method: "POST",
           headers: {

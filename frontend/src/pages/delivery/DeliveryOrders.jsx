@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import jsPDF from "jspdf";
 import DeliveryNavBar from "../../components/DeliveryNavBar";
+import { API_URL } from "../../config";
 
 export default function DeliveryOrders() {
   const { t, i18n } = useTranslation();
@@ -39,7 +40,7 @@ export default function DeliveryOrders() {
   const fetchActiveOrders = async () => {
     try {
       const res = await axios.get(
-        "https://souqyemen.store/api/delivery/orders",
+        `${API_URL}/api/delivery/orders`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -53,7 +54,7 @@ export default function DeliveryOrders() {
   const fetchHistoryOrders = async () => {
     try {
       const res = await axios.get(
-        "https://souqyemen.store/api/delivery/history",
+        `${API_URL}/api/delivery/history`,
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         },
@@ -73,7 +74,7 @@ export default function DeliveryOrders() {
     if (!updateText.trim()) return;
     try {
       await axios.post(
-        `https://souqyemen.store/api/delivery/orders/${orderId}/tracking`,
+        `${API_URL}/api/delivery/orders/${orderId}/tracking`,
         { update_text: updateText },
         {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
@@ -91,7 +92,7 @@ export default function DeliveryOrders() {
     if (window.confirm(t("Confirm package has been delivered?"))) {
       try {
         await axios.put(
-          `https://souqyemen.store/api/delivery/orders/${orderId}/deliver`,
+          `${API_URL}/api/delivery/orders/${orderId}/deliver`,
           {},
           {
             headers: {

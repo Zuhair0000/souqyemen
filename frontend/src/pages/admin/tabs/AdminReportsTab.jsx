@@ -11,6 +11,7 @@ import {
   Download,
   Trophy,
 } from "lucide-react";
+import { API_URL } from "../../../config";
 
 export default function AdminReportsTab() {
   const [report, setReport] = useState(null);
@@ -23,7 +24,7 @@ export default function AdminReportsTab() {
   const fetchReport = async () => {
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.get("https://souqyemen.store/api/admin/report", {
+      const res = await axios.get(`${API_URL}/api/admin/report`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setReport(res.data);

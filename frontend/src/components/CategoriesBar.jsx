@@ -12,13 +12,14 @@ import {
   Utensils,
   Tag,
 } from "lucide-react";
+import { API_URL } from "../config";
 
 export default function CategoriesBar({ onCategorySelect, activeCategory }) {
   const [categories, setCategories] = useState([]);
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    fetch("https://souqyemen.store/api/products/categories")
+    fetch(`${API_URL}/api/products/categories`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));

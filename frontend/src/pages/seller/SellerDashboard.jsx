@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import jsPDF from "jspdf";
 import { useTranslation } from "react-i18next";
+import { API_URL } from "../../config";
 
 // Flat, Vibrant KPI Card
 function KPI({ title, value, delta, icon: Icon, colorClass }) {
@@ -315,7 +316,7 @@ export default function SellerDashboard() {
       try {
         const token = localStorage.getItem("token");
         const res = await axios.get(
-          "https://souqyemen.store/api/seller/dashboard",
+          `${API_URL}/api/seller/dashboard`,
           { headers: { Authorization: `Bearer ${token}` } },
         );
         setAnalytics(res.data);

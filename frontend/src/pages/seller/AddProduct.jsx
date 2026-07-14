@@ -9,6 +9,7 @@ import {
   Archive,
   Type,
 } from "lucide-react";
+import { API_URL } from "../../config";
 
 export default function AddProduct() {
   const [form, setForm] = useState({
@@ -24,7 +25,7 @@ export default function AddProduct() {
   const { t } = useTranslation();
 
   useEffect(() => {
-    fetch("https://souqyemen.store/api/categories")
+    fetch(`${API_URL}/api/categories`)
       .then((res) => res.json())
       .then((data) => setCategories(data))
       .catch((err) => console.error("Error loading categories:", err));
@@ -47,7 +48,7 @@ export default function AddProduct() {
     Object.entries(form).forEach(([key, value]) => formData.append(key, value));
 
     try {
-      const res = await fetch("https://souqyemen.store/api/seller/products", {
+      const res = await fetch(`${API_URL}/api/seller/products`, {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
         body: formData,

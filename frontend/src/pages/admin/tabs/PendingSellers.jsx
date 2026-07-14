@@ -8,9 +8,10 @@ import {
   XCircle,
   FileImage,
 } from "lucide-react";
+import { API_URL } from "../../../config";
 
 // Centralize the backend URL so it only needs to be updated in one place
-const API_BASE = "https://souqyemen.store";
+const API_BASE = API_URL;
 
 export default function PendingPartners() {
   const [partners, setPartners] = useState([]);

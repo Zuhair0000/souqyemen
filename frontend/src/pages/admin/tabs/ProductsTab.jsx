@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
 import { Search, Trash2, Tag, Store } from "lucide-react";
+import { API_URL } from "../../../config";
 
 export default function ProductsTab() {
   const [products, setProducts] = useState([]);
@@ -12,7 +13,7 @@ export default function ProductsTab() {
     try {
       const token = localStorage.getItem("token");
       const res = await axios.get(
-        "https://souqyemen.store/api/admin/products",
+        `${API_URL}/api/admin/products`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -27,7 +28,7 @@ export default function ProductsTab() {
     if (window.confirm(t("Are you sure you want to remove this product?"))) {
       try {
         const token = localStorage.getItem("token");
-        await axios.delete(`https://souqyemen.store/api/admin/products/${id}`, {
+        await axios.delete(`${API_URL}/api/admin/products/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setProducts((prev) => prev.filter((p) => p.id !== id));

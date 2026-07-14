@@ -16,6 +16,7 @@ import {
 } from "lucide-react";
 import logo from "../assets/Logo.jpeg";
 import { useTranslation } from "react-i18next";
+import { API_URL } from "../config";
 
 export default function SellerNavBar({ children }) {
   const navigate = useNavigate();
@@ -49,7 +50,7 @@ export default function SellerNavBar({ children }) {
       // Fetch Orders
       try {
         const ordersRes = await axios.get(
-          "https://souqyemen.store/api/seller/orders",
+          `${API_URL}/api/seller/orders`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },
@@ -66,7 +67,7 @@ export default function SellerNavBar({ children }) {
       // Fetch Unread Messages
       try {
         const msgRes = await axios.get(
-          "https://souqyemen.store/api/messages/unread",
+          `${API_URL}/api/messages/unread`,
           {
             headers: { Authorization: `Bearer ${token}` },
           },

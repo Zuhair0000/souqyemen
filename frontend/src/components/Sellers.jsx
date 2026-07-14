@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Store, Star, Package } from "lucide-react";
 import logo from "../assets/Logo.jpeg"; // Fallback image
+import { API_URL } from "../config";
 
 export default function Sellers({ searchQuery }) {
   const [sellers, setSellers] = useState([]);
@@ -13,7 +14,7 @@ export default function Sellers({ searchQuery }) {
     const fetchSellers = async () => {
       try {
         // Point this to the new Node.js endpoint you just created
-        const res = await fetch("https://souqyemen.store/api/seller/sellers");
+        const res = await fetch(`${API_URL}/api/seller/sellers`);
         const data = await res.json();
         setSellers(data);
       } catch (err) {
@@ -68,7 +69,7 @@ export default function Sellers({ searchQuery }) {
                   <img
                     src={
                       seller.profile_photo
-                        ? `https://souqyemen.store${seller.profile_photo}`
+                        ? `${API_URL}${seller.profile_photo}`
                         : logo
                     }
                     alt={seller.business_name}
