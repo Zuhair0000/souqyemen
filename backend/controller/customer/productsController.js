@@ -61,7 +61,6 @@ exports.getAllCategories = async (req, res) => {
 };
 
 exports.getProductsByCategory = async (req, res) => {
-  // Use req.params.id to match your routes file!
   const categoryId = req.params.id || req.params.categoryId;
 
   try {
@@ -85,11 +84,9 @@ exports.getProductsByCategory = async (req, res) => {
   }
 };
 
-// Cleaned up Review Function!
 exports.review = async (req, res) => {
   const { order_id, product_id, rating, comment } = req.body;
 
-  // The 'authenticate' middleware already verified the token and gave us the user ID!
   const userId = req.user.id;
 
   if (!order_id || !product_id || !rating) {
@@ -166,8 +163,6 @@ exports.review = async (req, res) => {
 exports.getAIRecommendations = async (req, res) => {
   const { userId } = req.params;
 
-  console.log(`AI Engine: Fetching recommendations for User ${userId}...`);
-
   try {
     // 1. Call the FastAPI server
     const response = await fetch(
@@ -200,10 +195,6 @@ exports.getAIRecommendations = async (req, res) => {
     // --- LOGIC FOR YOUR TEST PHASE ---
     // If we found products in MySQL, we merge them with the AI ratings
     if (existingProducts.length > 0) {
-      console.log(
-        `AI Engine: Found ${existingProducts.length} matching products in MySQL.`,
-      );
-
       const mergedData = existingProducts.map((dbProd) => {
         const aiMatch = aiRecs.find((a) => a.id === dbProd.id);
         return {
@@ -214,12 +205,6 @@ exports.getAIRecommendations = async (req, res) => {
       return res.status(200).json(mergedData);
     }
 
-    // --- DEBUG BYPASS ---
-    // If NO products were found in MySQL, we return the AI data directly
-    // so you can see that the AI is actually working!
-    console.warn(
-      "AI Engine: Suggested IDs don't exist in MySQL. Returning raw AI data for debugging.",
-    );
     return res.status(200).json(aiRecs);
   } catch (error) {
     console.error("AI Server Connection Error:", error.message);

@@ -235,9 +235,6 @@ exports.requestOtp = async (req, res) => {
   }
 };
 
-// ==========================================
-// NEW: Update Profile Image
-// ==========================================
 exports.updateProfileImage = async (req, res) => {
   const userId = req.params.id;
 
@@ -258,7 +255,6 @@ exports.updateProfileImage = async (req, res) => {
     // Update the existing image_profile column in the users table
     const query = "UPDATE users SET profile_photo = ? WHERE id = ?";
     await db.query(query, [imagePath, userId]);
-    console.log("Saved to DB:", imagePath, "for user:", userId);
 
     return res.status(200).json({
       success: true,
