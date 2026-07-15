@@ -124,42 +124,6 @@ exports.review = async (req, res) => {
 };
 
 // Function to fetch recommendations from the Python FastAPI server
-// exports.getAIRecommendations = async (req, res) => {
-//   const { userId } = req.params;
-
-//   try {
-//     const response = await fetch(
-//       `http://ai-engine:8000/api/recommend/${userId}`,
-//     );
-//     const aiData = await response.json();
-//     const aiRecs = aiData.recommendations; // This is the list of 5 products
-
-//     // Get the IDs of the products the AI suggested
-//     const aiIds = aiRecs.map((p) => p.id);
-
-//     // CRITICAL: Check which of these actually exist in YOUR MySQL database
-//     const [existingProducts] = await db.query(
-//       `SELECT * FROM products WHERE id IN (?)`,
-//       [aiIds],
-//     );
-
-//     // Merge the AI's "predicted_rating" with the real data from your DB
-//     const finalRecommendations = existingProducts.map((dbProd) => {
-//       const aiMatch = aiRecs.find((a) => a.id === dbProd.id);
-//       return {
-//         ...dbProd,
-//         predicted_rating: aiMatch ? aiMatch.predicted_rating : 0,
-//       };
-//     });
-
-//     return res.status(200).json(finalRecommendations);
-//   } catch (error) {
-//     console.error("AI Sync Error:", error);
-//     return res.status(200).json([]); // Fallback to empty array
-//   }
-// };
-
-// Function to fetch recommendations from the Python FastAPI server
 exports.getAIRecommendations = async (req, res) => {
   const { userId } = req.params;
 
@@ -174,7 +138,7 @@ exports.getAIRecommendations = async (req, res) => {
     }
 
     const aiData = await response.json();
-    const aiRecs = aiData.recommendations; // The 5 products from the AI's "hallucination"
+    const aiRecs = aiData.recommendations;
 
     if (!aiRecs || aiRecs.length === 0) {
       return res.status(200).json([]);
@@ -192,8 +156,6 @@ exports.getAIRecommendations = async (req, res) => {
       [aiIds],
     );
 
-    // --- LOGIC FOR YOUR TEST PHASE ---
-    // If we found products in MySQL, we merge them with the AI ratings
     if (existingProducts.length > 0) {
       const mergedData = existingProducts.map((dbProd) => {
         const aiMatch = aiRecs.find((a) => a.id === dbProd.id);
