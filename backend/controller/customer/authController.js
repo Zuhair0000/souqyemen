@@ -15,8 +15,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-// ENV secret key or hardcoded for now
-// Change this line to check process.env first!
+
 const JWT_SECRET =
   process.env.JWT_SECRET ||
   "8cbf7645a1e3b8723e1d5f934b8d7e614e6d77c8b798e3b257456bcd312f74c1";
@@ -24,15 +23,6 @@ const JWT_SECRET =
 exports.registerCustomer = async (req, res) => {
   const { name, email, password, otp } = req.body;
 
-  // 1. Log the incoming request to see what React actually sent!
-  console.log("INCOMING CUSTOMER REGISTRATION:", {
-    name,
-    email,
-    password,
-    otp,
-  });
-
-  // 2. Make sure OTP is required before hitting the database
   if (!name || !email || !password || !otp) {
     return res.status(400).json({ message: "All fields and OTP are required" });
   }

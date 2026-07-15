@@ -13,14 +13,6 @@ const authenticate = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
-    // THIS IS OUR WIRETAP
-    console.log("====================================");
-    console.log("BOUNCER REJECTED THE TOKEN!");
-    console.log("Error reason:", err.message);
-    console.log("Secret Bouncer is using:", process.env.JWT_SECRET);
-    console.log("Token received:", token.substring(0, 15) + "...");
-    console.log("====================================");
-
     res.status(401).json({ error: "Invalid token" });
   }
 };
