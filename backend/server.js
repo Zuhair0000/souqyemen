@@ -81,26 +81,22 @@ io.on("connection", (socket) => {
     socket.leave(roomId);
   });
 
-  socket.on("sendMessage", async ({ senderId, receiverId, message }) => {
-    if (!senderId || !receiverId || !message) {
-      console.error("Invalid message data", { senderId, receiverId, message });
+  socket.on("sendMessage", async ({ sender_id, receiver_id, message }) => {
+    if (!sender_id || !receiver_id || !message) {
+      console.error("Invalid message data", {
+        sender_id,
+        receiver_id,
+        message,
+      });
       return;
     }
 
-    const roomId = [senderId, receiverId].sort().join("_");
+    const roomId = [sender_id, receiver_id].sort().join("_");
 
     // Emit to the room
-    io.to(roomId).emit("receiveMessage", { senderId, receiverId, message });
+    io.to(roomId).emit("receiveMessage", { sender_id, receiver_id, message });
 
     // Save to database
-    try {
-      await db.query(
-        "INSERT INTO messages (sender_id, receiver_id, message) VALUES (?, ?, ?)",
-        [senderId, receiverId, message],
-      );
-    } catch (err) {
-      console.error("Error saving message to DB:", err);
-    }
   });
 });
 

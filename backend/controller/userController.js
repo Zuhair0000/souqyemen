@@ -160,12 +160,9 @@ exports.postMessages = async (req, res) => {
   }
 };
 
-// PUT THIS IN userController.js
 exports.getInbox = async (req, res) => {
-  const { id } = req.params; // This is the logged-in user's ID
+  const id = req.user.id;
   try {
-    // We join the messages table with itself essentially to group by sender
-    // and count how many of those messages have is_read = 0
     const [rows] = await db.query(
       `SELECT 
          u.id, 
