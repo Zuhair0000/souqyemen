@@ -140,9 +140,7 @@ exports.updateProfile = async (req, res) => {
       SET name = ?, phone = ?, business_name = ?
       WHERE id = ?`;
 
-    await db
-      .promise()
-      .query(query, [name, phone, businessName || null, userId]);
+    await db.query(query, [name, phone, businessName || null, userId]);
 
     res.json({ message: "Profile updated successfully" });
   } catch (error) {
@@ -163,9 +161,9 @@ exports.changePassword = async (req, res) => {
   }
 
   try {
-    const [rows] = await db
-      .promise()
-      .query("SELECT password FROM users WHERE id = ?", [userId]);
+    const [rows] = await db.query("SELECT password FROM users WHERE id = ?", [
+      userId,
+    ]);
     if (rows.length === 0) {
       return res.status(404).json({ message: "User not found" });
     }
