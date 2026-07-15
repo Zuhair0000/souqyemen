@@ -107,12 +107,10 @@ exports.getMyOrders = async (req, res) => {
 exports.updateSettings = async (req, res) => {
   const { notificationsEnabled } = req.body;
   try {
-    await db
-      .promise()
-      .query("UPDATE users SET notifications_enabled = ? WHERE id = ?", [
-        notificationsEnabled,
-        req.user.id,
-      ]);
+    await db.query("UPDATE users SET notifications_enabled = ? WHERE id = ?", [
+      notificationsEnabled,
+      req.user.id,
+    ]);
     res.json({ message: "Settings updated" });
   } catch (err) {
     console.error(err);
